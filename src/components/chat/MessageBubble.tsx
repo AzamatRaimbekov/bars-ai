@@ -1,0 +1,32 @@
+import { motion } from "framer-motion";
+import type { ChatMessage } from "@/types/chat";
+
+interface MessageBubbleProps {
+  message: ChatMessage;
+  mentorAvatar?: string;
+}
+
+export function MessageBubble({ message, mentorAvatar }: MessageBubbleProps) {
+  const isUser = message.role === "user";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}
+    >
+      <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-sm shrink-0">
+        {isUser ? "👤" : mentorAvatar || "🤖"}
+      </div>
+      <div
+        className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+          isUser
+            ? "bg-primary text-white rounded-tr-md"
+            : "bg-surface border border-border text-text rounded-tl-md"
+        }`}
+      >
+        <div className="whitespace-pre-wrap">{message.content}</div>
+      </div>
+    </motion.div>
+  );
+}
