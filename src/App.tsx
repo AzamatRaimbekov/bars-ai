@@ -1,39 +1,54 @@
-import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useAuthStore } from "@/store/authStore";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import Onboarding from "@/pages/Onboarding";
-import Dashboard from "@/pages/Dashboard";
-import Roadmap from "@/pages/Roadmap";
-import Mentor from "@/pages/Mentor";
-import Simulator from "@/pages/Simulator";
-import Lesson from "@/pages/Lesson";
-import Achievements from "@/pages/Achievements";
-import Profile from "@/pages/Profile";
-import { Loader2 } from "lucide-react";
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useAuthStore } from '@/store/authStore'
+import Login from '@/pages/Login'
+import Register from '@/pages/Register'
+import Onboarding from '@/pages/Onboarding'
+import Dashboard from '@/pages/Dashboard'
+import Roadmap from '@/pages/Roadmap'
+import Mentor from '@/pages/Mentor'
+import Simulator from '@/pages/Simulator'
+import Lesson from '@/pages/Lesson'
+import Achievements from '@/pages/Achievements'
+import Profile from '@/pages/Profile'
+import { Loader2 } from 'lucide-react'
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, user } = useAuthStore()
+  const location = useLocation()
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="animate-spin text-primary" size={32} />
       </div>
-    );
+    )
   }
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  return <>{children}</>;
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+
+  // If user hasn't completed onboarding (no direction set), redirect to /
+  const onboardingComplete = !!(user?.direction && user.direction !== '')
+  const isOnboardingRoute = location.pathname === '/'
+
+  if (!onboardingComplete && !isOnboardingRoute) {
+    return <Navigate to="/" replace />
+  }
+
+  // If user has already completed onboarding, don't let them back to /
+  if (onboardingComplete && isOnboardingRoute) {
+    return <Navigate to="/dashboard" replace />
+  }
+
+  return <>{children}</>
 }
 
 export default function App() {
-  const tryRestore = useAuthStore((s) => s.tryRestore);
+  const tryRestore = useAuthStore((s) => s.tryRestore)
 
   useEffect(() => {
-    tryRestore();
-  }, [tryRestore]);
+    tryRestore()
+  }, [tryRestore])
 
   return (
     <BrowserRouter>
@@ -106,5 +121,5 @@ export default function App() {
         />
       </Routes>
     </BrowserRouter>
-  );
+  )
 }

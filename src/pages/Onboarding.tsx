@@ -1,125 +1,121 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Code2, Languages, Headphones, Building2, ArrowRight, Sparkles, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { DIRECTIONS } from "@/data/directions";
-import { useUserStore } from "@/store/userStore";
-import { assessLevel } from "@/services/claudeApi";
-import type { Direction } from "@/types";
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Code2, Languages, Headphones, Building2, ArrowRight, Sparkles, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
+import { DIRECTIONS } from '@/data/directions'
+import { useAuthStore } from '@/store/authStore'
+import { assessLevel } from '@/services/claudeApi'
+import { useTranslation } from '@/hooks/useTranslation'
+import type { Direction } from '@/types'
+import type { TranslationKey } from '@/lib/i18n'
 
-const iconMap = { Code2, Languages, Headphones, Building2 };
-const directionList = Object.values(DIRECTIONS);
+const iconMap = { Code2, Languages, Headphones, Building2 }
+const directionList = Object.values(DIRECTIONS)
 
-const ASSESSMENT_QUESTIONS: Record<Direction, string[]> = {
+const ASSESSMENT_QUESTION_KEYS: Record<Direction, TranslationKey[]> = {
   frontend: [
-    "What experience do you have with HTML and CSS?",
-    "Have you worked with JavaScript before? If so, what have you built?",
-    "Do you know what React is? Have you used any frameworks?",
-    "Can you explain what responsive design means?",
-    "What tools or code editors do you use for development?",
+    'assessment.frontend.q1', 'assessment.frontend.q2', 'assessment.frontend.q3',
+    'assessment.frontend.q4', 'assessment.frontend.q5',
   ],
   english: [
-    "How would you describe your current English level?",
-    "Do you use English at work or in daily life?",
-    "Can you tell me about your favorite hobby in English?",
-    "What is the most difficult part of English for you?",
-    "What is your goal with learning English?",
+    'assessment.english.q1', 'assessment.english.q2', 'assessment.english.q3',
+    'assessment.english.q4', 'assessment.english.q5',
   ],
   callcenter: [
-    "Have you ever worked in customer service or a call center?",
-    "How would you handle an angry customer?",
-    "What do you think makes good customer service?",
-    "Are you comfortable speaking on the phone for long periods?",
-    "Describe a time you resolved a conflict or problem for someone.",
+    'assessment.callcenter.q1', 'assessment.callcenter.q2', 'assessment.callcenter.q3',
+    'assessment.callcenter.q4', 'assessment.callcenter.q5',
   ],
   cib: [
-    "What do you know about Corporate & Investment Banking?",
-    "Have you studied finance or economics?",
-    "Can you explain what a bond is?",
-    "What financial tools or software have you used (e.g., Excel)?",
-    "Why are you interested in a career in banking?",
+    'assessment.cib.q1', 'assessment.cib.q2', 'assessment.cib.q3',
+    'assessment.cib.q4', 'assessment.cib.q5',
   ],
-};
+}
 
 export default function Onboarding() {
-  const navigate = useNavigate();
-  const { setProfile, completeOnboarding } = useUserStore();
-  const [step, setStep] = useState(0);
-  const [name, setName] = useState("");
-  const [selectedDirection, setSelectedDirection] = useState<Direction | null>(null);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
-  const [currentAnswer, setCurrentAnswer] = useState("");
-  const [chatMessages, setChatMessages] = useState<Array<{ role: "bot" | "user"; text: string }>>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [assessmentResult, setAssessmentResult] = useState<"beginner" | "intermediate" | "advanced" | null>(null);
+  const navigate = useNavigate()
+  const { t } = useTranslation()
+  const { user, updateUser, fetchUser } = useAuthStore()
+  const [step, setStep] = useState(0)
+  const [selectedDirection, setSelectedDirection] = useState<Direction | null>(null)
+  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [answers, setAnswers] = useState<string[]>([])
+  const [currentAnswer, setCurrentAnswer] = useState('')
+  const [chatMessages, setChatMessages] = useState<Array<{ role: 'bot' | 'user'; text: string }>>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [assessmentResult, setAssessmentResult] = useState<'beginner' | 'intermediate' | 'advanced' | null>(null)
+  const chatScrollRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll chat to bottom when new messages appear
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTo({ top: chatScrollRef.current.scrollHeight, behavior: 'smooth' })
+    }
+  }, [chatMessages, isLoading])
 
   const handleDirectionSelect = (dir: Direction) => {
-    setSelectedDirection(dir);
-    setStep(1);
-    const questions = ASSESSMENT_QUESTIONS[dir];
+    setSelectedDirection(dir)
+    setStep(1)
+    const questionKeys = ASSESSMENT_QUESTION_KEYS[dir]
     setChatMessages([
-      { role: "bot", text: `Hi ${name || "there"}! I'm going to ask you a few questions to understand your current level. Let's start!` },
-      { role: "bot", text: questions[0] },
-    ]);
-  };
+      { role: 'bot', text: t('onboarding.chatHi', { name: user?.name || 'there' }) },
+      { role: 'bot', text: t(questionKeys[0]) },
+    ])
+  }
 
   const handleAnswer = async () => {
-    if (!currentAnswer.trim() || !selectedDirection) return;
+    if (!currentAnswer.trim() || !selectedDirection) return
 
-    const newAnswers = [...answers, currentAnswer];
-    setAnswers(newAnswers);
-    setChatMessages((prev) => [...prev, { role: "user", text: currentAnswer }]);
-    setCurrentAnswer("");
+    const newAnswers = [...answers, currentAnswer]
+    setAnswers(newAnswers)
+    setChatMessages((prev) => [...prev, { role: 'user', text: currentAnswer }])
+    setCurrentAnswer('')
 
-    const questions = ASSESSMENT_QUESTIONS[selectedDirection];
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion((q) => q + 1);
+    const questionKeys = ASSESSMENT_QUESTION_KEYS[selectedDirection]
+    if (currentQuestion < questionKeys.length - 1) {
+      setCurrentQuestion((q) => q + 1)
       setChatMessages((prev) => [
         ...prev,
-        { role: "bot", text: questions[currentQuestion + 1] },
-      ]);
+        { role: 'bot', text: t(questionKeys[currentQuestion + 1]) },
+      ])
     } else {
-      setIsLoading(true);
+      setIsLoading(true)
       setChatMessages((prev) => [
         ...prev,
-        { role: "bot", text: "Great! Let me analyze your answers..." },
-      ]);
+        { role: 'bot', text: t('onboarding.analyzing') },
+      ])
 
-      let level: "beginner" | "intermediate" | "advanced" = "beginner";
+      let level: 'beginner' | 'intermediate' | 'advanced' = 'beginner'
       try {
-        level = await assessLevel(DIRECTIONS[selectedDirection].name, newAnswers);
+        level = await assessLevel(DIRECTIONS[selectedDirection].name, newAnswers)
       } catch {
         // fallback to beginner
       }
 
-      setAssessmentResult(level);
-      setIsLoading(false);
-      setStep(2);
+      setAssessmentResult(level)
+      setIsLoading(false)
+      setStep(2)
     }
-  };
+  }
 
-  const handleFinish = () => {
-    if (!selectedDirection || !assessmentResult) return;
-    setProfile({
-      name: name || "Learner",
-      direction: selectedDirection,
-      level: "Novice",
-      xp: 0,
-      streak: 0,
-      lastActiveDate: new Date().toISOString().split("T")[0],
-      completedNodes: [],
-      completedLessons: [],
-      earnedBadges: [],
-      assessmentLevel: assessmentResult,
-      onboardingComplete: true,
-    });
-    completeOnboarding();
-    navigate("/dashboard");
-  };
+  const handleFinish = async () => {
+    if (!selectedDirection || !assessmentResult) return
+    setIsSaving(true)
+    try {
+      await updateUser({
+        direction: selectedDirection,
+        assessment_level: assessmentResult,
+      })
+      await fetchUser()
+      navigate('/dashboard')
+    } catch (err) {
+      console.error('Failed to save onboarding data', err)
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -131,7 +127,7 @@ export default function Onboarding() {
               className="h-2 rounded-full"
               animate={{
                 width: step === i ? 32 : 8,
-                backgroundColor: step >= i ? "#6C63FF" : "#1E1E2E",
+                backgroundColor: step >= i ? '#6C63FF' : '#1E1E2E',
               }}
               transition={{ duration: 0.3 }}
             />
@@ -149,22 +145,18 @@ export default function Onboarding() {
             >
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold mb-2">
-                  Welcome to <span className="text-primary">Path</span>
-                  <span className="text-accent">Mind</span>
+                  {t('onboarding.welcome')} <span className="text-primary">{t('app.name.path')}</span>
+                  <span className="text-accent">{t('app.name.mind')}</span>
                 </h1>
-                <p className="text-text-secondary">Choose your learning path</p>
+                <p className="text-text-secondary">{t('onboarding.choosePath')}</p>
+                {user?.name && (
+                  <p className="text-sm text-primary mt-2">{user.name}</p>
+                )}
               </div>
-
-              <Input
-                label="What's your name?"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
 
               <div className="grid grid-cols-2 gap-4 mt-6">
                 {directionList.map((dir) => {
-                  const Icon = iconMap[dir.icon as keyof typeof iconMap];
+                  const Icon = iconMap[dir.icon as keyof typeof iconMap]
                   return (
                     <Card
                       key={dir.id}
@@ -179,12 +171,12 @@ export default function Onboarding() {
                       >
                         <Icon size={24} style={{ color: dir.color }} />
                       </div>
-                      <h3 className="font-semibold text-sm">{dir.name}</h3>
+                      <h3 className="font-semibold text-sm">{t(`direction.${dir.id}.name` as any)}</h3>
                       <p className="text-xs text-text-secondary leading-relaxed">
-                        {dir.description}
+                        {t(`direction.${dir.id}.desc` as any)}
                       </p>
                     </Card>
-                  );
+                  )
                 })}
               </div>
             </motion.div>
@@ -199,47 +191,50 @@ export default function Onboarding() {
               className="space-y-4"
             >
               <div className="text-center mb-4">
-                <h2 className="text-xl font-bold">Level Assessment</h2>
+                <h2 className="text-xl font-bold">{t('onboarding.assessment')}</h2>
                 <p className="text-text-secondary text-sm">
-                  Question {Math.min(currentQuestion + 1, 5)} of 5
+                  {t('onboarding.question')} {Math.min(currentQuestion + 1, 5)} / 5
                 </p>
               </div>
 
-              <Card className="h-80 overflow-y-auto space-y-3">
-                {chatMessages.map((msg, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    <div
-                      className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
-                        msg.role === "user"
-                          ? "bg-primary text-white rounded-br-md"
-                          : "bg-border/50 text-text rounded-bl-md"
-                      }`}
+              <Card className="h-80 overflow-hidden p-0">
+                <div ref={chatScrollRef} className="h-full overflow-y-auto space-y-3 p-6">
+                  {chatMessages.map((msg, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                      {msg.text}
+                      <div
+                        className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
+                          msg.role === 'user'
+                            ? 'bg-primary text-white rounded-br-md'
+                            : 'bg-border/50 text-text rounded-bl-md'
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                    </motion.div>
+                  ))}
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-border/50 px-4 py-2.5 rounded-2xl rounded-bl-md">
+                        <Loader2 className="animate-spin" size={16} />
+                      </div>
                     </div>
-                  </motion.div>
-                ))}
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-border/50 px-4 py-2.5 rounded-2xl rounded-bl-md">
-                      <Loader2 className="animate-spin" size={16} />
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </Card>
 
               {!isLoading && currentQuestion < 5 && (
                 <div className="flex gap-2">
-                  <Input
-                    placeholder="Type your answer..."
+                  <input
+                    className="flex-1 bg-bg border border-border rounded-xl px-4 py-2.5 text-sm text-text outline-none focus:border-primary/50 placeholder:text-text-secondary/50"
+                    placeholder={t('onboarding.answerPlaceholder')}
                     value={currentAnswer}
                     onChange={(e) => setCurrentAnswer(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleAnswer()}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAnswer()}
                   />
                   <Button onClick={handleAnswer} disabled={!currentAnswer.trim()}>
                     <ArrowRight size={18} />
@@ -264,28 +259,29 @@ export default function Onboarding() {
                 <Sparkles size={48} className="mx-auto text-primary" />
               </motion.div>
 
-              <h2 className="text-2xl font-bold">Your Learning Plan is Ready!</h2>
+              <h2 className="text-2xl font-bold">{t('onboarding.ready')}</h2>
 
               <Card glow="#6C63FF" className="text-left space-y-3">
-                <p className="text-sm text-text-secondary">Assessment Result</p>
+                <p className="text-sm text-text-secondary">{t('onboarding.result')}</p>
                 <p className="text-lg font-semibold capitalize text-primary">
-                  {assessmentResult} Level
+                  {t(`onboarding.level.${assessmentResult}` as any)}
                 </p>
                 <p className="text-sm text-text-secondary">
-                  Direction: {selectedDirection && DIRECTIONS[selectedDirection].name}
+                  {t('onboarding.direction')} {selectedDirection && t(`direction.${selectedDirection}.name` as any)}
                 </p>
                 <p className="text-sm text-text-secondary">
-                  Your personalized roadmap has been generated with topics tailored to your {assessmentResult} level.
+                  {t('onboarding.planDescription')}
                 </p>
               </Card>
 
-              <Button size="lg" onClick={handleFinish}>
-                Start Learning <ArrowRight size={18} />
+              <Button size="lg" onClick={handleFinish} disabled={isSaving}>
+                {isSaving ? <Loader2 className="animate-spin" size={18} /> : null}
+                {t('onboarding.startLearning')} <ArrowRight size={18} />
               </Button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
     </div>
-  );
+  )
 }
