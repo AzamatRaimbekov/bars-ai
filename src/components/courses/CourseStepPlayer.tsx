@@ -699,6 +699,17 @@ function MatchingStep({
   step: StepMatching;
   onAnswer: (correct: boolean) => void;
 }) {
+  const PAIR_COLORS = [
+    { border: "border-[#F97316]", bg: "bg-[#F97316]/15", text: "text-[#F97316]" },
+    { border: "border-[#3B82F6]", bg: "bg-[#3B82F6]/15", text: "text-[#3B82F6]" },
+    { border: "border-[#8B5CF6]", bg: "bg-[#8B5CF6]/15", text: "text-[#8B5CF6]" },
+    { border: "border-[#10B981]", bg: "bg-[#10B981]/15", text: "text-[#10B981]" },
+    { border: "border-[#EC4899]", bg: "bg-[#EC4899]/15", text: "text-[#EC4899]" },
+    { border: "border-[#EAB308]", bg: "bg-[#EAB308]/15", text: "text-[#EAB308]" },
+    { border: "border-[#06B6D4]", bg: "bg-[#06B6D4]/15", text: "text-[#06B6D4]" },
+    { border: "border-[#F43F5E]", bg: "bg-[#F43F5E]/15", text: "text-[#F43F5E]" },
+  ];
+
   // Shuffle right column once on mount
   const shuffledRight = useMemo(
     () => shuffle(step.pairs.map((p) => p.right)),
@@ -757,12 +768,13 @@ function MatchingStep({
             const isActive = selectedLeft === i;
             const isConnected = connections[i] !== undefined;
             const isCorrect = checked ? results[i] : null;
+            const color = PAIR_COLORS[i % PAIR_COLORS.length];
 
             let cls = "border-white/10 bg-white/5 text-text";
-            if (isActive) cls = "border-[#F97316]/60 bg-[#F97316]/10 text-[#F97316]";
+            if (isActive) cls = `${color.border} ${color.bg} ${color.text}`;
             else if (checked && isCorrect) cls = "border-success/50 bg-success/10 text-success";
             else if (checked && !isCorrect) cls = "border-red-500/50 bg-red-500/10 text-red-400";
-            else if (isConnected) cls = "border-white/30 bg-white/10 text-text";
+            else if (isConnected) cls = `${color.border}/60 ${color.bg} ${color.text}`;
 
             return (
               <button
@@ -793,13 +805,14 @@ function MatchingStep({
               checked && isConnectedLeft !== null
                 ? results[isConnectedLeft]
                 : null;
+            const connectedColor = isConnectedLeft !== null ? PAIR_COLORS[isConnectedLeft % PAIR_COLORS.length] : null;
 
             let cls = "border-white/10 bg-white/5 text-text hover:border-white/25 hover:bg-white/10";
             if (selectedLeft !== null && isConnectedLeft === null)
-              cls = "border-[#F97316]/30 bg-[#F97316]/5 text-text hover:border-[#F97316]/60 hover:bg-[#F97316]/10";
+              cls = "border-white/20 bg-white/5 text-text hover:border-white/40 hover:bg-white/10";
             else if (checked && isCorrectPair) cls = "border-success/50 bg-success/10 text-success";
             else if (checked && isCorrectPair === false) cls = "border-red-500/50 bg-red-500/10 text-red-400";
-            else if (isConnectedLeft !== null) cls = "border-white/30 bg-white/10 text-text";
+            else if (connectedColor) cls = `${connectedColor.border}/60 ${connectedColor.bg} ${connectedColor.text}`;
 
             return (
               <button
