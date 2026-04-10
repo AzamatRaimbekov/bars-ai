@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     REDIS_URL: str = "redis://redis:6379/0"
     ANTHROPIC_API_KEY: str
+    OPENAI_API_KEY: str = ""
     JWT_SECRET: str
     JWT_ACCESS_EXPIRE_MINUTES: int = 30
     JWT_REFRESH_EXPIRE_DAYS: int = 7
