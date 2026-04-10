@@ -21,7 +21,7 @@ function shuffleArray<T>(arr: T[]): T[] {
   return copy;
 }
 
-export function WordBuilderStep({ step, onAnswer }: Props) {
+export default function WordBuilderStep({ step, onAnswer }: Props) {
   const letters = useMemo<Letter[]>(
     () =>
       shuffleArray(

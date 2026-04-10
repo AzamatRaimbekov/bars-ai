@@ -17,7 +17,7 @@ const langNames: Record<string, string> = {
   fr: "французский",
 };
 
-export function SentenceTranslationStep({ step, onAnswer }: Props) {
+export default function SentenceTranslationStep({ step, onAnswer }: Props) {
   const [input, setInput] = useState("");
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState<{

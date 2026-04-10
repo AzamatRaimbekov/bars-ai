@@ -18,7 +18,7 @@ function normalize(s: string): string {
     .trim();
 }
 
-export function PronunciationStep({ step, onAnswer }: Props) {
+export default function PronunciationStep({ step, onAnswer }: Props) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [recognized, setRecognized] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState(false);

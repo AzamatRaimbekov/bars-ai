@@ -8,7 +8,7 @@ interface Props {
   onAnswer: (correct: boolean) => void;
 }
 
-export function ListeningComprehensionStep({ step, onAnswer }: Props) {
+export default function ListeningComprehensionStep({ step, onAnswer }: Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
