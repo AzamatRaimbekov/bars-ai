@@ -43,3 +43,21 @@ class ScoreResponse(BaseModel):
     score: int
     feedback: str
     model_answer: str
+
+
+class TranscribeResponse(BaseModel):
+    text: str
+    confidence: float
+
+
+class CheckTranslationRequest(BaseModel):
+    sentence: str = Field(min_length=1)
+    user_answer: str = Field(min_length=1)
+    source_language: str = Field(min_length=2, max_length=5)
+    target_language: str = Field(min_length=2, max_length=5)
+
+
+class CheckTranslationResponse(BaseModel):
+    correct: bool
+    feedback: str
+    suggested: str

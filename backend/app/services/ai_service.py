@@ -89,3 +89,58 @@ async def score(question: str, answer: str, direction: str, language: str = "ru"
         }
     except (json.JSONDecodeError, KeyError):
         return {"score": 5, "feedback": result, "model_answer": "Could not parse response"}
+
+
+async def transcribe(audio_bytes: bytes, filename: str = "recording.webm") -> dict:
+    """Send audio to OpenAI Whisper and return transcription."""
+    from openai import AsyncOpenAI
+    import io
+
+    client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+    audio_file = io.BytesIO(audio_bytes)
+    audio_file.name = filename
+
+    response = await client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio_file,
+        response_format="verbose_json",
+    )
+
+    return {
+        "text": response.text,
+        "confidence": getattr(response, "confidence", 0.9),
+    }
+
+
+LANG_NAMES = {"ru": "Russian", "en": "English", "kz": "Kazakh", "de": "German", "fr": "French"}
+
+
+async def check_translation(
+    sentence: str,
+    user_answer: str,
+    source_language: str,
+    target_language: str,
+) -> dict:
+    """Use Claude to evaluate a translation."""
+    src = LANG_NAMES.get(source_language, source_language)
+    tgt = LANG_NAMES.get(target_language, target_language)
+
+    system = (
+        f"You are a language teacher evaluating a student's translation from {src} to {tgt}. "
+        "Respond in JSON with keys: correct (bool), feedback (string in Russian, 1-2 sentences), "
+        "suggested (the best translation). Accept semantically correct translations even if wording differs. "
+        "Only output valid JSON, no markdown."
+    )
+    content = f"Original ({src}): {sentence}\nStudent's translation ({tgt}): {user_answer}"
+
+    raw = await _call_claude(system, [{"role": "user", "content": content}], max_tokens=256)
+
+    try:
+        data = json.loads(raw)
+        return {
+            "correct": bool(data.get("correct", False)),
+            "feedback": str(data.get("feedback", "")),
+            "suggested": str(data.get("suggested", "")),
+        }
+    except (json.JSONDecodeError, KeyError):
+        return {"correct": False, "feedback": "Ошибка проверки.", "suggested": ""}

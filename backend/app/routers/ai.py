@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -10,6 +10,8 @@ from app.schemas.ai import (
     AssessRequest, AssessResponse,
     TipRequest, TipResponse,
     ScoreRequest, ScoreResponse,
+    TranscribeResponse,
+    CheckTranslationRequest, CheckTranslationResponse,
 )
 from app.services import ai_service
 from app.utils.rate_limiter import rate_limit
@@ -56,3 +58,30 @@ async def score_answer(body: ScoreRequest, request: Request, user_id: uuid.UUID 
     language = await _get_user_language(db, user_id)
     result = await ai_service.score(body.question, body.answer, body.direction, language)
     return ScoreResponse(**result)
+
+
+@router.post("/transcribe", response_model=TranscribeResponse)
+async def transcribe(
+    audio: UploadFile = File(...),
+    request: Request = None,
+    user_id: uuid.UUID = Depends(get_current_user_id),
+):
+    request.state.user_id = str(user_id)
+    await rate_limit(request)
+    audio_bytes = await audio.read()
+    result = await ai_service.transcribe(audio_bytes, audio.filename or "recording.webm")
+    return TranscribeResponse(**result)
+
+
+@router.post("/check-translation", response_model=CheckTranslationResponse)
+async def check_translation(
+    body: CheckTranslationRequest,
+    request: Request,
+    user_id: uuid.UUID = Depends(get_current_user_id),
+):
+    request.state.user_id = str(user_id)
+    await rate_limit(request)
+    result = await ai_service.check_translation(
+        body.sentence, body.user_answer, body.source_language, body.target_language
+    )
+    return CheckTranslationResponse(**result)
