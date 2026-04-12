@@ -385,6 +385,8 @@ export const courseApi = {
       xp_reward: number;
       steps?: LessonStep[] | null;
     }>(`/courses/lessons/${lessonId}`),
+  getAllSteps: (courseId: string) =>
+    apiFetch<{ steps: LessonStep[] }>(`/courses/${courseId}/all-steps`),
 };
 
 export async function transcribeAudio(audioBlob: Blob): Promise<{ text: string; confidence: number }> {

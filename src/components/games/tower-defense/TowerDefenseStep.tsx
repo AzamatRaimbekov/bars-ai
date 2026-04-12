@@ -24,32 +24,15 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
 
   useEffect(() => {
     if (!courseId) {
-      // Fallback: use current lesson steps
       setAllCourseQuestions(extractQuestions(allSteps));
       setLoadingQuestions(false);
       return;
     }
 
-    courseApi.get(courseId).then(async (course) => {
-      const allQuestions: TDQuestion[] = [];
-      // Fetch steps from every lesson in the course
-      for (const section of course.sections) {
-        for (const lesson of section.lessons) {
-          try {
-            const data = await courseApi.getLessonSteps(lesson.id);
-            if (data.steps) {
-              allQuestions.push(...extractQuestions(data.steps));
-            }
-          } catch {
-            // skip lessons that fail to load
-          }
-        }
-      }
-      // If no questions found in course, fallback to current lesson
-      if (allQuestions.length === 0) {
-        allQuestions.push(...extractQuestions(allSteps));
-      }
-      setAllCourseQuestions(allQuestions);
+    // Single API call to get all steps from entire course
+    courseApi.getAllSteps(courseId).then((data) => {
+      const q = extractQuestions(data.steps);
+      setAllCourseQuestions(q.length > 0 ? q : extractQuestions(allSteps));
       setLoadingQuestions(false);
     }).catch(() => {
       setAllCourseQuestions(extractQuestions(allSteps));
