@@ -1,30 +1,12 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Star,
-  Play,
-  ArrowUpCircle,
-  RotateCcw,
-  Trophy,
-  Skull,
-} from "lucide-react";
+import { Star, Play, ArrowUpCircle, RotateCcw, Trophy, Skull } from "lucide-react";
+import { courseApi } from "@/services/courseApi";
 import type { LessonStep } from "@/services/courseApi";
 import type { GameState, TowerKind, TDQuestion } from "./types";
-import {
-  COINS_PER_CORRECT,
-  QUESTION_TIME,
-  TOWER_CONFIG,
-  UPGRADE_COSTS,
-} from "./config";
-import {
-  createInitialState,
-  generateWaves,
-  buildSpawnQueue,
-  placeTower,
-  upgradeTower,
-  canBuyTower,
-  canUpgradeTower,
-} from "./engine";
+import { COINS_PER_CORRECT, QUESTION_TIME, TOWER_CONFIG, UPGRADE_COSTS } from "./config";
+import { createInitialState, generateWaves, buildSpawnQueue, placeTower, upgradeTower, canBuyTower, canUpgradeTower } from "./engine";
 import { extractQuestions, splitIntoWaves } from "./questions";
 import TDCanvas from "./TDCanvas";
 
@@ -34,13 +16,60 @@ interface Props {
 }
 
 export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
-  const allQuestions = useMemo(() => extractQuestions(allSteps), [allSteps]);
-  const questionWaves = useMemo(() => splitIntoWaves(allQuestions), [allQuestions]);
+  const { id: courseId } = useParams<{ id: string }>();
+
+  // Load ALL course questions from ALL lessons
+  const [allCourseQuestions, setAllCourseQuestions] = useState<TDQuestion[]>([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
+
+  useEffect(() => {
+    if (!courseId) {
+      // Fallback: use current lesson steps
+      setAllCourseQuestions(extractQuestions(allSteps));
+      setLoadingQuestions(false);
+      return;
+    }
+
+    courseApi.get(courseId).then(async (course) => {
+      const allQuestions: TDQuestion[] = [];
+      // Fetch steps from every lesson in the course
+      for (const section of course.sections) {
+        for (const lesson of section.lessons) {
+          try {
+            const data = await courseApi.getLessonSteps(lesson.id);
+            if (data.steps) {
+              allQuestions.push(...extractQuestions(data.steps));
+            }
+          } catch {
+            // skip lessons that fail to load
+          }
+        }
+      }
+      // If no questions found in course, fallback to current lesson
+      if (allQuestions.length === 0) {
+        allQuestions.push(...extractQuestions(allSteps));
+      }
+      setAllCourseQuestions(allQuestions);
+      setLoadingQuestions(false);
+    }).catch(() => {
+      setAllCourseQuestions(extractQuestions(allSteps));
+      setLoadingQuestions(false);
+    });
+  }, [courseId, allSteps]);
+
+  const questionWaves = useMemo(() => splitIntoWaves(allCourseQuestions), [allCourseQuestions]);
   const totalWaves = questionWaves.length;
   const waveConfigs = useMemo(() => generateWaves(totalWaves), [totalWaves]);
 
-  const [state, setState] = useState<GameState>(() => createInitialState(totalWaves));
+  const [state, setState] = useState<GameState | null>(null);
   const [currentWave, setCurrentWave] = useState(0);
+
+  // Initialize game state when questions are loaded
+  useEffect(() => {
+    if (!loadingQuestions && totalWaves > 0) {
+      setState(createInitialState(totalWaves));
+    }
+  }, [loadingQuestions, totalWaves]);
 
   // Question modal state
   const [showQuestionModal, setShowQuestionModal] = useState(false);
@@ -73,12 +102,12 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
     return clearTimer;
   }, [showQuestionModal, qIndex]);
 
-  // ── Question logic ──────────────────────��──────────────────
+  // ── Question logic ─────────────────────────────────────────
 
   const advanceQuestion = useCallback((correct: boolean) => {
     setAnswered(correct ? "correct" : "wrong");
     if (correct) {
-      setState((s) => ({ ...s, coins: s.coins + COINS_PER_CORRECT }));
+      setState((s) => s ? { ...s, coins: s.coins + COINS_PER_CORRECT } : s);
       setCoinAnim(true);
       setTimeout(() => setCoinAnim(false), 700);
     }
@@ -90,8 +119,7 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
         clearTimer();
         setShowQuestionModal(false);
         setQIndex(0);
-        // Back to build phase
-        setState((s) => ({ ...s, phase: "build", selectedSlot: null, selectedTower: null }));
+        setState((s) => s ? { ...s, phase: "build", selectedSlot: null, selectedTower: null } : s);
       } else {
         setQIndex(nextIdx);
         setTimeLeft(QUESTION_TIME);
@@ -122,28 +150,32 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
   // ── Build phase ────────────────────────────────────────────
 
   const handleSlotTap = useCallback((slotIndex: number) => {
-    setState((s) => ({ ...s, selectedSlot: slotIndex, selectedTower: null }));
+    setState((s) => s ? { ...s, selectedSlot: slotIndex, selectedTower: null } : s);
   }, []);
 
   const handleTowerTap = useCallback((towerId: string) => {
-    setState((s) => ({ ...s, selectedTower: towerId, selectedSlot: null }));
+    setState((s) => s ? { ...s, selectedTower: towerId, selectedSlot: null } : s);
   }, []);
 
   const handleBuyTower = useCallback((kind: TowerKind) => {
-    if (state.selectedSlot === null) return;
-    setState((s) => placeTower(s, s.selectedSlot!, kind));
-  }, [state.selectedSlot]);
+    setState((s) => {
+      if (!s || s.selectedSlot === null) return s;
+      return { ...placeTower(s, s.selectedSlot, kind), selectedSlot: null };
+    });
+  }, []);
 
   const handleUpgrade = useCallback(() => {
-    if (!state.selectedTower) return;
-    setState((s) => upgradeTower(s, s.selectedTower!));
-  }, [state.selectedTower]);
+    setState((s) => {
+      if (!s || !s.selectedTower) return s;
+      return { ...upgradeTower(s, s.selectedTower), selectedTower: null };
+    });
+  }, []);
 
   const handleStartWave = useCallback(() => {
     const waveCfg = waveConfigs[currentWave];
     if (!waveCfg) return;
     const queue = buildSpawnQueue(waveCfg);
-    setState((s) => ({
+    setState((s) => s ? {
       ...s,
       phase: "battle",
       spawnQueue: queue,
@@ -153,7 +185,7 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
       waveDone: false,
       selectedSlot: null,
       selectedTower: null,
-    }));
+    } : s);
   }, [currentWave, waveConfigs]);
 
   // ── Battle callbacks ───────────────────────────────────────
@@ -162,22 +194,20 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
     setState(next);
 
     if (next.lives <= 0) {
-      setState((s) => ({ ...s, phase: "result" }));
+      setState((s) => s ? { ...s, phase: "result" } : s);
       return;
     }
 
     if (next.waveDone) {
       const nextWaveIdx = currentWave + 1;
       if (nextWaveIdx >= totalWaves) {
-        setState((s) => ({ ...s, phase: "result" }));
+        setState((s) => s ? { ...s, phase: "result" } : s);
       } else {
-        // Show question modal between waves
         setCurrentWave(nextWaveIdx);
         setQIndex(0);
         setTypedAnswer("");
         setAnswered(null);
-        setState((s) => ({ ...s, wave: nextWaveIdx, waveDone: false, phase: "build" }));
-        // Delay modal slightly so player sees wave cleared
+        setState((s) => s ? { ...s, wave: nextWaveIdx, waveDone: false, phase: "build" } : s);
         setTimeout(() => setShowQuestionModal(true), 800);
       }
     }
@@ -195,11 +225,22 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
     setAnswered(null);
   }, [totalWaves, clearTimer]);
 
+  // ── Loading state ──────────────────────────────────────────
+
+  if (loadingQuestions || !state) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-16">
+        <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-text-secondary text-sm">Загрузка вопросов курса...</p>
+      </div>
+    );
+  }
+
   const won = state.phase === "result" && state.lives > 0;
   const stars = state.lives >= 3 ? 3 : state.lives >= 2 ? 2 : state.lives >= 1 ? 1 : 0;
   const selectedTowerObj = state.selectedTower ? state.towers.find((t) => t.id === state.selectedTower) : null;
 
-  // ── RENDER ────────────────────────────────────────────���────
+  // ── RENDER ─────────────────────────────────────────────────
 
   return (
     <div className="flex flex-col items-center gap-3 w-full max-w-[420px] mx-auto relative">
@@ -245,6 +286,7 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
               <span className="flex items-center gap-1 text-yellow-400 font-semibold text-sm">
                 <Star className="w-4 h-4 fill-yellow-400" /> {state.coins}
               </span>
+              <span className="text-xs text-red-400">{"♥".repeat(state.lives)}</span>
             </div>
             <button onClick={handleStartWave} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold cursor-pointer hover:bg-primary/90 transition-colors">
               <Play size={14} /> Начать волну
@@ -253,7 +295,6 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
 
           <TDCanvas state={state} onStateChange={setState} onSlotTap={handleSlotTap} onTowerTap={handleTowerTap} />
 
-          {/* Tower shop */}
           {state.selectedSlot !== null && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2 justify-center">
               {(["blaster", "zapper", "cannon"] as TowerKind[]).map((kind) => {
@@ -270,7 +311,6 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
             </motion.div>
           )}
 
-          {/* Upgrade popup */}
           {selectedTowerObj && selectedTowerObj.level < 3 && (() => {
             const cost = UPGRADE_COSTS[(selectedTowerObj.level + 1) as 2 | 3];
             const affordable = canUpgradeTower(state, selectedTowerObj.id);
@@ -293,22 +333,14 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
         </motion.div>
       )}
 
-      {/* ── QUESTION MODAL (overlay between waves) ── */}
+      {/* ── QUESTION MODAL (between waves) ── */}
       <AnimatePresence>
         {showQuestionModal && currentQ && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="w-full max-w-md bg-[#16161e] border border-border rounded-2xl p-6 space-y-4 relative"
-            >
-              {/* Header */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+              className="w-full max-w-md bg-[#16161e] border border-border rounded-2xl p-6 space-y-4 relative">
+
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-text">Заработай монеты!</h3>
                 <span className="flex items-center gap-1 text-yellow-400 font-semibold">
@@ -316,7 +348,6 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
                 </span>
               </div>
 
-              {/* Coin anim */}
               <AnimatePresence>
                 {coinAnim && (
                   <motion.div key="coin" initial={{ opacity: 1, y: 0 }} animate={{ opacity: 0, y: -40 }} exit={{ opacity: 0 }}
@@ -326,16 +357,14 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
                 )}
               </AnimatePresence>
 
-              {/* Timer */}
               <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                 <motion.div className="h-full bg-primary rounded-full" animate={{ width: `${(timeLeft / QUESTION_TIME) * 100}%` }} transition={{ duration: 0.3 }} />
               </div>
 
               <p className="text-text-secondary text-xs text-center">
-                Волна {currentWave + 1} — Вопрос {qIndex + 1}/{currentQuestions.length} · {timeLeft}с
+                Вопрос {qIndex + 1}/{currentQuestions.length} · {timeLeft}с
               </p>
 
-              {/* Question */}
               <div className="space-y-3">
                 <p className="text-text font-medium text-center">{currentQ.question}</p>
 
@@ -378,19 +407,18 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
                       placeholder="Введите ответ..."
                       className="flex-1 py-2 px-4 bg-white/5 border border-border rounded-xl text-text placeholder:text-text-secondary/50 outline-none focus:border-primary transition-colors" />
                     <button onClick={handleTypeAnswer} disabled={!!answered}
-                      className="py-2 px-5 bg-primary rounded-xl text-white font-semibold cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50">
+                      className="py-2 px-5 bg-primary rounded-xl text-white font-semibold cursor-pointer hover:opacity-90 disabled:opacity-50">
                       OK
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* Feedback */}
               <AnimatePresence>
                 {answered && (
                   <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                     className={`text-center text-sm font-semibold ${answered === "correct" ? "text-green-400" : "text-red-400"}`}>
-                    {answered === "correct" ? "Правильно! +25 ⭐" : "Неверно!"}
+                    {answered === "correct" ? `Правильно! +${COINS_PER_CORRECT} ⭐` : "Неверно!"}
                   </motion.div>
                 )}
               </AnimatePresence>
