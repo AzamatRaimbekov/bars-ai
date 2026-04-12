@@ -1723,12 +1723,20 @@ function VideoStep({ step, onNext }: { step: StepVideo; onNext: () => void }) {
   const isYouTube =
     step.url.includes("youtube.com") || step.url.includes("youtu.be");
 
-  // Convert watch URLs to embed URLs if needed
-  const embedUrl = isYouTube
-    ? step.url
-        .replace("watch?v=", "embed/")
-        .replace("youtu.be/", "www.youtube.com/embed/")
-    : step.url;
+  // Extract video ID and build proper embed URL
+  const getEmbedUrl = (url: string): string => {
+    let videoId = "";
+    const watchMatch = url.match(/[?&]v=([^&#]+)/);
+    const shortMatch = url.match(/youtu\.be\/([^?&#]+)/);
+    const embedMatch = url.match(/embed\/([^?&#]+)/);
+    if (watchMatch) videoId = watchMatch[1];
+    else if (shortMatch) videoId = shortMatch[1];
+    else if (embedMatch) videoId = embedMatch[1];
+    if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    return url;
+  };
+
+  const embedUrl = isYouTube ? getEmbedUrl(step.url) : step.url;
 
   return (
     <div className="space-y-4">
@@ -1743,6 +1751,7 @@ function VideoStep({ step, onNext }: { step: StepVideo; onNext: () => void }) {
             title={step.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            referrerPolicy="no-referrer"
             className="w-full aspect-video"
           />
         ) : (
@@ -1755,6 +1764,17 @@ function VideoStep({ step, onNext }: { step: StepVideo; onNext: () => void }) {
           />
         )}
       </div>
+
+      {isYouTube && (
+        <a
+          href={step.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block text-center text-xs text-text-secondary hover:text-primary transition-colors"
+        >
+          Не загружается? Открыть на YouTube &rarr;
+        </a>
+      )}
 
       <Button className="w-full" onClick={onNext}>
         Далее <ArrowRight size={15} />
