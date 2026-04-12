@@ -32,6 +32,7 @@ import {
   BookOpen,
   Languages,
   TextCursorInput,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -66,6 +67,7 @@ import {
   type StepWordBuilder,
   type StepSentenceTranslation,
   type StepClozePassage,
+  type StepTowerDefense,
 } from "@/services/courseApi";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -230,6 +232,8 @@ function defaultStep(type: StepType): LessonStep {
           { type: "text", value: "." },
         ],
       };
+    case "tower-defense":
+      return { type: "tower-defense" };
   }
 }
 
@@ -260,6 +264,7 @@ const STEP_TYPES: { type: StepType; label: string; icon: React.ReactNode; color:
   { type: "word-builder", label: "Собери слово", icon: <BookOpen size={14} />, color: "#10B981" },
   { type: "sentence-translation", label: "Перевод", icon: <Languages size={14} />, color: "#A855F7" },
   { type: "cloze-passage", label: "Текст с пропусками", icon: <TextCursorInput size={14} />, color: "#F59E0B" },
+  { type: "tower-defense", label: "Tower Defense", icon: <Shield size={14} />, color: "#ef4444" },
 ];
 
 // ─── Sub-forms ─────────────────────────────────────────────────────────────
@@ -2385,6 +2390,12 @@ function StepCard({
                   step={step as StepClozePassage & { _id: string }}
                   onChange={onUpdate}
                 />
+              )}
+              {step.type === "tower-defense" && (
+                <div className="text-sm text-text-secondary px-1">
+                  Игра Tower Defense. Вопросы берутся автоматически из других шагов этого урока.
+                  Убедитесь что в уроке есть quiz, true-false или type-answer шаги.
+                </div>
               )}
             </div>
           </motion.div>
