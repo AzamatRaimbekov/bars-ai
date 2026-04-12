@@ -84,7 +84,8 @@ export type StepType =
   | "pronunciation"
   | "word-builder"
   | "sentence-translation"
-  | "cloze-passage";
+  | "cloze-passage"
+  | "tower-defense";
 
 export interface StepInfo {
   type: "info";
@@ -265,6 +266,10 @@ export interface StepClozePassage {
   segments: ClozeSegment[];
 }
 
+export interface StepTowerDefense {
+  type: "tower-defense";
+}
+
 export type LessonStep =
   | StepInfo
   | StepQuiz
@@ -291,7 +296,8 @@ export type LessonStep =
   | StepPronunciation
   | StepWordBuilder
   | StepSentenceTranslation
-  | StepClozePassage;
+  | StepClozePassage
+  | StepTowerDefense;
 
 export interface LessonStepsResponse {
   steps: LessonStep[];

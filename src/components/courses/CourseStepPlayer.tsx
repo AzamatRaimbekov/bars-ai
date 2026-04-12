@@ -35,6 +35,7 @@ import type {
   StepWordBuilder,
   StepSentenceTranslation,
   StepClozePassage,
+  StepTowerDefense,
 } from "@/services/courseApi";
 
 import WordBuilderStep from "./steps/WordBuilderStep";
@@ -42,6 +43,7 @@ import ClozePassageStep from "./steps/ClozePassageStep";
 import ListeningComprehensionStep from "./steps/ListeningComprehensionStep";
 import SentenceTranslationStep from "./steps/SentenceTranslationStep";
 import PronunciationStep from "./steps/PronunciationStep";
+import TowerDefenseStep from "../games/tower-defense/TowerDefenseStep";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
@@ -2731,6 +2733,13 @@ export function CourseStepPlayer({
         return (
           <ClozePassageStep
             step={step as StepClozePassage}
+            onAnswer={handleInteractiveAnswer}
+          />
+        );
+      case "tower-defense":
+        return (
+          <TowerDefenseStep
+            allSteps={steps}
             onAnswer={handleInteractiveAnswer}
           />
         );
