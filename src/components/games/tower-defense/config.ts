@@ -1,9 +1,11 @@
 import type { EnemyKind, TowerKind } from "./types";
 
-export const COINS_PER_CORRECT = 30;
-export const QUESTION_TIME = 15;
-export const QUESTIONS_PER_WAVE = 4;
+export const COINS_PER_CORRECT = 25;
+export const QUESTION_TIME = 12;
+export const QUESTIONS_PER_WAVE = 3;
 export const INITIAL_LIVES = 3;
+export const MIN_WAVES = 5;
+export const STARTING_COINS = 30;
 export const CANVAS_W = 400;
 export const CANVAS_H = 600;
 

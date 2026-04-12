@@ -2,7 +2,6 @@ import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Star,
-  Heart,
   Play,
   ArrowUpCircle,
   RotateCcw,
@@ -35,108 +34,93 @@ interface Props {
 }
 
 export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
-  /* ── derived data (stable across renders) ─────────────── */
   const allQuestions = useMemo(() => extractQuestions(allSteps), [allSteps]);
   const questionWaves = useMemo(() => splitIntoWaves(allQuestions), [allQuestions]);
   const totalWaves = questionWaves.length;
   const waveConfigs = useMemo(() => generateWaves(totalWaves), [totalWaves]);
 
-  /* ── core state ────────────────────────────────────────── */
   const [state, setState] = useState<GameState>(() => createInitialState(totalWaves));
   const [currentWave, setCurrentWave] = useState(0);
+
+  // Question modal state
+  const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [qIndex, setQIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
-  const [coinAnim, setCoinAnim] = useState(false);
   const [typedAnswer, setTypedAnswer] = useState("");
+  const [coinAnim, setCoinAnim] = useState(false);
+  const [answered, setAnswered] = useState<"correct" | "wrong" | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  /* ── helpers ───────────────────────────────────────────── */
   const currentQuestions = questionWaves[currentWave] ?? [];
   const currentQ: TDQuestion | undefined = currentQuestions[qIndex];
 
+  // ── Timer ──────────────────────────────────────────────────
+
   const clearTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
   }, []);
 
-  /* ── question timer ────────────────────────────────────── */
   useEffect(() => {
-    if (state.phase !== "questions") {
-      clearTimer();
-      return;
-    }
-
+    if (!showQuestionModal) { clearTimer(); return; }
     setTimeLeft(QUESTION_TIME);
     clearTimer();
-
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
-        if (prev <= 1) {
-          // Time's up — wrong answer, advance
-          advanceQuestion(false);
-          return QUESTION_TIME;
-        }
+        if (prev <= 1) { advanceQuestion(false); return QUESTION_TIME; }
         return prev - 1;
       });
     }, 1000);
-
     return clearTimer;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.phase, qIndex, currentWave]);
+  }, [showQuestionModal, qIndex]);
 
-  /* ── advance to next question or build phase ───────────── */
-  const advanceQuestion = useCallback(
-    (correct: boolean) => {
-      if (correct) {
-        setState((s) => ({ ...s, coins: s.coins + COINS_PER_CORRECT }));
-        setCoinAnim(true);
-        setTimeout(() => setCoinAnim(false), 700);
-      }
+  // ── Question logic ──────────────────────��──────────────────
 
+  const advanceQuestion = useCallback((correct: boolean) => {
+    setAnswered(correct ? "correct" : "wrong");
+    if (correct) {
+      setState((s) => ({ ...s, coins: s.coins + COINS_PER_CORRECT }));
+      setCoinAnim(true);
+      setTimeout(() => setCoinAnim(false), 700);
+    }
+
+    setTimeout(() => {
+      setAnswered(null);
       const nextIdx = qIndex + 1;
       if (nextIdx >= currentQuestions.length) {
-        // All questions in this wave done → build phase
         clearTimer();
+        setShowQuestionModal(false);
+        setQIndex(0);
+        // Back to build phase
         setState((s) => ({ ...s, phase: "build", selectedSlot: null, selectedTower: null }));
       } else {
         setQIndex(nextIdx);
         setTimeLeft(QUESTION_TIME);
         setTypedAnswer("");
       }
-    },
-    [qIndex, currentQuestions.length, clearTimer],
-  );
+    }, 600);
+  }, [qIndex, currentQuestions.length, clearTimer]);
 
-  /* ── answer handlers ───────────────────────────────────── */
-  const handleQuizAnswer = useCallback(
-    (optionId: string) => {
-      if (!currentQ || currentQ.type !== "quiz") return;
-      const option = currentQ.options?.find((o) => o.id === optionId);
-      advanceQuestion(!!option?.correct);
-    },
-    [currentQ, advanceQuestion],
-  );
+  const handleQuizAnswer = useCallback((optionId: string) => {
+    if (!currentQ || currentQ.type !== "quiz" || answered) return;
+    const opt = currentQ.options?.find((o) => o.id === optionId);
+    advanceQuestion(!!opt?.correct);
+  }, [currentQ, advanceQuestion, answered]);
 
-  const handleTrueFalse = useCallback(
-    (answer: boolean) => {
-      if (!currentQ || currentQ.type !== "true-false") return;
-      advanceQuestion(answer === currentQ.correct);
-    },
-    [currentQ, advanceQuestion],
-  );
+  const handleTrueFalse = useCallback((answer: boolean) => {
+    if (!currentQ || currentQ.type !== "true-false" || answered) return;
+    advanceQuestion(answer === currentQ.correct);
+  }, [currentQ, advanceQuestion, answered]);
 
   const handleTypeAnswer = useCallback(() => {
-    if (!currentQ || currentQ.type !== "type-answer") return;
+    if (!currentQ || currentQ.type !== "type-answer" || answered) return;
     const trimmed = typedAnswer.trim().toLowerCase();
     const accepted = currentQ.acceptedAnswers ?? [];
-    const correct = accepted.some((a) => a.trim().toLowerCase() === trimmed);
-    advanceQuestion(correct);
+    advanceQuestion(accepted.some((a) => a.trim().toLowerCase() === trimmed));
     setTypedAnswer("");
-  }, [currentQ, typedAnswer, advanceQuestion]);
+  }, [currentQ, typedAnswer, advanceQuestion, answered]);
 
-  /* ── build phase handlers ──────────────────────────────── */
+  // ── Build phase ────────────────────────────────────────────
+
   const handleSlotTap = useCallback((slotIndex: number) => {
     setState((s) => ({ ...s, selectedSlot: slotIndex, selectedTower: null }));
   }, []);
@@ -145,23 +129,14 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
     setState((s) => ({ ...s, selectedTower: towerId, selectedSlot: null }));
   }, []);
 
-  const handleBuyTower = useCallback(
-    (kind: TowerKind) => {
-      if (state.selectedSlot === null) return;
-      setState((s) => {
-        const next = placeTower(s, s.selectedSlot!, kind);
-        return { ...next, selectedSlot: null };
-      });
-    },
-    [state.selectedSlot],
-  );
+  const handleBuyTower = useCallback((kind: TowerKind) => {
+    if (state.selectedSlot === null) return;
+    setState((s) => placeTower(s, s.selectedSlot!, kind));
+  }, [state.selectedSlot]);
 
   const handleUpgrade = useCallback(() => {
     if (!state.selectedTower) return;
-    setState((s) => {
-      const next = upgradeTower(s, s.selectedTower!);
-      return { ...next, selectedTower: null };
-    });
+    setState((s) => upgradeTower(s, s.selectedTower!));
   }, [state.selectedTower]);
 
   const handleStartWave = useCallback(() => {
@@ -181,314 +156,248 @@ export default function TowerDefenseStep({ allSteps, onAnswer }: Props) {
     }));
   }, [currentWave, waveConfigs]);
 
-  /* ── battle state updates from canvas ──────────────────── */
-  const handleStateChange = useCallback(
-    (next: GameState) => {
-      setState(next);
+  // ── Battle callbacks ───────────────────────────────────────
 
-      if (next.lives <= 0) {
+  const handleStateChange = useCallback((next: GameState) => {
+    setState(next);
+
+    if (next.lives <= 0) {
+      setState((s) => ({ ...s, phase: "result" }));
+      return;
+    }
+
+    if (next.waveDone) {
+      const nextWaveIdx = currentWave + 1;
+      if (nextWaveIdx >= totalWaves) {
         setState((s) => ({ ...s, phase: "result" }));
-        return;
+      } else {
+        // Show question modal between waves
+        setCurrentWave(nextWaveIdx);
+        setQIndex(0);
+        setTypedAnswer("");
+        setAnswered(null);
+        setState((s) => ({ ...s, wave: nextWaveIdx, waveDone: false, phase: "build" }));
+        // Delay modal slightly so player sees wave cleared
+        setTimeout(() => setShowQuestionModal(true), 800);
       }
+    }
+  }, [currentWave, totalWaves]);
 
-      if (next.waveDone) {
-        const nextWaveIdx = currentWave + 1;
-        if (nextWaveIdx >= totalWaves) {
-          setState((s) => ({ ...s, phase: "result" }));
-        } else {
-          setCurrentWave(nextWaveIdx);
-          setQIndex(0);
-          setTypedAnswer("");
-          setState((s) => ({
-            ...s,
-            phase: "questions",
-            wave: nextWaveIdx,
-            waveDone: false,
-          }));
-        }
-      }
-    },
-    [currentWave, totalWaves],
-  );
+  // ── Retry ──────────────────────────────────────────────────
 
-  /* ── retry / continue ──────────────────────────────────── */
   const handleRetry = useCallback(() => {
     clearTimer();
     setState(createInitialState(totalWaves));
     setCurrentWave(0);
     setQIndex(0);
     setTypedAnswer("");
+    setShowQuestionModal(false);
+    setAnswered(null);
   }, [totalWaves, clearTimer]);
 
-  const won = state.lives > 0;
+  const won = state.phase === "result" && state.lives > 0;
   const stars = state.lives >= 3 ? 3 : state.lives >= 2 ? 2 : state.lives >= 1 ? 1 : 0;
+  const selectedTowerObj = state.selectedTower ? state.towers.find((t) => t.id === state.selectedTower) : null;
 
-  const selectedTowerObj = state.selectedTower
-    ? state.towers.find((t) => t.id === state.selectedTower)
-    : null;
+  // ── RENDER ────────────────────────────────────────────���────
 
-  /* ── RENDER ────────────────────────────────────────────── */
+  return (
+    <div className="flex flex-col items-center gap-3 w-full max-w-[420px] mx-auto relative">
 
-  /* ─── QUESTIONS PHASE ──────────────────────────────────── */
-  if (state.phase === "questions") {
-    return (
-      <div className="flex flex-col items-center gap-4 p-4">
-        {/* header */}
-        <div className="flex items-center gap-3">
-          <h2 className="text-xl font-bold text-text">Заработай монеты!</h2>
-          <span className="flex items-center gap-1 text-yellow-400 font-semibold">
-            <Star className="w-5 h-5 fill-yellow-400" /> {state.coins}
-          </span>
-        </div>
-
-        {/* coin animation */}
-        <AnimatePresence>
-          {coinAnim && (
-            <motion.div
-              key="coin-anim"
-              initial={{ opacity: 1, y: 0 }}
-              animate={{ opacity: 0, y: -40 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-yellow-400 font-bold text-lg absolute"
-            >
-              +{COINS_PER_CORRECT} ⭐
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* timer bar */}
-        <div className="w-full max-w-md h-2 bg-surface rounded-full overflow-hidden border border-border">
-          <motion.div
-            className="h-full bg-primary rounded-full"
-            initial={{ width: "100%" }}
-            animate={{ width: `${(timeLeft / QUESTION_TIME) * 100}%` }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
-        <span className="text-text-secondary text-sm">{timeLeft}s</span>
-
-        {/* wave indicator */}
-        <p className="text-text-secondary text-xs">
-          Волна {currentWave + 1}/{totalWaves} — Вопрос {qIndex + 1}/{currentQuestions.length}
-        </p>
-
-        {/* question card */}
-        {currentQ && (
-          <div className="w-full max-w-md bg-surface border border-border rounded-xl p-5 flex flex-col gap-4">
-            <p className="text-text font-medium text-center">{currentQ.question}</p>
-
-            {/* quiz options */}
-            {currentQ.type === "quiz" && currentQ.options && (
-              <div className="flex flex-col gap-2">
-                {currentQ.options.map((opt) => (
-                  <button
-                    key={opt.id}
-                    onClick={() => handleQuizAnswer(opt.id)}
-                    className="w-full py-3 px-4 bg-surface border border-border rounded-xl text-text hover:bg-primary/20 hover:border-primary transition-colors cursor-pointer text-left"
-                  >
-                    {opt.text}
-                  </button>
+      {/* ── RESULT ── */}
+      {state.phase === "result" && (
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-4 py-8">
+          {won ? (
+            <>
+              <Trophy size={48} className="text-yellow-400" />
+              <h2 className="text-xl font-bold text-text">Защита пройдена!</h2>
+              <div className="flex gap-1">
+                {[1, 2, 3].map((s) => (
+                  <Star key={s} size={28} className={s <= stars ? "text-yellow-400 fill-yellow-400" : "text-white/20"} />
                 ))}
               </div>
-            )}
-
-            {/* true-false */}
-            {currentQ.type === "true-false" && (
-              <div className="flex gap-3 justify-center">
-                <button
-                  onClick={() => handleTrueFalse(true)}
-                  className="flex-1 py-3 bg-green-600/20 border border-green-600/40 rounded-xl text-green-400 font-semibold hover:bg-green-600/30 transition-colors cursor-pointer"
-                >
-                  Верно
-                </button>
-                <button
-                  onClick={() => handleTrueFalse(false)}
-                  className="flex-1 py-3 bg-red-600/20 border border-red-600/40 rounded-xl text-red-400 font-semibold hover:bg-red-600/30 transition-colors cursor-pointer"
-                >
-                  Неверно
-                </button>
-              </div>
-            )}
-
-            {/* type-answer */}
-            {currentQ.type === "type-answer" && (
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={typedAnswer}
-                  onChange={(e) => setTypedAnswer(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleTypeAnswer()}
-                  placeholder="Введите ответ..."
-                  className="flex-1 py-2 px-4 bg-surface border border-border rounded-xl text-text placeholder:text-text-secondary/50 outline-none focus:border-primary transition-colors"
-                />
-                <button
-                  onClick={handleTypeAnswer}
-                  className="py-2 px-5 bg-primary rounded-xl text-white font-semibold hover:opacity-90 transition-opacity cursor-pointer"
-                >
-                  OK
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  /* ─── BUILD PHASE ──────────────────────────────────────── */
-  if (state.phase === "build") {
-    return (
-      <div className="flex flex-col items-center gap-4 p-4">
-        <div className="flex items-center gap-3">
-          <h2 className="text-xl font-bold text-text">Размести башни</h2>
-          <span className="flex items-center gap-1 text-yellow-400 font-semibold">
-            <Star className="w-5 h-5 fill-yellow-400" /> {state.coins}
-          </span>
-          <span className="flex items-center gap-1 text-red-400 font-semibold">
-            <Heart className="w-5 h-5 fill-red-400" /> {state.lives}
-          </span>
-        </div>
-
-        <p className="text-text-secondary text-xs">
-          Волна {currentWave + 1}/{totalWaves}
-        </p>
-
-        {/* canvas */}
-        <TDCanvas
-          state={state}
-          onSlotTap={handleSlotTap}
-          onTowerTap={handleTowerTap}
-        />
-
-        {/* tower buy buttons when slot selected */}
-        {state.selectedSlot !== null && (
-          <div className="flex gap-2">
-            {(["blaster", "zapper", "cannon"] as TowerKind[]).map((kind) => {
-              const cfg = TOWER_CONFIG[kind];
-              const affordable = canBuyTower(state, kind);
-              return (
-                <button
-                  key={kind}
-                  onClick={() => handleBuyTower(kind)}
-                  disabled={!affordable}
-                  className={`flex flex-col items-center py-2 px-4 rounded-xl border transition-colors cursor-pointer ${
-                    affordable
-                      ? "bg-surface border-border text-text hover:border-primary hover:bg-primary/10"
-                      : "bg-surface/50 border-border/50 text-text-secondary/50 cursor-not-allowed"
-                  }`}
-                >
-                  <span className="text-2xl">{cfg.emoji}</span>
-                  <span className="text-xs font-semibold">⭐ {cfg.cost}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* upgrade button when tower selected */}
-        {selectedTowerObj && (
-          <div className="flex gap-2">
-            {selectedTowerObj.level < 3 ? (
-              <button
-                onClick={handleUpgrade}
-                disabled={!canUpgradeTower(state, selectedTowerObj.id)}
-                className={`flex items-center gap-2 py-2 px-5 rounded-xl border transition-colors cursor-pointer ${
-                  canUpgradeTower(state, selectedTowerObj.id)
-                    ? "bg-surface border-border text-text hover:border-primary hover:bg-primary/10"
-                    : "bg-surface/50 border-border/50 text-text-secondary/50 cursor-not-allowed"
-                }`}
-              >
-                <ArrowUpCircle className="w-5 h-5" />
-                <span className="font-semibold text-sm">
-                  Улучшить Lvl {selectedTowerObj.level + 1} (⭐{" "}
-                  {UPGRADE_COSTS[(selectedTowerObj.level + 1) as 2 | 3]})
-                </span>
+            </>
+          ) : (
+            <>
+              <Skull size={48} className="text-red-400" />
+              <h2 className="text-xl font-bold text-text">Базу захватили!</h2>
+            </>
+          )}
+          <div className="flex gap-3 mt-4">
+            {!won && (
+              <button onClick={handleRetry} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-surface border border-border text-text font-semibold cursor-pointer hover:bg-white/10 transition-colors">
+                <RotateCcw size={16} /> Ещё раз
               </button>
-            ) : (
-              <span className="text-text-secondary text-sm py-2 px-4">
-                Макс. уровень
-              </span>
             )}
+            <button onClick={() => onAnswer(won)} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-semibold cursor-pointer hover:bg-primary/90 transition-colors">
+              Продолжить
+            </button>
           </div>
-        )}
-
-        {/* start wave button */}
-        <button
-          onClick={handleStartWave}
-          className="flex items-center gap-2 py-3 px-6 bg-primary rounded-xl text-white font-bold hover:opacity-90 transition-opacity cursor-pointer"
-        >
-          <Play className="w-5 h-5 fill-white" />
-          Начать волну
-        </button>
-      </div>
-    );
-  }
-
-  /* ─── BATTLE PHASE ─────────────────────────────────────── */
-  if (state.phase === "battle") {
-    return (
-      <div className="flex flex-col items-center gap-4 p-4">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1 text-yellow-400 font-semibold">
-            <Star className="w-5 h-5 fill-yellow-400" /> {state.coins}
-          </span>
-          <span className="flex items-center gap-1 text-red-400 font-semibold">
-            <Heart className="w-5 h-5 fill-red-400" /> {state.lives}
-          </span>
-          <span className="text-text-secondary text-sm">
-            Волна {currentWave + 1}/{totalWaves}
-          </span>
-        </div>
-
-        <TDCanvas
-          state={state}
-          onStateChange={handleStateChange}
-        />
-      </div>
-    );
-  }
-
-  /* ─── RESULT PHASE ─────────────────────────────────────── */
-  return (
-    <div className="flex flex-col items-center gap-6 p-8">
-      {won ? (
-        <>
-          <Trophy className="w-16 h-16 text-yellow-400" />
-          <h2 className="text-2xl font-bold text-text">Защита пройдена!</h2>
-          <div className="flex gap-2">
-            {[1, 2, 3].map((i) => (
-              <Star
-                key={i}
-                className={`w-10 h-10 ${
-                  i <= stars
-                    ? "text-yellow-400 fill-yellow-400"
-                    : "text-text-secondary/30"
-                }`}
-              />
-            ))}
-          </div>
-        </>
-      ) : (
-        <>
-          <Skull className="w-16 h-16 text-red-400" />
-          <h2 className="text-2xl font-bold text-text">Базу захватили!</h2>
-          <button
-            onClick={handleRetry}
-            className="flex items-center gap-2 py-3 px-6 bg-surface border border-border rounded-xl text-text font-semibold hover:bg-primary/10 hover:border-primary transition-colors cursor-pointer"
-          >
-            <RotateCcw className="w-5 h-5" />
-            Ещё раз
-          </button>
-        </>
+        </motion.div>
       )}
 
-      <button
-        onClick={() => onAnswer(won)}
-        className="py-3 px-8 bg-primary rounded-xl text-white font-bold hover:opacity-90 transition-opacity cursor-pointer"
-      >
-        Продолжить
-      </button>
+      {/* ── BUILD PHASE ── */}
+      {state.phase === "build" && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-text">Волна {currentWave + 1}/{totalWaves}</span>
+              <span className="flex items-center gap-1 text-yellow-400 font-semibold text-sm">
+                <Star className="w-4 h-4 fill-yellow-400" /> {state.coins}
+              </span>
+            </div>
+            <button onClick={handleStartWave} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold cursor-pointer hover:bg-primary/90 transition-colors">
+              <Play size={14} /> Начать волну
+            </button>
+          </div>
+
+          <TDCanvas state={state} onStateChange={setState} onSlotTap={handleSlotTap} onTowerTap={handleTowerTap} />
+
+          {/* Tower shop */}
+          {state.selectedSlot !== null && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2 justify-center">
+              {(["blaster", "zapper", "cannon"] as TowerKind[]).map((kind) => {
+                const cfg = TOWER_CONFIG[kind];
+                const affordable = canBuyTower(state, kind);
+                return (
+                  <button key={kind} onClick={() => handleBuyTower(kind)} disabled={!affordable}
+                    className={`flex flex-col items-center gap-1 px-4 py-3 rounded-xl border text-xs font-medium transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default ${affordable ? "border-border bg-surface hover:border-white/30" : "border-border/50 bg-surface/50"}`}>
+                    <span className="text-xl">{cfg.emoji}</span>
+                    <span className="text-yellow-400">⭐ {cfg.cost}</span>
+                  </button>
+                );
+              })}
+            </motion.div>
+          )}
+
+          {/* Upgrade popup */}
+          {selectedTowerObj && selectedTowerObj.level < 3 && (() => {
+            const cost = UPGRADE_COSTS[(selectedTowerObj.level + 1) as 2 | 3];
+            const affordable = canUpgradeTower(state, selectedTowerObj.id);
+            return (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-center">
+                <button onClick={handleUpgrade} disabled={!affordable}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-default ${affordable ? "border-primary/50 bg-primary/10 text-primary" : "border-border bg-surface text-text-secondary"}`}>
+                  <ArrowUpCircle size={16} /> Lvl {selectedTowerObj.level + 1} (⭐ {cost})
+                </button>
+              </motion.div>
+            );
+          })()}
+        </motion.div>
+      )}
+
+      {/* ── BATTLE PHASE ── */}
+      {state.phase === "battle" && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full">
+          <TDCanvas state={state} onStateChange={handleStateChange} onSlotTap={() => {}} onTowerTap={() => {}} />
+        </motion.div>
+      )}
+
+      {/* ── QUESTION MODAL (overlay between waves) ── */}
+      <AnimatePresence>
+        {showQuestionModal && currentQ && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="w-full max-w-md bg-[#16161e] border border-border rounded-2xl p-6 space-y-4 relative"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-text">Заработай монеты!</h3>
+                <span className="flex items-center gap-1 text-yellow-400 font-semibold">
+                  <Star className="w-4 h-4 fill-yellow-400" /> {state.coins}
+                </span>
+              </div>
+
+              {/* Coin anim */}
+              <AnimatePresence>
+                {coinAnim && (
+                  <motion.div key="coin" initial={{ opacity: 1, y: 0 }} animate={{ opacity: 0, y: -40 }} exit={{ opacity: 0 }}
+                    className="absolute top-4 left-1/2 -translate-x-1/2 text-yellow-400 font-bold text-lg pointer-events-none">
+                    +{COINS_PER_CORRECT} ⭐
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Timer */}
+              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <motion.div className="h-full bg-primary rounded-full" animate={{ width: `${(timeLeft / QUESTION_TIME) * 100}%` }} transition={{ duration: 0.3 }} />
+              </div>
+
+              <p className="text-text-secondary text-xs text-center">
+                Волна {currentWave + 1} — Вопрос {qIndex + 1}/{currentQuestions.length} · {timeLeft}с
+              </p>
+
+              {/* Question */}
+              <div className="space-y-3">
+                <p className="text-text font-medium text-center">{currentQ.question}</p>
+
+                {currentQ.type === "quiz" && currentQ.options && (
+                  <div className="flex flex-col gap-2">
+                    {currentQ.options.map((opt) => (
+                      <button key={opt.id} onClick={() => handleQuizAnswer(opt.id)} disabled={!!answered}
+                        className={`w-full py-3 px-4 rounded-xl border text-left text-sm transition-colors cursor-pointer disabled:cursor-default ${
+                          answered && opt.correct ? "border-green-500 bg-green-500/10 text-green-400" :
+                          answered && !opt.correct ? "border-white/5 bg-white/2 text-text-secondary" :
+                          "border-border bg-white/5 text-text hover:bg-primary/10 hover:border-primary/50"
+                        }`}>
+                        {opt.text}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {currentQ.type === "true-false" && (
+                  <div className="flex gap-3 justify-center">
+                    <button onClick={() => handleTrueFalse(true)} disabled={!!answered}
+                      className={`flex-1 py-3 rounded-xl border font-semibold transition-colors cursor-pointer disabled:cursor-default ${
+                        answered === "correct" && currentQ.correct === true ? "border-green-500 bg-green-500/20 text-green-400" :
+                        answered === "wrong" && currentQ.correct !== true ? "border-red-500 bg-red-500/20 text-red-400" :
+                        "border-green-600/30 bg-green-600/10 text-green-400 hover:bg-green-600/20"
+                      }`}>Верно</button>
+                    <button onClick={() => handleTrueFalse(false)} disabled={!!answered}
+                      className={`flex-1 py-3 rounded-xl border font-semibold transition-colors cursor-pointer disabled:cursor-default ${
+                        answered === "correct" && currentQ.correct === false ? "border-green-500 bg-green-500/20 text-green-400" :
+                        answered === "wrong" && currentQ.correct !== false ? "border-red-500 bg-red-500/20 text-red-400" :
+                        "border-red-600/30 bg-red-600/10 text-red-400 hover:bg-red-600/20"
+                      }`}>Неверно</button>
+                  </div>
+                )}
+
+                {currentQ.type === "type-answer" && (
+                  <div className="flex gap-2">
+                    <input type="text" value={typedAnswer} onChange={(e) => setTypedAnswer(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleTypeAnswer()} disabled={!!answered}
+                      placeholder="Введите ответ..."
+                      className="flex-1 py-2 px-4 bg-white/5 border border-border rounded-xl text-text placeholder:text-text-secondary/50 outline-none focus:border-primary transition-colors" />
+                    <button onClick={handleTypeAnswer} disabled={!!answered}
+                      className="py-2 px-5 bg-primary rounded-xl text-white font-semibold cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50">
+                      OK
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Feedback */}
+              <AnimatePresence>
+                {answered && (
+                  <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    className={`text-center text-sm font-semibold ${answered === "correct" ? "text-green-400" : "text-red-400"}`}>
+                    {answered === "correct" ? "Правильно! +25 ⭐" : "Неверно!"}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,7 +1,17 @@
 import type { LessonStep } from "@/services/courseApi";
 import type { TDQuestion } from "./types";
-import { QUESTIONS_PER_WAVE } from "./config";
+import { QUESTIONS_PER_WAVE, MIN_WAVES } from "./config";
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/** Extract answerable questions from lesson steps. */
 export function extractQuestions(steps: LessonStep[]): TDQuestion[] {
   const questions: TDQuestion[] = [];
   for (const step of steps) {
@@ -19,16 +29,23 @@ export function extractQuestions(steps: LessonStep[]): TDQuestion[] {
   return questions;
 }
 
+/** Shuffle and split into waves. Guarantees at least MIN_WAVES waves by recycling questions. */
 export function splitIntoWaves(questions: TDQuestion[]): TDQuestion[][] {
-  const shuffled = [...questions];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  if (questions.length === 0) return [[]];
+
+  const totalQuestionsNeeded = MIN_WAVES * QUESTIONS_PER_WAVE;
+
+  // Recycle questions if not enough for MIN_WAVES
+  let pool = shuffle(questions);
+  while (pool.length < totalQuestionsNeeded) {
+    pool = [...pool, ...shuffle(questions)];
   }
+  pool = pool.slice(0, totalQuestionsNeeded);
+
   const waves: TDQuestion[][] = [];
-  for (let i = 0; i < shuffled.length; i += QUESTIONS_PER_WAVE) {
-    waves.push(shuffled.slice(i, i + QUESTIONS_PER_WAVE));
+  for (let i = 0; i < pool.length; i += QUESTIONS_PER_WAVE) {
+    waves.push(pool.slice(i, i + QUESTIONS_PER_WAVE));
   }
-  if (waves.length === 0) waves.push([]);
+
   return waves;
 }

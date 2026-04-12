@@ -14,6 +14,7 @@ import {
   UPGRADE_DAMAGE_MULT,
   UPGRADE_RANGE_MULT,
   INITIAL_LIVES,
+  STARTING_COINS,
 } from "./config";
 import { getPositionAlongPath, TOWER_SLOTS } from "./path";
 
@@ -33,28 +34,33 @@ export function generateWaves(totalWaves: number): WaveConfig[] {
     const ratio = i / Math.max(totalWaves - 1, 1);
     const enemies: WaveConfig["enemies"] = [];
 
-    // Base count scales with wave index
-    const base = 3 + Math.floor(i * 1.5);
+    // Harder scaling: more enemies per wave
+    const base = 5 + Math.floor(i * 2.5);
 
-    // Early waves (first third): bug + glitch
-    if (ratio < 0.33) {
-      enemies.push({ kind: "bug", count: base, delay: 0.8 });
-      enemies.push({ kind: "glitch", count: Math.floor(base * 0.5), delay: 1.0 });
+    // Wave 1: intro
+    if (i === 0) {
+      enemies.push({ kind: "bug", count: 6, delay: 0.7 });
+      enemies.push({ kind: "glitch", count: 2, delay: 1.0 });
     }
-    // Middle waves: + virus + trojan
-    else if (ratio < 0.75) {
-      enemies.push({ kind: "bug", count: Math.floor(base * 0.6), delay: 0.7 });
-      enemies.push({ kind: "glitch", count: Math.floor(base * 0.4), delay: 0.9 });
-      enemies.push({ kind: "virus", count: Math.floor(base * 0.3), delay: 1.2 });
-      enemies.push({ kind: "trojan", count: Math.floor(base * 0.2), delay: 1.4 });
+    // Early waves: bug + glitch, tight spacing
+    else if (ratio < 0.3) {
+      enemies.push({ kind: "bug", count: base, delay: 0.6 });
+      enemies.push({ kind: "glitch", count: Math.floor(base * 0.6), delay: 0.8 });
     }
-    // Last waves: all types + boss
+    // Middle waves: + virus + trojan, faster spawns
+    else if (ratio < 0.7) {
+      enemies.push({ kind: "bug", count: Math.floor(base * 0.5), delay: 0.5 });
+      enemies.push({ kind: "glitch", count: Math.floor(base * 0.5), delay: 0.7 });
+      enemies.push({ kind: "virus", count: Math.floor(base * 0.4), delay: 1.0 });
+      enemies.push({ kind: "trojan", count: Math.floor(base * 0.3), delay: 1.1 });
+    }
+    // Late waves: full mix + boss
     else {
-      enemies.push({ kind: "bug", count: Math.floor(base * 0.4), delay: 0.6 });
-      enemies.push({ kind: "glitch", count: Math.floor(base * 0.3), delay: 0.8 });
-      enemies.push({ kind: "virus", count: Math.floor(base * 0.3), delay: 1.0 });
-      enemies.push({ kind: "trojan", count: Math.floor(base * 0.25), delay: 1.2 });
-      enemies.push({ kind: "boss", count: 1 + Math.floor((i - totalWaves * 0.75) * 0.5), delay: 2.0 });
+      enemies.push({ kind: "bug", count: Math.floor(base * 0.5), delay: 0.4 });
+      enemies.push({ kind: "glitch", count: Math.floor(base * 0.4), delay: 0.6 });
+      enemies.push({ kind: "virus", count: Math.floor(base * 0.4), delay: 0.8 });
+      enemies.push({ kind: "trojan", count: Math.floor(base * 0.3), delay: 0.9 });
+      enemies.push({ kind: "boss", count: 1 + Math.floor(i * 0.3), delay: 1.5 });
     }
 
     // Filter out zero-count entries
@@ -90,8 +96,8 @@ export function buildSpawnQueue(
 
 export function createInitialState(totalWaves: number): GameState {
   return {
-    phase: "questions",
-    coins: 0,
+    phase: "build",
+    coins: STARTING_COINS,
     lives: INITIAL_LIVES,
     maxLives: INITIAL_LIVES,
     wave: 0,
