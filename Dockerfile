@@ -22,4 +22,4 @@ COPY --from=frontend /app/dist /app/static
 
 ENV PYTHONPATH=/app
 EXPOSE 3847
-CMD ["sh", "-c", "python create_tables.py && python seed_production.py && python -m seed_claude_code_advanced; python -m seed_claude_code_full; python -m seed_kyrgyz_language; python -m seed_kazakh_language; python -m seed_french_language; python -m seed_chinese_language; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-3847}"]
+CMD ["sh", "-c", "python create_tables.py && python seed_production.py && python -m seed_claude_code_advanced; python -m seed_claude_code_full; python -m seed_kyrgyz_language; python -m seed_kazakh_language; python -m seed_french_language; python -m seed_chinese_language; python -m seed_popping_course; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-3847}"]
