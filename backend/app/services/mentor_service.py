@@ -170,14 +170,14 @@ async def chat(db: AsyncSession, user_id: uuid.UUID, session_id: str | None, con
     db.add(assistant_msg)
 
     # Update session title from first message
-    msg_count = await db.execute(
+    msg_count_result = await db.execute(
         select(func.count()).select_from(MentorMessage).where(MentorMessage.session_id == session.id)
     )
-    if msg_count.scalar() <= 2:
+    total = msg_count_result.scalar() or 0
+    if total <= 2:
         session.title = content[:80] if len(content) <= 80 else content[:77] + "..."
 
     # Update knowledge profile every 10 messages
-    total = msg_count.scalar() or 0
     if total > 0 and total % 10 == 0:
         all_msgs = [{"role": m.role, "content": m.content} for m in history]
         await update_knowledge_profile(db, user_id, direction, all_msgs)
