@@ -24,7 +24,10 @@ function mapUserToProfile(user: UserData | null): UserProfile | null {
     completedNodes: user.completed_nodes,
     completedLessons: user.completed_lessons,
     earnedBadges: user.earned_badges,
-    assessmentLevel: (user.assessment_level || 'beginner') as UserProfile['assessmentLevel'],
+    assessmentLevel: (() => {
+      const validLevels = ['beginner', 'intermediate', 'advanced'];
+      return validLevels.includes(user.assessment_level) ? user.assessment_level : 'beginner';
+    })() as UserProfile['assessmentLevel'],
     onboardingComplete: !!(user.direction && user.direction !== ''),
   }
 }

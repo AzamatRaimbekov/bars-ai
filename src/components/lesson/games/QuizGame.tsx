@@ -17,11 +17,13 @@ export function QuizGame({ question, onAnswer }: QuizGameProps) {
     setTimeout(() => onAnswer(idx === question.correct), 1200);
   };
 
+  if (!question.options || question.options.length === 0) return null;
+
   return (
     <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="flex flex-col gap-6">
       <h3 className="text-lg font-bold">{question.question[lang]}</h3>
       <div className="space-y-3">
-        {question.options?.map((opt, i) => {
+        {question.options.map((opt, i) => {
           const isSelected = selected === i;
           const isCorrectOpt = question.correct === i;
           const showCorrect = answered && isCorrectOpt;
