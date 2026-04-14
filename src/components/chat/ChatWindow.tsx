@@ -1,10 +1,13 @@
-import { useState, useRef, useEffect } from "react";
-import { Send, Loader2 } from "lucide-react";
+import { useState, useRef, useEffect, type ReactNode } from "react";
+import { Send, Loader2, Mic } from "lucide-react";
+import { motion } from "framer-motion";
 import { MessageBubble } from "./MessageBubble";
 import { VoiceButton } from "./VoiceButton";
 import { WaveformVisualizer } from "./WaveformVisualizer";
 import { Chip } from "@/components/ui/Chip";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { ChatMessage } from "@/types/chat";
+import type { VoiceState } from "@/hooks/useVoice";
 
 interface ChatWindowProps {
   messages: ChatMessage[];
@@ -18,6 +21,10 @@ interface ChatWindowProps {
   transcript?: string;
   onVoiceToggle?: () => void;
   suggestions?: string[];
+  voiceMode?: boolean;
+  voiceState?: VoiceState;
+  onVoiceModeToggle?: () => void;
+  renderMessage?: (msg: ChatMessage) => ReactNode | undefined;
 }
 
 export function ChatWindow({
@@ -32,7 +39,12 @@ export function ChatWindow({
   transcript,
   onVoiceToggle,
   suggestions = [],
+  voiceMode,
+  voiceState,
+  onVoiceModeToggle,
+  renderMessage,
 }: ChatWindowProps) {
+  const { t } = useTranslation();
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -49,20 +61,67 @@ export function ChatWindow({
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-border">
-        <span className="text-2xl">{mentorAvatar}</span>
-        <div>
-          <p className="font-semibold text-sm">{mentorName}</p>
-          <p className="text-xs text-text-secondary">AI Mentor</p>
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">{mentorAvatar}</span>
+          <div>
+            <p className="font-semibold text-sm">{mentorName}</p>
+            <p className="text-xs text-text-secondary">{t("mentor.aiMentor")}</p>
+          </div>
+          {isSpeaking && !voiceMode && <WaveformVisualizer active color="#F97316" />}
         </div>
-        {isSpeaking && <WaveformVisualizer active color="#00D9FF" />}
+
+        {/* Voice Mode Toggle */}
+        {voiceEnabled && onVoiceModeToggle && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onVoiceModeToggle}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+              voiceMode
+                ? "bg-accent/15 text-accent border border-accent/30"
+                : "bg-surface border border-border text-text-secondary hover:text-text hover:border-primary/30"
+            }`}
+          >
+            <Mic size={14} />
+            {voiceMode ? t("mentor.voiceModeOn") : t("mentor.voiceModeOff")}
+          </motion.button>
+        )}
       </div>
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4">
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} mentorAvatar={mentorAvatar} />
-        ))}
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-center gap-4 opacity-60">
+            <motion.img
+              src="/images/mascot-thinking.png"
+              alt="Mentor mascot"
+              className="w-44 h-44 object-contain drop-shadow-2xl"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            />
+            <p className="text-sm text-text-secondary max-w-xs">
+              {t("mentor.greeting", { name: mentorName })}
+            </p>
+          </div>
+        )}
+
+        {messages.map((msg) => {
+          const custom = renderMessage?.(msg);
+          if (custom !== undefined) {
+            return (
+              <div key={msg.id} className="flex gap-3">
+                <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-sm shrink-0">
+                  {msg.role === "user" ? "👤" : mentorAvatar}
+                </div>
+                <div className="max-w-[70%] px-4 py-3 rounded-2xl text-sm leading-relaxed bg-surface border border-border text-text rounded-tl-md">
+                  {custom}
+                </div>
+              </div>
+            );
+          }
+          return <MessageBubble key={msg.id} message={msg} mentorAvatar={mentorAvatar} />;
+        })}
         {isLoading && (
           <div className="flex gap-3">
             <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-sm">
@@ -76,7 +135,7 @@ export function ChatWindow({
       </div>
 
       {/* Transcript */}
-      {isListening && transcript && (
+      {isListening && transcript && !voiceMode && (
         <div className="px-6 py-2 text-sm text-accent italic border-t border-border/50">
           {transcript}
         </div>
@@ -93,27 +152,42 @@ export function ChatWindow({
 
       {/* Input */}
       <div className="flex items-center gap-3 px-6 py-4 border-t border-border">
-        {voiceEnabled && onVoiceToggle && (
+        {voiceEnabled && onVoiceToggle && !voiceMode && (
           <VoiceButton
             isListening={isListening || false}
             isSpeaking={isSpeaking || false}
             onToggle={onVoiceToggle}
           />
         )}
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-          placeholder={`Ask ${mentorName} anything...`}
-          className="flex-1 bg-bg border border-border rounded-xl px-4 py-2.5 text-sm text-text outline-none focus:border-primary/50 placeholder:text-text-secondary/50"
-        />
-        <button
-          onClick={handleSend}
-          disabled={!input.trim() || isLoading}
-          className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white disabled:opacity-50 cursor-pointer hover:bg-primary/90 transition-colors"
-        >
-          <Send size={16} />
-        </button>
+
+        {voiceMode && onVoiceModeToggle ? (
+          <div className="flex-1 flex items-center justify-center gap-3 py-1">
+            <motion.div
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              <Mic size={18} className="text-accent" />
+            </motion.div>
+            <p className="text-sm text-accent">{t("mentor.voiceModeActive")}</p>
+          </div>
+        ) : (
+          <>
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+              placeholder={t("mentor.askAnything", { name: mentorName })}
+              className="flex-1 bg-[#0A0A0A] border border-white/6 rounded-xl px-4 py-2.5 text-sm text-text outline-none focus:border-primary/40 placeholder:text-text-secondary/50"
+            />
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading}
+              className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white disabled:opacity-50 cursor-pointer hover:bg-primary/90 transition-colors"
+            >
+              <Send size={16} />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
