@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { apiFetch, setAccessToken } from '@/services/api'
+import { apiFetch, setAccessToken, getAccessToken } from '@/services/api'
 import * as authApi from '@/services/authApi'
 
 export interface UserData {
@@ -38,7 +38,15 @@ interface AuthState {
   tryRestore: () => Promise<void>
 }
 
-export const useAuthStore = create<AuthState>()((set) => ({
+export const useAuthStore = create<AuthState>()((set) => {
+  // Auto-logout when refresh token fails
+  if (typeof window !== 'undefined') {
+    window.addEventListener('auth:session-expired', () => {
+      set({ user: null, isAuthenticated: false })
+    })
+  }
+
+  return {
   user: null,
   isAuthenticated: false,
   isLoading: true,
@@ -76,6 +84,18 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
   tryRestore: async () => {
     try {
+      // If we have a cached token in sessionStorage, try using it first
+      if (getAccessToken()) {
+        try {
+          const user = await apiFetch<UserData>('/users/me')
+          set({ user, isAuthenticated: true, isLoading: false })
+          return
+        } catch {
+          // Token expired or invalid, fall through to refresh
+        }
+      }
+
+      // Try refreshing via httpOnly cookie
       const resp = await fetch('/api/auth/refresh', {
         method: 'POST',
         credentials: 'include',
@@ -86,10 +106,12 @@ export const useAuthStore = create<AuthState>()((set) => ({
         const user = await apiFetch<UserData>('/users/me')
         set({ user, isAuthenticated: true, isLoading: false })
       } else {
+        setAccessToken(null)
         set({ isLoading: false })
       }
     } catch {
+      setAccessToken(null)
       set({ isLoading: false })
     }
   },
-}))
+}})

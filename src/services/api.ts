@@ -54,10 +54,11 @@ export async function apiFetch<T>(
 
   if (resp.status === 401) {
     if (!refreshPromise) {
-      refreshPromise = refreshAccessToken();
+      refreshPromise = refreshAccessToken().finally(() => {
+        refreshPromise = null;
+      });
     }
     const newToken = await refreshPromise;
-    refreshPromise = null;
 
     if (newToken) {
       headers["Authorization"] = `Bearer ${newToken}`;
@@ -68,6 +69,7 @@ export async function apiFetch<T>(
       });
     } else {
       setAccessToken(null);
+      window.dispatchEvent(new Event("auth:session-expired"));
       throw new Error("Session expired");
     }
   }
