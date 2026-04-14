@@ -54,9 +54,10 @@ export default function Profile() {
   if (!profile) return null
 
   const dirConfig = DIRECTIONS[profile.direction]
-  const currentIdx = LEVELS_ORDERED.indexOf(profile.level)
+  const validLevel = LEVELS_ORDERED.includes(profile.level) ? profile.level : 'Legend' as Level
+  const currentIdx = LEVELS_ORDERED.indexOf(validLevel)
   const nextLevel = LEVELS_ORDERED[currentIdx + 1]
-  const currentThreshold = LEVEL_THRESHOLDS[profile.level]
+  const currentThreshold = LEVEL_THRESHOLDS[validLevel] ?? 0
   const nextThreshold = nextLevel ? LEVEL_THRESHOLDS[nextLevel] : currentThreshold
   const xpInLevel = profile.xp - currentThreshold
   const xpNeeded = nextThreshold - currentThreshold || 1
@@ -70,8 +71,8 @@ export default function Profile() {
   const tier = completedNodes >= 20 ? 'Senior' : completedNodes >= 9 ? 'Middle' : 'Junior'
   const tierColor = tier === 'Senior' ? '#FF6B6B' : tier === 'Middle' ? '#FFB800' : '#F97316'
 
-  const LevelIcon = LEVEL_ICONS[profile.level]
-  const levelColor = LEVEL_COLORS[profile.level]
+  const LevelIcon = LEVEL_ICONS[validLevel] ?? Star
+  const levelColor = LEVEL_COLORS[validLevel] ?? '#FFD700'
 
   const handleLogout = async () => {
     if (window.confirm(t('profile.resetConfirm'))) {
