@@ -37,6 +37,12 @@ import type {
   StepSentenceTranslation,
   StepClozePassage,
   StepTowerDefense,
+  StepVideoDemo,
+  StepPoseCheck,
+  StepMirrorPractice,
+  StepComboChallenge,
+  StepBattleSim,
+  StepSlowMotion,
 } from "@/services/courseApi";
 
 import WordBuilderStep from "./steps/WordBuilderStep";
@@ -45,6 +51,12 @@ import ListeningComprehensionStep from "./steps/ListeningComprehensionStep";
 import SentenceTranslationStep from "./steps/SentenceTranslationStep";
 import PronunciationStep from "./steps/PronunciationStep";
 import TowerDefenseStep from "../games/tower-defense/TowerDefenseStep";
+import { VideoDemoStep } from "@/components/dance/VideoDemoStep";
+import { PoseCheckStep } from "@/components/dance/PoseCheckStep";
+import { MirrorPracticeStep } from "@/components/dance/MirrorPracticeStep";
+import { ComboChallengeStep } from "@/components/dance/ComboChallengeStep";
+import { BattleSimStep } from "@/components/dance/BattleSimStep";
+import { SlowMotionStep } from "@/components/dance/SlowMotionStep";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
@@ -2770,6 +2782,18 @@ export function CourseStepPlayer({
             onAnswer={handleInteractiveAnswer}
           />
         );
+      case "video-demo":
+        return <VideoDemoStep step={step as StepVideoDemo} onNext={goForward} />;
+      case "pose-check":
+        return <PoseCheckStep step={step as StepPoseCheck} onAnswer={handleInteractiveAnswer} />;
+      case "mirror-practice":
+        return <MirrorPracticeStep step={step as StepMirrorPractice} onAnswer={handleInteractiveAnswer} />;
+      case "combo-challenge":
+        return <ComboChallengeStep step={step as StepComboChallenge} onAnswer={handleInteractiveAnswer} />;
+      case "battle-sim":
+        return <BattleSimStep step={step as StepBattleSim} onAnswer={handleInteractiveAnswer} />;
+      case "slow-motion":
+        return <SlowMotionStep step={step as StepSlowMotion} onNext={goForward} />;
       default:
         return null;
     }

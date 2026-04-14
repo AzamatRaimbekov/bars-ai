@@ -270,6 +270,13 @@ export interface StepTowerDefense {
   type: "tower-defense";
 }
 
+export interface StepVideoDemo { type: "video-demo"; title: string; videos: { url: string; angle: string }[]; description?: string }
+export interface StepPoseCheck { type: "pose-check"; title: string; description: string; referencePose: { landmarks: number[][] }; referenceImage?: string; threshold: number }
+export interface StepMirrorPractice { type: "mirror-practice"; title: string; referenceVideo: string; duration: number; threshold: number }
+export interface StepComboChallenge { type: "combo-challenge"; title: string; music: string; bpm: number; moves: { name: string; pose: { landmarks: number[][] }; beatStart: number; beatEnd: number }[]; threshold: number }
+export interface StepBattleSim { type: "battle-sim"; title: string; music: string; duration: number; bpm: number }
+export interface StepSlowMotion { type: "slow-motion"; title: string; video: string; keyframes: { time: number; pose: { landmarks: number[][] }; description: string }[] }
+
 export type LessonStep =
   | StepInfo
   | StepQuiz
@@ -297,7 +304,13 @@ export type LessonStep =
   | StepWordBuilder
   | StepSentenceTranslation
   | StepClozePassage
-  | StepTowerDefense;
+  | StepTowerDefense
+  | StepVideoDemo
+  | StepPoseCheck
+  | StepMirrorPractice
+  | StepComboChallenge
+  | StepBattleSim
+  | StepSlowMotion;
 
 export interface LessonStepsResponse {
   steps: LessonStep[];
