@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
+import { AudioButton } from "@/components/ui/AudioButton";
 import type { GameQuestion } from "@/types/lesson";
 
 interface MatchPairsGameProps { question: GameQuestion; onAnswer: (correct: boolean) => void; }
@@ -47,7 +48,9 @@ export function MatchPairsGame({ question, onAnswer }: MatchPairsGameProps) {
                 isMatched?"border-green-500/40 bg-green-500/10 text-green-400 opacity-50"
                 :isWrong2?"border-red-500 bg-red-500/10 text-red-400"
                 :isSelected?"border-primary bg-primary/10 text-primary"
-                :"border-border hover:border-primary/30"}`}>{p.term[lang]}</motion.button>);
+                :"border-border hover:border-primary/30"}`}>
+                <span className="flex items-center gap-1.5">{p.term[lang]} <AudioButton text={p.term[lang]} lang={lang} size={12} /></span>
+              </motion.button>);
           })}
         </div>
         <div className="space-y-2">
@@ -58,7 +61,9 @@ export function MatchPairsGame({ question, onAnswer }: MatchPairsGameProps) {
                 isMatched?"border-green-500/40 bg-green-500/10 text-green-400 opacity-50"
                 :isWrong2?"border-red-500 bg-red-500/10 text-red-400"
                 :isSelected?"border-accent bg-accent/10 text-accent"
-                :"border-border hover:border-accent/30"}`}>{pairs[origIdx].definition[lang]}</motion.button>);
+                :"border-border hover:border-accent/30"}`}>
+                <span className="flex items-center gap-1.5">{pairs[origIdx].definition[lang]} <AudioButton text={pairs[origIdx].definition[lang]} lang={lang} size={12} /></span>
+              </motion.button>);
           })}
         </div>
       </div>

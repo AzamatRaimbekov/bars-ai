@@ -7,6 +7,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 import { Button } from "@/components/ui/Button";
+import { AudioButton } from "@/components/ui/AudioButton";
 import type {
   LessonStep,
   StepInfo,
@@ -786,7 +787,7 @@ function MatchingStep({
                 disabled={checked}
                 className={`w-full text-left px-3 py-2.5 rounded-xl border text-xs font-medium transition-all duration-200 cursor-pointer disabled:cursor-default ${cls}`}
               >
-                {pair.left}
+                <span className="flex items-center gap-1.5">{pair.left} <AudioButton text={pair.left} lang="auto" size={12} /></span>
               </button>
             );
           })}
@@ -824,7 +825,7 @@ function MatchingStep({
                 disabled={checked}
                 className={`w-full text-left px-3 py-2.5 rounded-xl border text-xs font-medium transition-all duration-200 cursor-pointer disabled:cursor-default ${cls}`}
               >
-                {rightValue}
+                <span className="flex items-center gap-1.5">{rightValue} <AudioButton text={rightValue} lang="auto" size={12} /></span>
               </button>
             );
           })}
@@ -1016,7 +1017,10 @@ function FlashcardsStep({
             <span className="text-xs text-text-secondary mb-3 uppercase tracking-widest">
               Вопрос
             </span>
-            <p className="text-base font-semibold text-text">{card.front}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-base font-semibold text-text">{card.front}</p>
+              <AudioButton text={card.front} lang="auto" size={14} />
+            </div>
             <span className="mt-4 text-xs text-text-secondary/50">
               Нажмите, чтобы перевернуть
             </span>
@@ -1035,7 +1039,10 @@ function FlashcardsStep({
             <span className="text-xs text-[#F97316]/70 mb-3 uppercase tracking-widest">
               Ответ
             </span>
-            <p className="text-base font-semibold text-text">{card.back}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-base font-semibold text-text">{card.back}</p>
+              <AudioButton text={card.back} lang="auto" size={14} />
+            </div>
           </div>
         </motion.div>
       </div>

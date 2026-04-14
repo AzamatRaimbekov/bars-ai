@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { AudioButton } from "@/components/ui/AudioButton";
 import type { GameQuestion } from "@/types/lesson";
 
 interface FlashCardGameProps { question: GameQuestion; onAnswer: (correct: boolean) => void; }
@@ -33,8 +34,17 @@ export function FlashCardGame({ question, onAnswer }: FlashCardGameProps) {
         whileHover={{scale:1.01}} whileTap={{scale:0.99}}>
         <AnimatePresence mode="wait">
           <motion.div key={flipped?"back":"front"} initial={{rotateY:90,opacity:0}} animate={{rotateY:0,opacity:1}} exit={{rotateY:-90,opacity:0}} transition={{duration:0.2}} className="text-center">
-            {flipped ? <p className="text-sm text-accent leading-relaxed">{card.definition[lang]}</p>
-              : <p className="text-lg font-semibold">{card.term[lang]}</p>}
+            {flipped ? (
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-accent leading-relaxed">{card.definition[lang]}</p>
+                <AudioButton text={card.definition[lang]} lang={lang} size={14} />
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <p className="text-lg font-semibold">{card.term[lang]}</p>
+                <AudioButton text={card.term[lang]} lang={lang} size={14} />
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </motion.div>

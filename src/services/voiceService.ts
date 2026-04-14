@@ -193,6 +193,37 @@ class VoiceService {
     return chunks;
   }
 
+  /** Speak text in a specific language (for language courses) */
+  speakInLanguage(text: string, langCode: string): Promise<void> {
+    return new Promise((resolve) => {
+      this.synthesis.cancel();
+      const cleanText = text.trim();
+      if (!cleanText) { resolve(); return; }
+
+      const langMap: Record<string, string> = {
+        ky: "ky-KG", kk: "kk-KZ", fr: "fr-FR", zh: "zh-CN",
+        en: "en-US", ru: "ru-RU", de: "de-DE", es: "es-ES",
+        tr: "tr-TR", ar: "ar-SA", ja: "ja-JP", ko: "ko-KR",
+      };
+      const targetLang = langMap[langCode] || langCode;
+      const voices = this.synthesis.getVoices();
+
+      // Find best voice for this language
+      const langVoice = voices.find((v) => v.lang.startsWith(targetLang.split("-")[0]));
+
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      utterance.lang = targetLang;
+      if (langVoice) utterance.voice = langVoice;
+
+      utterance.onend = () => resolve();
+      utterance.onerror = () => resolve();
+      this.synthesis.speak(utterance);
+    });
+  }
+
   stopSpeaking() {
     this.synthesis.cancel();
   }
