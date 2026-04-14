@@ -449,8 +449,13 @@ YT = {
     "transitions":      "https://www.youtube.com/embed/4vTJHUDB5ak",
     "performance":      "https://www.youtube.com/embed/grWaRMjGfME",
 }
-# Music URL (royalty-free funk beat from Pixabay)
-MUSIC = "https://cdn.pixabay.com/audio/2024/11/04/audio_4956b54637.mp3"
+# Royalty-free beats from Pixabay — different vibes per level
+M1 = "https://cdn.pixabay.com/audio/2024/11/04/audio_4956b54637.mp3"   # Funk groove ~100bpm (Level 1-2)
+M2 = "https://cdn.pixabay.com/audio/2023/10/24/audio_3f8a4330ed.mp3"   # Funky beat ~105bpm (Level 2-3)
+M3 = "https://cdn.pixabay.com/audio/2024/03/12/audio_e55b3c285f.mp3"   # Hip-hop ~108bpm (Level 3-4)
+M4 = "https://cdn.pixabay.com/audio/2023/07/19/audio_e59e41e917.mp3"   # Electro funk ~110bpm (Level 4-5)
+M5 = "https://cdn.pixabay.com/audio/2024/06/11/audio_5f6e11d634.mp3"   # Hard battle ~112bpm (Level 5 + battles)
+MUSIC = M1  # default
 
 S = [
   # ==================== Level 1: Основы тела и ритм ====================
@@ -625,7 +630,7 @@ S = [
     ]},
     {"t":"Связка Level 2","xp":40,"steps":[
       {"type":"info","title":"Связка из 6 движений","markdown":"## Связка Level 2\n\n1. **Fresno влево** (бит 1-2)\n2. **Fresno вправо** (бит 3-4)\n3. **Neck Pop** (бит 5)\n4. **Chest Pop** (бит 6)\n5. **Walkout 2 шага** (бит 7-8)\n6. **Dimestop** (бит 1 следующего такта)"},
-      {"type":"combo-challenge","title":"Связка Level 2","music":MUSIC,"bpm":105,"moves":[
+      {"type":"combo-challenge","title":"Связка Level 2","music":M2,"bpm":105,"moves":[
         {"name":"Fresno влево","pose":{"landmarks":_fresno()},"beatStart":1,"beatEnd":2},
         {"name":"Fresno вправо","pose":{"landmarks":_fresno()},"beatStart":3,"beatEnd":4},
         {"name":"Neck Pop","pose":{"landmarks":_neck_pop()},"beatStart":5,"beatEnd":5},
@@ -636,7 +641,7 @@ S = [
     ]},
     {"t":"Мини-баттл Level 2","xp":50,"steps":[
       {"type":"info","title":"Твой первый баттл!","markdown":"## Мини-баттл\n\nИспользуй все движения Level 1 и 2.\n\n**Правила:**\n- 30 секунд под музыку\n- Используй минимум 3 разных движения\n- Попадай в бит!\n- Закончи Dimestop'ом"},
-      {"type":"battle-sim","title":"Мини-баттл 30 сек","music":MUSIC,"duration":30,"bpm":105},
+      {"type":"battle-sim","title":"Мини-баттл 30 сек","music":M2,"duration":30,"bpm":105},
     ]},
   ]},
 
@@ -715,7 +720,7 @@ S = [
       ]},
     ]},
     {"t":"Связка Level 3","xp":40,"steps":[
-      {"type":"combo-challenge","title":"Связка Level 3 — 8 движений","music":MUSIC,"bpm":105,"moves":[
+      {"type":"combo-challenge","title":"Связка Level 3 — 8 движений","music":M2,"bpm":105,"moves":[
         {"name":"Robot walk","pose":{"landmarks":_robot()},"beatStart":1,"beatEnd":2},
         {"name":"Изоляция головы","pose":{"landmarks":_iso_head()},"beatStart":3,"beatEnd":4},
         {"name":"Изоляция плеч","pose":{"landmarks":_iso_shoulders()},"beatStart":5,"beatEnd":6},
@@ -728,7 +733,7 @@ S = [
     ]},
     {"t":"Баттл Level 3","xp":50,"steps":[
       {"type":"info","title":"Баттл Level 3","markdown":"## Баттл — изоляции\n\n**45 секунд** под музыку. Покажи все изоляции + хиты.\n\n**Задание:**\n- Начни с Robot walk\n- Покажи минимум 4 разные изоляции\n- Добавь хиты\n- Финиш — Dimestop"},
-      {"type":"battle-sim","title":"Баттл Level 3 — 45 сек","music":MUSIC,"duration":45,"bpm":105},
+      {"type":"battle-sim","title":"Баттл Level 3 — 45 сек","music":M3,"duration":45,"bpm":105},
     ]},
   ]},
 
@@ -808,7 +813,7 @@ S = [
       ],"threshold":55},
     ]},
     {"t":"Связка Level 4","xp":40,"steps":[
-      {"type":"combo-challenge","title":"Связка Level 4 — 10 движений","music":MUSIC,"bpm":108,"moves":[
+      {"type":"combo-challenge","title":"Связка Level 4 — 10 движений","music":M3,"bpm":108,"moves":[
         {"name":"Arm Wave L→R","pose":{"landmarks":_arm_wave()},"beatStart":1,"beatEnd":3},
         {"name":"Pop","pose":{"landmarks":_pop_arms()},"beatStart":4,"beatEnd":4},
         {"name":"Body Wave","pose":{"landmarks":_body_wave()},"beatStart":5,"beatEnd":7},
@@ -823,7 +828,7 @@ S = [
     ]},
     {"t":"Баттл Level 4","xp":50,"steps":[
       {"type":"info","title":"Баттл Level 4","markdown":"## Баттл — волны и глайды\n\n**60 секунд!** Покажи всё: хиты, изоляции, волны, глайды.\n\n**Подсказки:**\n- Начни плавно (волна)\n- Усиль (хиты)\n- Удиви (глайд/moonwalk)\n- Финиш — мощный Dimestop"},
-      {"type":"battle-sim","title":"Баттл Level 4 — 60 сек","music":MUSIC,"duration":60,"bpm":108},
+      {"type":"battle-sim","title":"Баттл Level 4 — 60 сек","music":M3,"duration":60,"bpm":108},
     ]},
   ]},
 
@@ -891,7 +896,7 @@ S = [
     ]},
     {"t":"Создание комбинаций","xp":35,"steps":[
       {"type":"info","title":"Как создавать свои комбо","markdown":"## Создание комбинаций\n\n### Формула:\n1. **Вход** (2 бита) — Walkout или Fresno\n2. **Основная часть** (8 битов) — миксуй 3-4 разных техники\n3. **Кульминация** (2 бита) — самое сложное/эффектное\n4. **Финиш** (2 бита) — Dimestop или мощный хит\n\n### Правила:\n- Не повторяй одно движение подряд\n- Чередуй мягкое и резкое\n- Используй разные levels\n- Всегда заканчивай чётко\n\n### Задание:\nСоздай свою комбинацию из 6+ движений!"},
-      {"type":"combo-challenge","title":"Твоя комбинация","music":MUSIC,"bpm":108,"moves":[
+      {"type":"combo-challenge","title":"Твоя комбинация","music":M3,"bpm":108,"moves":[
         {"name":"Fresno вход","pose":{"landmarks":_fresno()},"beatStart":1,"beatEnd":2},
         {"name":"Arm Wave","pose":{"landmarks":_arm_wave()},"beatStart":3,"beatEnd":5},
         {"name":"Pop","pose":{"landmarks":_pop_arms()},"beatStart":6,"beatEnd":6},
@@ -909,7 +914,7 @@ S = [
     ]},
     {"t":"Полная комбинация","xp":40,"steps":[
       {"type":"info","title":"Финальная комбинация","markdown":"## Полная комбинация — 12+ движений\n\nВсё, что вы изучили, в одной связке.\n\n### План:\n1. Walkout вход\n2. Fresno × 2\n3. Arm Wave → Pop\n4. Изоляция плеч → груди\n5. Body Wave\n6. Robot transition\n7. Moonwalk\n8. Snake\n9. Floor work moment\n10. Встаём → Tutting\n11. Combo pops\n12. DIMESTOP финиш!"},
-      {"type":"combo-challenge","title":"Полная комбинация","music":MUSIC,"bpm":110,"moves":[
+      {"type":"combo-challenge","title":"Полная комбинация","music":M4,"bpm":110,"moves":[
         {"name":"Walkout","pose":{"landmarks":_standing()},"beatStart":1,"beatEnd":2},
         {"name":"Fresno L","pose":{"landmarks":_fresno()},"beatStart":3,"beatEnd":4},
         {"name":"Fresno R","pose":{"landmarks":_fresno()},"beatStart":5,"beatEnd":6},
@@ -928,11 +933,11 @@ S = [
     ]},
     {"t":"Тренировочный баттл","xp":50,"steps":[
       {"type":"info","title":"Тренировочный баттл","markdown":"## 60 секунд фристайла!\n\n### Чек-лист:\n- [ ] Чистый вход\n- [ ] Минимум 5 разных техник\n- [ ] Смена levels\n- [ ] Музыкальность\n- [ ] Мощный финиш\n\nПокажи всё, что умеешь!"},
-      {"type":"battle-sim","title":"Тренировочный баттл — 60 сек","music":MUSIC,"duration":60,"bpm":110},
+      {"type":"battle-sim","title":"Тренировочный баттл — 60 сек","music":M4,"duration":60,"bpm":110},
     ]},
     {"t":"Финальный баттл","xp":50,"steps":[
       {"type":"info","title":"Финальный экзамен","markdown":"## Финальный баттл — 90 секунд!\n\nЭто ваш выпускной экзамен.\n\n### Критерии оценки:\n- **Техника** — чистота хитов, изоляций, волн\n- **Музыкальность** — попадание в бит\n- **Разнообразие** — использование всех техник\n- **Performance** — подача, энергия, характер\n- **Оригинальность** — свой стиль, неожиданные моменты\n\n### 90 секунд. Всё или ничего. Удачи!"},
-      {"type":"battle-sim","title":"ФИНАЛЬНЫЙ БАТТЛ — 90 сек","music":MUSIC,"duration":90,"bpm":112},
+      {"type":"battle-sim","title":"ФИНАЛЬНЫЙ БАТТЛ — 90 сек","music":M5,"duration":90,"bpm":112},
     ]},
   ]},
 
@@ -940,11 +945,11 @@ S = [
   {"title":"Бонус: Баттл-арена","pos":5,"lessons":[
     {"t":"1 раунд баттл","xp":50,"steps":[
       {"type":"info","title":"Баттл-арена: 1 раунд","markdown":"## Баттл-арена\n\nДобро пожаловать в баттл-арену! Здесь нет обучения — только практика.\n\n**1 раунд — 60 секунд.**\n\nПравила:\n- Любые техники\n- Максимум стиля\n- Попадай в бит\n- Покажи характер"},
-      {"type":"battle-sim","title":"Баттл-арена: 1 раунд","music":MUSIC,"duration":60,"bpm":110},
+      {"type":"battle-sim","title":"Баттл-арена: 1 раунд","music":M4,"duration":60,"bpm":110},
     ]},
     {"t":"3 раунда подряд","xp":50,"steps":[
       {"type":"info","title":"3 раунда подряд!","markdown":"## Ультра-баттл: 3 раунда\n\n**90 секунд непрерывного танца!**\n\nЭто самое сложное испытание курса.\n\n### Стратегия:\n- **0-30 сек**: Разогрев, groove, базовые хиты\n- **30-60 сек**: Основная часть, все техники\n- **60-90 сек**: Финал, максимум энергии, шоу\n\nПоехали!"},
-      {"type":"battle-sim","title":"УЛЬТРА-БАТТЛ — 90 сек","music":MUSIC,"duration":90,"bpm":115},
+      {"type":"battle-sim","title":"УЛЬТРА-БАТТЛ — 90 сек","music":M5,"duration":90,"bpm":115},
     ]},
   ]},
 ]
