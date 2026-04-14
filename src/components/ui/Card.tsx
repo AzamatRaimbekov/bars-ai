@@ -2,12 +2,13 @@ import { cn } from "@/lib/cn";
 import { motion } from "framer-motion";
 import type { HTMLAttributes, ReactNode } from "react";
 
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   hover?: boolean;
+  glow?: string;
 }
 
-export function Card({ children, className, hover = false, ...props }: CardProps) {
+export function Card({ children, className, hover = false, glow, ...props }: CardProps) {
   return (
     <motion.div
       whileHover={hover ? { y: -2, scale: 1.01 } : undefined}

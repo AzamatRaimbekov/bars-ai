@@ -14,7 +14,7 @@ interface ResolvedLesson {
   title: string
   content_markdown: string
   xp_reward: number
-  steps: LessonStep[] | null
+  steps?: LessonStep[] | null
 }
 
 type PlayerMode =
