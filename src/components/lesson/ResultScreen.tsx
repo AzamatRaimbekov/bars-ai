@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Star, ArrowRight, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { calculateStars, calculateXP } from "./autoMix";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface ResultScreenProps {
   errors: number;
@@ -12,6 +13,7 @@ interface ResultScreenProps {
 export function ResultScreen({ errors, onBackToMap, onRetry }: ResultScreenProps) {
   const stars = calculateStars(errors);
   const xp = calculateXP(stars);
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -19,6 +21,14 @@ export function ResultScreen({ errors, onBackToMap, onRetry }: ResultScreenProps
       animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center"
     >
+      <motion.img
+        src={stars === 3 ? "/images/mascot-study.png" : stars >= 2 ? "/images/mascot-reading.png" : "/images/mascot-sad.png"}
+        alt="Result"
+        className="w-44 h-44 object-contain drop-shadow-2xl"
+        initial={{ scale: 0, rotate: -15 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 12 }}
+      />
       <div className="flex items-end gap-3">
         {[1, 2, 3].map((i) => (
           <motion.div
@@ -40,10 +50,10 @@ export function ResultScreen({ errors, onBackToMap, onRetry }: ResultScreenProps
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }}>
         <h2 className="text-2xl font-bold mb-1">
-          {stars === 3 ? "Perfect!" : stars === 2 ? "Great Job!" : "Lesson Complete!"}
+          {stars === 3 ? t("lesson.perfect") : stars === 2 ? t("lesson.greatJob") : t("lesson.complete")}
         </h2>
         <p className="text-text-secondary text-sm">
-          {errors === 0 ? "No mistakes — flawless!" : `${errors} mistake${errors > 1 ? "s" : ""}`}
+          {errors === 0 ? t("lesson.noMistakes") : t("lesson.mistakes", { count: String(errors) })}
         </p>
       </motion.div>
 
@@ -57,8 +67,8 @@ export function ResultScreen({ errors, onBackToMap, onRetry }: ResultScreenProps
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} className="flex gap-3 mt-4">
-        <Button variant="ghost" onClick={onRetry}><RotateCcw size={16} /> Retry</Button>
-        <Button onClick={onBackToMap}>Back to Map <ArrowRight size={16} /></Button>
+        <Button variant="ghost" onClick={onRetry}><RotateCcw size={16} /> {t("lesson.retry")}</Button>
+        <Button onClick={onBackToMap}>{t("lesson.backToMap")} <ArrowRight size={16} /></Button>
       </motion.div>
     </motion.div>
   );

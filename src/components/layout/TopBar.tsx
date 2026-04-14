@@ -1,26 +1,55 @@
 import { useUserStore } from "@/store/userStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import { XPBar } from "@/components/gamification/XPBar";
 import { StreakCounter } from "@/components/gamification/StreakCounter";
+import { Flame } from "lucide-react";
 
 export function TopBar() {
   const profile = useUserStore((s) => s.profile);
+  const { t } = useTranslation();
   if (!profile) return null;
 
   const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    hour < 12 ? t("topbar.morning") : hour < 18 ? t("topbar.afternoon") : t("topbar.evening");
 
   return (
-    <header className="h-16 border-b border-border bg-surface/50 backdrop-blur-xl flex items-center justify-between px-6">
-      <div>
-        <h2 className="text-sm font-medium">
-          {greeting}, <span className="text-primary">{profile.name}</span>
-        </h2>
+    <header className="h-14 lg:h-16 border-b border-white/[0.06] bg-[#0A0A0A]/80 backdrop-blur-xl flex items-center justify-between px-4 lg:px-6">
+      {/* Mobile: logo wordmark + greeting */}
+      <div className="flex items-center gap-2.5 lg:hidden">
+        <div>
+          <span className="text-[13px] font-bold leading-none text-white">PathMind</span>
+          <p className="text-[10px] text-white/40 leading-tight mt-0.5">
+            {greeting}, {profile.name}
+          </p>
+        </div>
       </div>
 
-      <div className="flex items-center gap-6">
-        <XPBar />
-        <StreakCounter />
+      {/* Desktop: greeting */}
+      <h2 className="text-sm font-medium text-white/40 hidden lg:block">
+        {greeting},{" "}
+        <span className="text-white font-semibold">{profile.name}</span>
+      </h2>
+
+      <div className="flex items-center gap-3 lg:gap-6">
+        {/* Mobile: compact XP + streak pills */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <span className="text-[11px] font-bold text-[#FB923C] bg-white/[0.04] px-2.5 py-1 rounded-full">
+            {profile.xp} XP
+          </span>
+          <div className="flex items-center gap-1 bg-white/[0.04] px-2.5 py-1 rounded-full">
+            <Flame size={12} className="text-orange-400" fill="currentColor" />
+            <span className="text-[11px] font-bold text-white">{profile.streak}</span>
+          </div>
+        </div>
+
+        {/* Desktop: full XP bar + streak */}
+        <div className="hidden lg:block">
+          <XPBar />
+        </div>
+        <div className="hidden lg:block">
+          <StreakCounter />
+        </div>
       </div>
     </header>
   );

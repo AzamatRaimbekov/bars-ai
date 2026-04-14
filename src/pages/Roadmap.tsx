@@ -10,6 +10,8 @@ import { englishRoadmap } from "@/data/roadmaps/english";
 import { callcenterRoadmap } from "@/data/roadmaps/callcenter";
 import { cibRoadmap } from "@/data/roadmaps/cib";
 import type { Direction, RoadmapNodeData, NodeStatus } from "@/types";
+// NOTE: @xyflow/react is no longer used on this page — RoadmapCanvas is now a
+// pure CSS/SVG winding path implementation.
 
 const roadmapsByDirection: Record<Direction, RoadmapNodeData[]> = {
   frontend: frontendRoadmap,
@@ -38,22 +40,21 @@ export default function Roadmap() {
 
   return (
     <PageWrapper>
-      <div className="relative">
-        <RoadmapCanvas
-          roadmapData={roadmap}
-          completedNodes={profile.completedNodes}
-          color={dirConfig.color}
-          onNodeClick={setSelectedNodeId}
-        />
-        <NodePanel
-          node={selectedNode}
-          status={selectedNode ? getStatus(selectedNode.id) : "locked"}
-          completedLessons={profile.completedLessons}
-          onClose={() => setSelectedNodeId(null)}
-          onStartLesson={(id) => navigate(`/lesson/${id}`)}
-          onStartAI={() => navigate("/mentor")}
-        />
-      </div>
+      {/* Canvas fills the padded content area; NodePanel is fixed-position */}
+      <RoadmapCanvas
+        roadmapData={roadmap}
+        completedNodes={profile.completedNodes}
+        color={dirConfig.color}
+        onNodeClick={setSelectedNodeId}
+      />
+      <NodePanel
+        node={selectedNode}
+        status={selectedNode ? getStatus(selectedNode.id) : "locked"}
+        completedLessons={profile.completedLessons}
+        onClose={() => setSelectedNodeId(null)}
+        onStartLesson={(id) => navigate(`/lesson/${id}`)}
+        onStartAI={() => navigate("/mentor", { state: { topicNode: selectedNode } })}
+      />
     </PageWrapper>
   );
 }

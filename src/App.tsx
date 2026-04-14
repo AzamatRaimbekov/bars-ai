@@ -10,7 +10,15 @@ import Mentor from '@/pages/Mentor'
 import Simulator from '@/pages/Simulator'
 import Lesson from '@/pages/Lesson'
 import Achievements from '@/pages/Achievements'
+import Leaderboard from '@/pages/Leaderboard'
+import Leagues from '@/pages/Leagues'
 import Profile from '@/pages/Profile'
+import Courses from '@/pages/Courses'
+import CourseDetail from '@/pages/CourseDetail'
+import CourseLearn from '@/pages/CourseLearn'
+import CourseRoadmap from '@/pages/CourseRoadmap'
+import Teach from '@/pages/Teach'
+import CourseEditor from '@/pages/CourseEditor'
 import { Loader2 } from 'lucide-react'
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -112,10 +120,60 @@ export default function App() {
           }
         />
         <Route
+          path="/leaderboard"
+          element={
+            <AuthGuard>
+              <Leaderboard />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/leagues"
+          element={
+            <AuthGuard>
+              <Leagues />
+            </AuthGuard>
+          }
+        />
+        <Route
           path="/profile"
           element={
             <AuthGuard>
               <Profile />
+            </AuthGuard>
+          }
+        />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/:id" element={<CourseDetail />} />
+        <Route
+          path="/courses/:id/roadmap"
+          element={
+            <AuthGuard>
+              <CourseRoadmap />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/courses/:id/learn/:lessonId"
+          element={
+            <AuthGuard>
+              <CourseLearn />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/teach"
+          element={
+            <AuthGuard>
+              <Teach />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/teach/:id"
+          element={
+            <AuthGuard>
+              <CourseEditor />
             </AuthGuard>
           }
         />

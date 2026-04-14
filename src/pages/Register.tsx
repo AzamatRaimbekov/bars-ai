@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { UserPlus, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { useAuthStore } from "@/store/authStore";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const register = useAuthStore((s) => s.register);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,48 +24,67 @@ export default function Register() {
       await register({ email, password, name, direction: "frontend" });
       navigate("/");
     } catch (err: any) {
-      setError(err.message || "Registration failed");
+      setError(err.message || t("auth.registerFailed"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Subtle radial glow behind card */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: 600,
+          height: 600,
+          background: "radial-gradient(circle, rgba(249,115,22,0.06), transparent 70%)",
+          transform: "translate(-50%, -50%)",
+          left: "50%",
+          top: "50%",
+        }}
+      />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md relative z-10"
       >
+        {/* Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">
-            <span className="text-primary">Path</span>
-            <span className="text-accent">Mind</span>
-          </h1>
-          <p className="text-text-secondary mt-2">Create your account</p>
+          <motion.h1
+            className="text-3xl font-bold tracking-tight text-white"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            Path<span className="text-[#F97316]">Mind</span>
+          </motion.h1>
+          <p className="text-white/40 mt-2 text-sm">{t("auth.signUpSubtitle")}</p>
         </div>
 
-        <Card>
+        {/* Form card */}
+        <div className="bg-[#0A0A0A] border border-white/6 rounded-2xl p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Name"
-              placeholder="Your name"
+              label={t("auth.name")}
+              placeholder={t("auth.namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
             />
             <Input
-              label="Email"
+              label={t("auth.email")}
               type="email"
-              placeholder="your@email.com"
+              placeholder={t("auth.emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
             <Input
-              label="Password"
+              label={t("auth.password")}
               type="password"
-              placeholder="At least 8 characters"
+              placeholder={t("auth.passwordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -76,19 +95,24 @@ export default function Register() {
               <p className="text-red-400 text-sm">{error}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-sm text-white transition-opacity disabled:opacity-50"
+              style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
+            >
               {loading ? <Loader2 className="animate-spin" size={18} /> : <UserPlus size={18} />}
-              <span className="ml-2">Create Account</span>
-            </Button>
+              {t("auth.createAccount")}
+            </button>
           </form>
 
-          <p className="text-center text-text-secondary text-sm mt-4">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline">
-              Sign In
+          <p className="text-center text-white/40 text-sm mt-5">
+            {t("auth.hasAccount")}{" "}
+            <Link to="/login" className="text-[#FB923C] hover:text-[#F97316] transition-colors">
+              {t("auth.signIn")}
             </Link>
           </p>
-        </Card>
+        </div>
       </motion.div>
     </div>
   );

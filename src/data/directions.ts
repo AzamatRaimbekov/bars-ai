@@ -16,7 +16,7 @@ export const DIRECTIONS: Record<Direction, DirectionConfig> = {
     name: "Frontend Development",
     description: "Master HTML, CSS, JavaScript, React and modern web development",
     icon: "Code2",
-    color: "#6C63FF",
+    color: "#F97316",
     mentor: {
       name: "Alex",
       avatar: "👨‍💻",
@@ -28,7 +28,7 @@ export const DIRECTIONS: Record<Direction, DirectionConfig> = {
     name: "English Language",
     description: "Improve your business and conversational English skills",
     icon: "Languages",
-    color: "#00FF94",
+    color: "#4ADE80",
     mentor: {
       name: "Emma",
       avatar: "👩‍🏫",
@@ -40,7 +40,7 @@ export const DIRECTIONS: Record<Direction, DirectionConfig> = {
     name: "Call Center Training",
     description: "Learn customer service, conflict resolution, and communication",
     icon: "Headphones",
-    color: "#FFB800",
+    color: "#FBBF24",
     mentor: {
       name: "Jordan",
       avatar: "🎧",
@@ -52,7 +52,7 @@ export const DIRECTIONS: Record<Direction, DirectionConfig> = {
     name: "CIB Banking",
     description: "Corporate & Investment Banking concepts, operations, and interview prep",
     icon: "Building2",
-    color: "#FFD700",
+    color: "#3B82F6",
     mentor: {
       name: "Morgan",
       avatar: "🏦",

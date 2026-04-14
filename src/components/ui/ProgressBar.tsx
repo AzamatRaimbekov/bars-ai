@@ -12,7 +12,7 @@ interface ProgressBarProps {
 export function ProgressBar({
   value,
   max = 100,
-  color = "#6C63FF",
+  color = "#F97316",
   className,
   showLabel = false,
 }: ProgressBarProps) {
@@ -26,7 +26,7 @@ export function ProgressBar({
           <span>{max}</span>
         </div>
       )}
-      <div className="h-2 rounded-full bg-border overflow-hidden">
+      <div className="h-1.5 rounded-full bg-border overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percent}%` }}
@@ -34,7 +34,6 @@ export function ProgressBar({
           className="h-full rounded-full"
           style={{
             background: `linear-gradient(90deg, ${color}, ${color}99)`,
-            boxShadow: `0 0 12px ${color}40`,
           }}
         />
       </div>

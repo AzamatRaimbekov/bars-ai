@@ -2,8 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Code2, Languages, Headphones, Building2, ArrowRight, Sparkles, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
 import { DIRECTIONS } from '@/data/directions'
 import { useAuthStore } from '@/store/authStore'
 import { assessLevel } from '@/services/claudeApi'
@@ -118,8 +116,22 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Ambient radial glow */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: 700,
+          height: 700,
+          background: "radial-gradient(circle, rgba(249,115,22,0.05), transparent 70%)",
+          transform: "translate(-50%, -50%)",
+          left: "50%",
+          top: "50%",
+        }}
+      />
+
+      <div className="w-full max-w-2xl relative z-10">
+        {/* Progress dots */}
         <div className="flex justify-center gap-2 mb-8">
           {[0, 1, 2].map((i) => (
             <motion.div
@@ -127,7 +139,7 @@ export default function Onboarding() {
               className="h-2 rounded-full"
               animate={{
                 width: step === i ? 32 : 8,
-                backgroundColor: step >= i ? '#6C63FF' : '#1E1E2E',
+                backgroundColor: step >= i ? '#F97316' : 'rgba(255,255,255,0.10)',
               }}
               transition={{ duration: 0.3 }}
             />
@@ -144,38 +156,46 @@ export default function Onboarding() {
               className="space-y-6"
             >
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold mb-2">
-                  {t('onboarding.welcome')} <span className="text-primary">{t('app.name.path')}</span>
-                  <span className="text-accent">{t('app.name.mind')}</span>
+                {/* Clean brand mark — no mascot */}
+                <motion.div
+                  className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center"
+                  style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+                >
+                  <Sparkles size={28} className="text-white" />
+                </motion.div>
+                <h1 className="text-3xl font-bold mb-2 tracking-tight text-white">
+                  {t('onboarding.welcome')} <span className="text-[#F97316]">{t('app.name.path')}</span>
+                  <span className="text-white">{t('app.name.mind')}</span>
                 </h1>
-                <p className="text-text-secondary">{t('onboarding.choosePath')}</p>
+                <p className="text-white/40 text-sm">{t('onboarding.choosePath')}</p>
                 {user?.name && (
-                  <p className="text-sm text-primary mt-2">{user.name}</p>
+                  <p className="text-sm text-[#FB923C] mt-2">{user.name}</p>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                 {directionList.map((dir) => {
                   const Icon = iconMap[dir.icon as keyof typeof iconMap]
                   return (
-                    <Card
+                    <motion.div
                       key={dir.id}
-                      hover
-                      glow={dir.color}
+                      whileHover={{ y: -2, scale: 1.01 }}
                       onClick={() => handleDirectionSelect(dir.id)}
-                      className="flex flex-col items-center gap-3 text-center cursor-pointer"
+                      className="flex flex-col items-center gap-3 text-center cursor-pointer p-6 rounded-2xl bg-[#0A0A0A] border border-white/6 transition-colors hover:border-[#F97316]/30"
                     >
                       <div
                         className="w-12 h-12 rounded-xl flex items-center justify-center"
-                        style={{ backgroundColor: `${dir.color}15` }}
+                        style={{ backgroundColor: "#F9731615" }}
                       >
-                        <Icon size={24} style={{ color: dir.color }} />
+                        <Icon size={24} className="text-[#FB923C]" />
                       </div>
-                      <h3 className="font-semibold text-sm">{t(`direction.${dir.id}.name` as any)}</h3>
-                      <p className="text-xs text-text-secondary leading-relaxed">
+                      <h3 className="font-semibold text-sm text-white">{t(`direction.${dir.id}.name` as any)}</h3>
+                      <p className="text-xs text-white/40 leading-relaxed">
                         {t(`direction.${dir.id}.desc` as any)}
                       </p>
-                    </Card>
+                    </motion.div>
                   )
                 })}
               </div>
@@ -191,13 +211,13 @@ export default function Onboarding() {
               className="space-y-4"
             >
               <div className="text-center mb-4">
-                <h2 className="text-xl font-bold">{t('onboarding.assessment')}</h2>
-                <p className="text-text-secondary text-sm">
+                <h2 className="text-xl font-bold text-white">{t('onboarding.assessment')}</h2>
+                <p className="text-white/40 text-sm">
                   {t('onboarding.question')} {Math.min(currentQuestion + 1, 5)} / 5
                 </p>
               </div>
 
-              <Card className="h-80 overflow-hidden p-0">
+              <div className="h-80 overflow-hidden rounded-2xl bg-[#0A0A0A] border border-white/6">
                 <div ref={chatScrollRef} className="h-full overflow-y-auto space-y-3 p-6">
                   {chatMessages.map((msg, i) => (
                     <motion.div
@@ -209,9 +229,14 @@ export default function Onboarding() {
                       <div
                         className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
                           msg.role === 'user'
-                            ? 'bg-primary text-white rounded-br-md'
-                            : 'bg-border/50 text-text rounded-bl-md'
+                            ? 'text-white rounded-br-md'
+                            : 'bg-white/6 text-white/80 rounded-bl-md'
                         }`}
+                        style={
+                          msg.role === 'user'
+                            ? { background: "linear-gradient(135deg, #F97316, #FB923C)" }
+                            : undefined
+                        }
                       >
                         {msg.text}
                       </div>
@@ -219,26 +244,31 @@ export default function Onboarding() {
                   ))}
                   {isLoading && (
                     <div className="flex justify-start">
-                      <div className="bg-border/50 px-4 py-2.5 rounded-2xl rounded-bl-md">
-                        <Loader2 className="animate-spin" size={16} />
+                      <div className="bg-white/6 px-4 py-2.5 rounded-2xl rounded-bl-md">
+                        <Loader2 className="animate-spin text-[#FB923C]" size={16} />
                       </div>
                     </div>
                   )}
                 </div>
-              </Card>
+              </div>
 
               {!isLoading && currentQuestion < 5 && (
                 <div className="flex gap-2">
                   <input
-                    className="flex-1 bg-bg border border-border rounded-xl px-4 py-2.5 text-sm text-text outline-none focus:border-primary/50 placeholder:text-text-secondary/50"
+                    className="flex-1 bg-[#0A0A0A] border border-white/6 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#F97316]/50 placeholder:text-white/30"
                     placeholder={t('onboarding.answerPlaceholder')}
                     value={currentAnswer}
                     onChange={(e) => setCurrentAnswer(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleAnswer()}
                   />
-                  <Button onClick={handleAnswer} disabled={!currentAnswer.trim()}>
+                  <button
+                    onClick={handleAnswer}
+                    disabled={!currentAnswer.trim()}
+                    className="px-4 py-2.5 rounded-xl text-white font-semibold text-sm disabled:opacity-40 transition-opacity"
+                    style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
+                  >
                     <ArrowRight size={18} />
-                  </Button>
+                  </button>
                 </div>
               )}
             </motion.div>
@@ -252,32 +282,43 @@ export default function Onboarding() {
               exit={{ opacity: 0, x: -50 }}
               className="text-center space-y-6"
             >
+              {/* Clean result indicator — no mascot */}
               <motion.div
+                className="w-20 h-20 rounded-2xl mx-auto flex items-center justify-center"
+                style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
                 animate={{ scale: [0.8, 1.1, 1] }}
                 transition={{ duration: 0.6 }}
               >
-                <Sparkles size={48} className="mx-auto text-primary" />
+                <Sparkles size={32} className="text-white" />
               </motion.div>
 
-              <h2 className="text-2xl font-bold">{t('onboarding.ready')}</h2>
+              <h2 className="text-2xl font-bold text-white tracking-tight">{t('onboarding.ready')}</h2>
 
-              <Card glow="#6C63FF" className="text-left space-y-3">
-                <p className="text-sm text-text-secondary">{t('onboarding.result')}</p>
-                <p className="text-lg font-semibold capitalize text-primary">
+              <div
+                className="text-left space-y-3 p-6 rounded-2xl bg-[#0A0A0A] border border-white/6"
+                style={{ boxShadow: "0 0 40px rgba(249,115,22,0.08)" }}
+              >
+                <p className="text-sm text-white/40">{t('onboarding.result')}</p>
+                <p className="text-lg font-semibold capitalize text-[#FB923C]">
                   {t(`onboarding.level.${assessmentResult}` as any)}
                 </p>
-                <p className="text-sm text-text-secondary">
+                <p className="text-sm text-white/40">
                   {t('onboarding.direction')} {selectedDirection && t(`direction.${selectedDirection}.name` as any)}
                 </p>
-                <p className="text-sm text-text-secondary">
+                <p className="text-sm text-white/40">
                   {t('onboarding.planDescription')}
                 </p>
-              </Card>
+              </div>
 
-              <Button size="lg" onClick={handleFinish} disabled={isSaving}>
+              <button
+                onClick={handleFinish}
+                disabled={isSaving}
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white text-sm disabled:opacity-50 transition-opacity"
+                style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
+              >
                 {isSaving ? <Loader2 className="animate-spin" size={18} /> : null}
                 {t('onboarding.startLearning')} <ArrowRight size={18} />
-              </Button>
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

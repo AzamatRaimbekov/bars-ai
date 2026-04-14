@@ -5,26 +5,35 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:back": "cd backend && source venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port 3847 --reload",
+    "dev:all": "concurrently -n front,back -c cyan,yellow \"npm run dev\" \"npm run dev:back\"",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-html": "^6.4.11",
+    "@codemirror/lang-javascript": "^6.2.5",
     "@tailwindcss/vite": "^4.2.2",
+    "@uiw/react-codemirror": "^4.25.9",
     "@xyflow/react": "^12.10.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",
+    "prism-react-renderer": "^2.4.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.2",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
+    "vite-plugin-pwa": "^1.2.0",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^9.2.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.3"
   }

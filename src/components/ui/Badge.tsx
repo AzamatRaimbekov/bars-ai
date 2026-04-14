@@ -5,7 +5,7 @@ const rarityStyles: Record<BadgeRarity, string> = {
   Common: "border-text-secondary/30 text-text-secondary",
   Rare: "border-primary/50 text-primary",
   Epic: "border-accent/50 text-accent",
-  Legendary: "border-warning/50 text-warning",
+  Legendary: "border-primary/50 text-primary",
 };
 
 interface BadgeProps {

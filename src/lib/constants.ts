@@ -23,8 +23,8 @@ export const XP_REWARDS = {
 export const STREAK_MILESTONES = [7, 30, 100] as const;
 
 export const DIRECTION_COLORS = {
-  frontend: { primary: "#6C63FF", secondary: "#818CF8" },
-  english: { primary: "#00FF94", secondary: "#34D399" },
-  callcenter: { primary: "#FFB800", secondary: "#FBBF24" },
-  cib: { primary: "#FFD700", secondary: "#F59E0B" },
+  frontend:   { primary: "#F97316", secondary: "#FB923C" },
+  english:    { primary: "#4ADE80", secondary: "#34D399" },
+  callcenter: { primary: "#FBBF24", secondary: "#F59E0B" },
+  cib:        { primary: "#3B82F6", secondary: "#60A5FA" },
 } as const;

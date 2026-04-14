@@ -14,7 +14,7 @@ export function ProgressRing({
   max = 100,
   size = 120,
   strokeWidth = 8,
-  color = "#6C63FF",
+  color = "#F97316",
   children,
 }: ProgressRingProps) {
   const radius = (size - strokeWidth) / 2;
@@ -30,7 +30,7 @@ export function ProgressRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#1E1E2E"
+          stroke="rgba(255,255,255,0.06)"
           strokeWidth={strokeWidth}
         />
         <motion.circle

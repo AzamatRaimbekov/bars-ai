@@ -4,17 +4,19 @@ import { Code2, Users, Mic } from "lucide-react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Card } from "@/components/ui/Card";
 import { InterviewRoom } from "@/components/simulator/InterviewRoom";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type SimMode = "technical" | "situation" | "voice";
 
-const modes = [
-  { id: "technical" as SimMode, name: "Technical Interview", description: "Answer technical questions with AI evaluation", icon: Code2, color: "#6C63FF" },
-  { id: "situation" as SimMode, name: "Situation Simulator", description: "Practice real-world customer scenarios", icon: Users, color: "#FFB800" },
-  { id: "voice" as SimMode, name: "Voice Interview", description: "Fully voice-based interview simulation", icon: Mic, color: "#00D9FF" },
-];
-
 export default function Simulator() {
   const [selectedMode, setSelectedMode] = useState<SimMode | null>(null);
+  const { t } = useTranslation();
+
+  const modes = [
+    { id: "technical" as SimMode, name: t("sim.technical"), description: t("sim.technicalDesc"), icon: Code2, color: "#F97316" },
+    { id: "situation" as SimMode, name: t("sim.situation"), description: t("sim.situationDesc"), icon: Users, color: "#FBBF24" },
+    { id: "voice" as SimMode, name: t("sim.voice"), description: t("sim.voiceDesc"), icon: Mic, color: "#FB923C" },
+  ];
 
   if (selectedMode) {
     return (
@@ -28,11 +30,18 @@ export default function Simulator() {
     <PageWrapper>
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2">Interview Simulator</h1>
-          <p className="text-text-secondary text-sm">Choose a mode to practice</p>
+          <motion.img
+            src="/images/mascot-happy.png"
+            alt="Simulator mascot"
+            className="w-28 h-28 lg:w-40 lg:h-40 object-contain mx-auto mb-4 drop-shadow-2xl"
+            animate={{ y: [0, -8, 0] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+          />
+          <h1 className="text-2xl font-bold mb-2">{t("sim.title")}</h1>
+          <p className="text-text-secondary text-sm">{t("sim.chooseMode")}</p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {modes.map((mode) => (
             <motion.div key={mode.id} whileHover={{ y: -4 }}>
               <Card

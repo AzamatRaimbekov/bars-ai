@@ -18,12 +18,12 @@ export function Modal({ open, onClose, children, title }: ModalProps) {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+          <div className="absolute inset-0 bg-black/80" onClick={onClose} />
           <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="relative z-10 w-full max-w-lg rounded-2xl border border-border bg-surface p-6"
+            className="relative z-10 w-full max-w-lg rounded-2xl border border-border bg-[#111111] p-6"
           >
             <div className="flex items-center justify-between mb-4">
               {title && <h2 className="text-lg font-semibold">{title}</h2>}

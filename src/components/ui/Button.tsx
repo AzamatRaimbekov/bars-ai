@@ -22,7 +22,7 @@ export function Button({
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
         {
-          "bg-primary text-white shadow-lg shadow-primary/25 hover:shadow-primary/40":
+          "bg-primary text-white":
             variant === "primary",
           "bg-surface border border-border text-text hover:border-primary/50":
             variant === "secondary",

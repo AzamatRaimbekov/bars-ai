@@ -1,9 +1,11 @@
 import { useUserStore } from "@/store/userStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import { LEVELS_ORDERED, LEVEL_THRESHOLDS } from "@/lib/constants";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 
 export function XPBar() {
   const profile = useUserStore((s) => s.profile);
+  const { t } = useTranslation();
   if (!profile) return null;
 
   const currentIdx = LEVELS_ORDERED.indexOf(profile.level);
@@ -15,11 +17,11 @@ export function XPBar() {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs font-semibold text-primary">{profile.level}</span>
+      <span className="text-xs font-semibold text-[#FB923C]">{t(`level.${profile.level}` as any)}</span>
       <div className="w-32">
-        <ProgressBar value={progress} max={needed || 1} color="#6C63FF" />
+        <ProgressBar value={progress} max={needed || 1} color="#F97316" />
       </div>
-      <span className="text-xs text-text-secondary">{profile.xp} XP</span>
+      <span className="text-xs text-white/40">{profile.xp} XP</span>
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default function Lesson() {
   }
 
   const nodeId = id ? id.split("-").slice(0, 2).join("-") : "";
-  const allLessonIds = Object.keys(LESSONS_V2).filter((k) => k.startsWith(nodeId));
+  const allLessonIds = Object.keys(LESSONS_V2).filter((k) => k.startsWith(nodeId + "-"));
 
   return (
     <LessonPlayer

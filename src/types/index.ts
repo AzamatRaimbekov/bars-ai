@@ -22,9 +22,9 @@ export interface UserProfile {
 
 export interface RoadmapNodeData {
   id: string;
-  title: string;
-  description: string;
-  section: string;
+  title: { en: string; ru: string };
+  description: { en: string; ru: string };
+  section: { en: string; ru: string };
   sectionIndex: number;
   nodeIndex: number;
   estimatedMinutes: number;
@@ -33,14 +33,14 @@ export interface RoadmapNodeData {
 
 export interface LessonMeta {
   id: string;
-  title: string;
+  title: { en: string; ru: string };
   estimatedMinutes: number;
 }
 
 export interface Badge {
   id: string;
-  name: string;
-  description: string;
+  name: { en: string; ru: string };
+  description: { en: string; ru: string };
   icon: string;
   rarity: BadgeRarity;
   direction?: Direction;

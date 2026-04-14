@@ -9,6 +9,7 @@ import { WaveformVisualizer } from "@/components/chat/WaveformVisualizer";
 import { useVoice } from "@/hooks/useVoice";
 import { sendMessage, scoreAnswer } from "@/services/claudeApi";
 import { useUserStore } from "@/store/userStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import { DIRECTIONS } from "@/data/directions";
 import { XP_REWARDS } from "@/lib/constants";
 import type { ChatMessage } from "@/types/chat";
@@ -27,6 +28,7 @@ interface QA {
 }
 
 export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
+  const { t, lang } = useTranslation();
   const profile = useUserStore((s) => s.profile);
   const addXP = useUserStore((s) => s.addXP);
   const direction = profile?.direction ?? "frontend";
@@ -65,7 +67,8 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
         ? "situational/role-play"
         : "voice-based interview";
     const pastQuestions = qas.map((q) => q.question).join("\n");
-    const prompt = `You are conducting a ${modeLabel} for a ${dirConfig.name} position. Ask question ${questionIndex + 1} of ${totalQuestions}. ${pastQuestions ? `Previous questions (don't repeat):\n${pastQuestions}\n\n` : ""}Difficulty: ${questionIndex < 2 ? "easy" : questionIndex < 4 ? "medium" : "hard"}. Ask ONLY the question, nothing else.`;
+    const langInstruction = lang === "ru" ? " IMPORTANT: Ask the question in Russian." : "";
+    const prompt = `You are conducting a ${modeLabel} for a ${dirConfig.name} position. Ask question ${questionIndex + 1} of ${totalQuestions}. ${pastQuestions ? `Previous questions (don't repeat):\n${pastQuestions}\n\n` : ""}Difficulty: ${questionIndex < 2 ? "easy" : questionIndex < 4 ? "medium" : "hard"}. Ask ONLY the question, nothing else.${langInstruction}`;
 
     const messages: ChatMessage[] = [
       {
@@ -84,7 +87,7 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
         await voice.speak(question);
       }
     } catch {
-      setCurrentQuestion("Tell me about your experience in this field.");
+      setCurrentQuestion(lang === "ru" ? "Расскажите о вашем опыте в этой области." : "Tell me about your experience in this field.");
     }
     setIsGenerating(false);
   }, [questionIndex, qas, direction, mode, voice, isVoiceMode, dirConfig.name]);
@@ -110,7 +113,7 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
     } catch {
       setLastScore({
         score: 5,
-        feedback: "Could not evaluate. Try again.",
+        feedback: t("sim.couldNotEvaluate"),
         modelAnswer: "",
       });
       setShowScore(true);
@@ -158,26 +161,26 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
         >
           <BarChart3 size={48} className="mx-auto text-primary" />
         </motion.div>
-        <h2 className="text-2xl font-bold">Interview Complete!</h2>
+        <h2 className="text-2xl font-bold">{t("sim.complete")}</h2>
         <p className="text-4xl font-bold text-primary">{avgScore}/10</p>
-        <p className="text-text-secondary text-sm">Average Score</p>
+        <p className="text-text-secondary text-sm">{t("sim.avgScore")}</p>
         <div className="space-y-3 text-left">
           {qas.map((qa, i) => (
-            <div key={i} className="p-3 rounded-xl bg-bg border border-border">
+            <div key={i} className="p-3 rounded-xl bg-[#0A0A0A] border border-white/6">
               <p className="text-xs text-text-secondary mb-1">
                 Q{i + 1}: {qa.question}
               </p>
               <p className="text-sm">
-                Score:{" "}
+                {t("sim.scoreLabel")}:{" "}
                 <span className="font-bold text-primary">{qa.score}/10</span>
               </p>
             </div>
           ))}
         </div>
         <p className="text-sm text-success">
-          +{XP_REWARDS.interviewSimulation} XP earned!
+          +{XP_REWARDS.interviewSimulation} {t("sim.xpEarned")}
         </p>
-        <Button onClick={onEnd}>Back to Menu</Button>
+        <Button onClick={onEnd}>{t("sim.backToMenu")}</Button>
       </Card>
     );
   }
@@ -191,21 +194,21 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
             {dirConfig.mentor.avatar}
           </div>
           <div>
-            <p className="text-sm font-semibold">Interviewer</p>
+            <p className="text-sm font-semibold">{t("sim.interviewer")}</p>
             <p className="text-xs text-text-secondary">
               {mode === "technical"
-                ? "Technical"
+                ? t("sim.technical")
                 : mode === "situation"
-                ? "Situational"
-                : "Voice"}{" "}
-              Interview
+                ? t("sim.situational")
+                : t("sim.voice")}{" "}
+              {t("sim.interview")}
             </p>
           </div>
-          {voice.isSpeaking && <WaveformVisualizer active color="#00D9FF" />}
+          {voice.isSpeaking && <WaveformVisualizer active color="#F97316" />}
         </div>
         <div className="flex items-center gap-2 text-sm text-text-secondary">
           <Timer size={14} />
-          Question {questionIndex + 1}/{totalQuestions}
+          {t("sim.questionProgress", { current: String(questionIndex + 1), total: String(totalQuestions) })}
         </div>
       </div>
 
@@ -213,14 +216,14 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
       {!currentQuestion && !isGenerating && (
         <Card className="text-center py-12">
           <p className="text-text-secondary mb-4">
-            Ready to begin your interview?
+            {t("sim.readyToBegin")}
           </p>
-          <Button onClick={generateQuestion}>Start Interview</Button>
+          <Button onClick={generateQuestion}>{t("sim.startInterview")}</Button>
         </Card>
       )}
 
       {currentQuestion && (
-        <Card glow="#6C63FF" className="space-y-4">
+        <Card glow="#F97316" className="space-y-4">
           <p className="text-sm leading-relaxed">{currentQuestion}</p>
         </Card>
       )}
@@ -246,7 +249,7 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
               </button>
               {voice.isListening && (
                 <p className="text-sm text-accent italic">
-                  {voice.transcript || "Listening..."}
+                  {voice.transcript || t("voice.listening")}
                 </p>
               )}
             </div>
@@ -255,11 +258,11 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             rows={4}
-            placeholder="Type your answer..."
-            className="w-full bg-bg border border-border rounded-xl px-4 py-3 text-sm text-text outline-none focus:border-primary/50 resize-none placeholder:text-text-secondary/50"
+            placeholder={t("sim.typeAnswer")}
+            className="w-full bg-[#0A0A0A] border border-white/6 rounded-xl px-4 py-3 text-sm text-text outline-none focus:border-[#F97316]/40 resize-none placeholder:text-text-secondary/50"
           />
           <Button onClick={submitAnswer} disabled={!answer.trim() || isGenerating}>
-            {isGenerating ? "Evaluating..." : "Submit Answer"}
+            {isGenerating ? t("sim.evaluating") : t("sim.submitAnswer")}
           </Button>
         </div>
       )}
@@ -274,8 +277,8 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
           />
           <Button onClick={handleNext}>
             {questionIndex >= totalQuestions - 1
-              ? "Finish Interview"
-              : "Next Question"}
+              ? t("sim.finishInterview")
+              : t("sim.nextQuestion")}
           </Button>
         </div>
       )}
@@ -284,7 +287,7 @@ export function InterviewRoom({ mode, onEnd }: InterviewRoomProps) {
       {transcript.length > 0 && (
         <Card className="mt-4">
           <p className="text-xs text-text-secondary uppercase tracking-wider mb-3">
-            Transcript
+            {t("sim.transcript")}
           </p>
           <TranscriptPanel entries={transcript} />
         </Card>
