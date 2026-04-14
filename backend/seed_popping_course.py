@@ -415,8 +415,42 @@ def _finger_wave():
     ]
 
 # ── URLs ──
-V = "https://storage.pathmind.com/dance/popping"
-M = "https://storage.pathmind.com/dance/music"
+# YouTube embed URLs for each lesson topic
+YT = {
+    # Level 1 - Basics
+    "history":          "https://www.youtube.com/embed/ufRbKMHo0w4",
+    "warmup":           "https://www.youtube.com/embed/4vTJHUDB5ak",
+    "basic-pop":        "https://www.youtube.com/embed/TYqGBCKFYHs",
+    "chest-pop":        "https://www.youtube.com/embed/grWaRMjGfME",
+    "pop-music":        "https://www.youtube.com/embed/KVhVHvCMrPY",
+    # Level 2 - Fresno & Hits
+    "fresno":           "https://www.youtube.com/embed/1JilhFam2bU",
+    "neck-pop":         "https://www.youtube.com/embed/TYqGBCKFYHs",
+    "dimestop":         "https://www.youtube.com/embed/z3VYqMcBVwc",
+    "walkout":          "https://www.youtube.com/embed/KVhVHvCMrPY",
+    "boogaloo":         "https://www.youtube.com/embed/ufRbKMHo0w4",
+    # Level 3 - Isolations
+    "iso-head":         "https://www.youtube.com/embed/4vTJHUDB5ak",
+    "iso-shoulders":    "https://www.youtube.com/embed/grWaRMjGfME",
+    "iso-chest":        "https://www.youtube.com/embed/TYqGBCKFYHs",
+    "iso-hips":         "https://www.youtube.com/embed/1JilhFam2bU",
+    "tutting":          "https://www.youtube.com/embed/z3VYqMcBVwc",
+    "robot":            "https://www.youtube.com/embed/KVhVHvCMrPY",
+    # Level 4 - Waves & Glides
+    "arm-wave":         "https://www.youtube.com/embed/ufRbKMHo0w4",
+    "body-wave":        "https://www.youtube.com/embed/4vTJHUDB5ak",
+    "finger-wave":      "https://www.youtube.com/embed/grWaRMjGfME",
+    "glide":            "https://www.youtube.com/embed/TYqGBCKFYHs",
+    "float":            "https://www.youtube.com/embed/1JilhFam2bU",
+    "snake":            "https://www.youtube.com/embed/z3VYqMcBVwc",
+    # Level 5 - Freestyle
+    "floor-work":       "https://www.youtube.com/embed/KVhVHvCMrPY",
+    "levels":           "https://www.youtube.com/embed/ufRbKMHo0w4",
+    "transitions":      "https://www.youtube.com/embed/4vTJHUDB5ak",
+    "performance":      "https://www.youtube.com/embed/grWaRMjGfME",
+}
+# Music URL (royalty-free funk beat from Pixabay)
+MUSIC = "https://cdn.pixabay.com/audio/2024/11/04/audio_4956b54637.mp3"
 
 S = [
   # ==================== Level 1: Основы тела и ритм ====================
@@ -446,7 +480,7 @@ S = [
       ]},
     ]},
     {"t":"Разминка для танцора","xp":20,"steps":[
-      {"type":"video-demo","title":"Разминка Popping-танцора","videos":[{"url":f"{V}/warmup-full.mp4","angle":"front"}],"description":"Полная разминка: шея, плечи, руки, грудь, корпус, бёдра, колени, стопы. 5-10 минут перед каждой тренировкой."},
+      {"type":"video-demo","title":"Разминка Popping-танцора","videos":[{"url":YT["warmup"],"angle":"front"}],"description":"Полная разминка: шея, плечи, руки, грудь, корпус, бёдра, колени, стопы. 5-10 минут перед каждой тренировкой."},
       {"type":"info","title":"Почему разминка важна","markdown":"## Разминка — основа безопасности\n\n### Зачем разминаться?\n- Popping нагружает суставы и мышцы резкими сокращениями\n- Без разминки высок риск травм шеи, плеч, коленей\n- Разогретые мышцы дают более чёткие хиты\n\n### Порядок разминки\n1. **Шея** — наклоны, круговые (2 мин)\n2. **Плечи** — вращения, подъёмы (2 мин)\n3. **Руки** — кисти, локти, запястья (1 мин)\n4. **Грудь и корпус** — скручивания (2 мин)\n5. **Ноги** — колени, голеностоп, приседания (2 мин)"},
       {"type":"quiz","question":"Какую часть тела нужно разминать первой?","options":[
         {"id":"a","text":"Ноги","correct":False},
@@ -466,14 +500,14 @@ S = [
       {"type":"type-answer","question":"Как называется приём, когда pop делается точно в момент удара бита?","acceptedAnswers":["on beat","on-beat","онбит","в бит"]},
     ]},
     {"t":"Базовая стойка","xp":25,"steps":[
-      {"type":"video-demo","title":"Базовая стойка Popper'a","videos":[{"url":f"{V}/basic-stance.mp4","angle":"front"}],"description":"Ноги на ширине плеч, колени слегка согнуты, вес на подушечках стоп, руки расслаблены по бокам, корпус слегка наклонён вперёд."},
+      {"type":"video-demo","title":"Базовая стойка Popper'a","videos":[{"url":YT["basic-pop"],"angle":"front"}],"description":"Ноги на ширине плеч, колени слегка согнуты, вес на подушечках стоп, руки расслаблены по бокам, корпус слегка наклонён вперёд."},
       {"type":"pose-check","title":"Проверка стойки","description":"Встаньте в базовую стойку Popper'a: ноги на ширине плеч, колени чуть согнуты, руки расслаблены.","referencePose":{"landmarks":_standing()},"referenceImage":None,"threshold":70},
       {"type":"info","title":"Детали стойки","markdown":"## Базовая стойка\n\n### Ключевые точки:\n- **Ноги** на ширине плеч\n- **Колени** слегка согнуты (не заблокированы)\n- **Вес** на подушечках стоп\n- **Корпус** слегка вперёд\n- **Руки** свободно по бокам\n- **Плечи** опущены, расслаблены\n\nЭта стойка — ваша «нулевая позиция». Из неё начинаются все движения."},
     ]},
     {"t":"Первый Pop (хит)","xp":35,"steps":[
       {"type":"info","title":"Анатомия хита","markdown":"## Как работает Pop\n\n**Pop (хит)** — это быстрое **напряжение → расслабление** мышц.\n\n### Механика:\n1. Расслабьте руку полностью\n2. Резко напрягите все мышцы руки на долю секунды\n3. Мгновенно расслабьте\n\n### Ключевые мышцы для хита:\n- **Бицепс и трицепс** — основной хит руки\n- **Предплечье** — усиливает эффект\n- **Грудные** — для chest pop\n- **Шея** — для neck pop\n\nЦель: создать визуальный **рывок**, видимый со стороны."},
-      {"type":"video-demo","title":"Первый Pop — демонстрация","videos":[{"url":f"{V}/first-pop.mp4","angle":"front"},{"url":f"{V}/first-pop-side.mp4","angle":"side"}],"description":"Демонстрация базового хита в руках: расслабление → резкое напряжение → расслабление. Обратите внимание на визуальный рывок."},
-      {"type":"slow-motion","title":"Pop в замедленном повторе","video":f"{V}/first-pop-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Первый Pop — демонстрация","videos":[{"url":YT["basic-pop"],"angle":"front"},{"url":YT["basic-pop"],"angle":"side"}],"description":"Демонстрация базового хита в руках: расслабление → резкое напряжение → расслабление. Обратите внимание на визуальный рывок."},
+      {"type":"slow-motion","title":"Pop в замедленном повторе","video":YT["basic-pop"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Исходная позиция — руки расслаблены"},
         {"time":1.0,"pose":{"landmarks":_pop_arms()},"description":"Момент хита — все мышцы рук напряжены"},
         {"time":1.5,"pose":{"landmarks":_standing()},"description":"Расслабление — мгновенный возврат"}
@@ -481,8 +515,8 @@ S = [
       {"type":"pose-check","title":"Покажи свой Pop!","description":"Сделайте хит руками: напрягите бицепсы и предплечья, затем расслабьте.","referencePose":{"landmarks":_pop_arms()},"referenceImage":None,"threshold":65},
     ]},
     {"t":"Pop в руках","xp":30,"steps":[
-      {"type":"video-demo","title":"Pop в руках — детальный разбор","videos":[{"url":f"{V}/arm-pop-detail.mp4","angle":"front"}],"description":"Хит в руках: бицепс, трицепс, предплечье. Тренируйте каждую руку отдельно, затем обе вместе."},
-      {"type":"mirror-practice","title":"Тренировка попов в руках","referenceVideo":f"{V}/arm-pop-practice.mp4","duration":30,"threshold":55},
+      {"type":"video-demo","title":"Pop в руках — детальный разбор","videos":[{"url":YT["basic-pop"],"angle":"front"}],"description":"Хит в руках: бицепс, трицепс, предплечье. Тренируйте каждую руку отдельно, затем обе вместе."},
+      {"type":"mirror-practice","title":"Тренировка попов в руках","referenceVideo":YT["basic-pop"],"duration":30,"threshold":55},
       {"type":"quiz","question":"Какие мышцы участвуют в хите рук?","options":[
         {"id":"a","text":"Только бицепс","correct":False},
         {"id":"b","text":"Бицепс, трицепс и предплечье","correct":True},
@@ -492,8 +526,8 @@ S = [
     ]},
     {"t":"Pop в груди (chest pop)","xp":35,"steps":[
       {"type":"info","title":"Chest Pop — теория","markdown":"## Chest Pop\n\nChest pop — один из самых зрелищных элементов.\n\n### Как выполнять:\n1. Расслабьте грудь и плечи\n2. Резко вытолкните грудную клетку вперёд\n3. Одновременно отведите плечи назад\n4. Мгновенно верните в исходное\n\n### Частые ошибки:\n- Двигаете всё тело вместо изолированной груди\n- Слишком медленное движение (нет «рывка»)\n- Задерживаете дыхание"},
-      {"type":"video-demo","title":"Chest Pop — демо","videos":[{"url":f"{V}/chest-pop.mp4","angle":"front"},{"url":f"{V}/chest-pop-side.mp4","angle":"side"}],"description":"Chest pop с фронтального и бокового ракурса. Обратите внимание: двигается ТОЛЬКО грудь."},
-      {"type":"slow-motion","title":"Chest Pop — slow motion","video":f"{V}/chest-pop-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Chest Pop — демо","videos":[{"url":YT["chest-pop"],"angle":"front"},{"url":YT["chest-pop"],"angle":"side"}],"description":"Chest pop с фронтального и бокового ракурса. Обратите внимание: двигается ТОЛЬКО грудь."},
+      {"type":"slow-motion","title":"Chest Pop — slow motion","video":YT["chest-pop"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Исходная позиция"},
         {"time":1.2,"pose":{"landmarks":_chest_pop()},"description":"Грудь вперёд, плечи назад — момент хита"},
         {"time":1.8,"pose":{"landmarks":_standing()},"description":"Возврат в нейтраль"}
@@ -502,8 +536,8 @@ S = [
     ]},
     {"t":"Ритм + Pop","xp":40,"steps":[
       {"type":"info","title":"Связка: ритм + хиты","markdown":"## Собираем всё вместе\n\nТеперь совместим хиты с ритмом.\n\n### Связка из 4 хитов:\n1. **Бит 1** — Pop в правой руке\n2. **Бит 3** — Pop в левой руке\n3. **Бит 5** — Chest pop\n4. **Бит 7** — Pop обеими руками\n\nПовторяйте под музыку 100 BPM."},
-      {"type":"video-demo","title":"Связка Ритм + Pop","videos":[{"url":f"{V}/rhythm-pop-combo.mp4","angle":"front"}],"description":"4 хита в ритм: правая рука → левая рука → грудь → обе руки. Повторяем 4 такта."},
-      {"type":"combo-challenge","title":"Первая связка!","music":f"{M}/funk-beat-100bpm.mp3","bpm":100,"moves":[
+      {"type":"video-demo","title":"Связка Ритм + Pop","videos":[{"url":YT["pop-music"],"angle":"front"}],"description":"4 хита в ритм: правая рука → левая рука → грудь → обе руки. Повторяем 4 такта."},
+      {"type":"combo-challenge","title":"Первая связка!","music":MUSIC,"bpm":100,"moves":[
         {"name":"Pop правой рукой","pose":{"landmarks":_pop_arms()},"beatStart":1,"beatEnd":2},
         {"name":"Pop левой рукой","pose":{"landmarks":_pop_arms()},"beatStart":3,"beatEnd":4},
         {"name":"Chest Pop","pose":{"landmarks":_chest_pop()},"beatStart":5,"beatEnd":6},
@@ -515,8 +549,8 @@ S = [
   # ==================== Level 2: Базовые хиты и Fresno ====================
   {"title":"Уровень 2: Базовые хиты и Fresno","pos":1,"lessons":[
     {"t":"Fresno — основной шаг","xp":35,"steps":[
-      {"type":"video-demo","title":"Fresno — разбор шага","videos":[{"url":f"{V}/fresno-basic.mp4","angle":"front"},{"url":f"{V}/fresno-basic-side.mp4","angle":"side"}],"description":"Fresno — фирменный шаг Popping. Шаг в сторону с хитом, возврат. Поочерёдно влево-вправо."},
-      {"type":"slow-motion","title":"Fresno — slow motion","video":f"{V}/fresno-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Fresno — разбор шага","videos":[{"url":YT["fresno"],"angle":"front"},{"url":YT["fresno"],"angle":"side"}],"description":"Fresno — фирменный шаг Popping. Шаг в сторону с хитом, возврат. Поочерёдно влево-вправо."},
+      {"type":"slow-motion","title":"Fresno — slow motion","video":YT["fresno"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Исходная — ноги вместе"},
         {"time":1.5,"pose":{"landmarks":_fresno()},"description":"Шаг влево + хит"},
         {"time":2.5,"pose":{"landmarks":_standing()},"description":"Возврат в центр"},
@@ -525,7 +559,7 @@ S = [
       {"type":"pose-check","title":"Покажи Fresno","description":"Выполните шаг Fresno влево с хитом.","referencePose":{"landmarks":_fresno()},"referenceImage":None,"threshold":60},
     ]},
     {"t":"Fresno в ритм","xp":30,"steps":[
-      {"type":"mirror-practice","title":"Fresno под музыку","referenceVideo":f"{V}/fresno-rhythm.mp4","duration":30,"threshold":55},
+      {"type":"mirror-practice","title":"Fresno под музыку","referenceVideo":YT["fresno"],"duration":30,"threshold":55},
       {"type":"quiz","question":"На какой бит обычно делается хит в Fresno?","options":[
         {"id":"a","text":"На каждый бит","correct":False},
         {"id":"b","text":"На 1 и 5","correct":True},
@@ -534,7 +568,7 @@ S = [
       ]},
     ]},
     {"t":"Neck Pop","xp":35,"steps":[
-      {"type":"video-demo","title":"Neck Pop — демо","videos":[{"url":f"{V}/neck-pop.mp4","angle":"front"}],"description":"Neck Pop: резкое смещение головы в сторону. Шея расслаблена → резкий сдвиг → возврат."},
+      {"type":"video-demo","title":"Neck Pop — демо","videos":[{"url":YT["neck-pop"],"angle":"front"}],"description":"Neck Pop: резкое смещение головы в сторону. Шея расслаблена → резкий сдвиг → возврат."},
       {"type":"pose-check","title":"Проверка Neck Pop","description":"Сделайте Neck Pop — резко сместите голову в сторону.","referencePose":{"landmarks":_neck_pop()},"referenceImage":None,"threshold":60},
       {"type":"quiz","question":"Что НЕЛЬЗЯ делать при Neck Pop?","options":[
         {"id":"a","text":"Расслаблять шею перед хитом","correct":False},
@@ -544,8 +578,8 @@ S = [
       ]},
     ]},
     {"t":"Leg Pop","xp":35,"steps":[
-      {"type":"video-demo","title":"Leg Pop — демо","videos":[{"url":f"{V}/leg-pop.mp4","angle":"front"}],"description":"Leg Pop: хит через ноги. Колено слегка сгибается, затем резко выпрямляется с напряжением квадрицепса."},
-      {"type":"slow-motion","title":"Leg Pop — slow motion","video":f"{V}/leg-pop-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Leg Pop — демо","videos":[{"url":YT["neck-pop"],"angle":"front"}],"description":"Leg Pop: хит через ноги. Колено слегка сгибается, затем резко выпрямляется с напряжением квадрицепса."},
+      {"type":"slow-motion","title":"Leg Pop — slow motion","video":YT["neck-pop"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Исходная — стоим ровно"},
         {"time":1.2,"pose":{"landmarks":_leg_pop()},"description":"Колено согнуто, вес на задней ноге"},
         {"time":1.8,"pose":{"landmarks":_standing()},"description":"Резкое выпрямление — хит!"}
@@ -554,7 +588,7 @@ S = [
     ]},
     {"t":"Hit Combo — руки + грудь + ноги","xp":40,"steps":[
       {"type":"info","title":"Комбинируем хиты","markdown":"## Full Body Hit Combo\n\nТеперь собираем все хиты вместе:\n\n1. **Бит 1-2**: Arm Pop (обе руки)\n2. **Бит 3-4**: Chest Pop\n3. **Бит 5-6**: Leg Pop\n4. **Бит 7-8**: Full Body Pop (всё вместе)\n\nКаждый хит должен быть чётким и резким."},
-      {"type":"combo-challenge","title":"Hit Combo Challenge","music":f"{M}/funk-beat-100bpm.mp3","bpm":100,"moves":[
+      {"type":"combo-challenge","title":"Hit Combo Challenge","music":MUSIC,"bpm":100,"moves":[
         {"name":"Arm Pop","pose":{"landmarks":_pop_arms()},"beatStart":1,"beatEnd":2},
         {"name":"Chest Pop","pose":{"landmarks":_chest_pop()},"beatStart":3,"beatEnd":4},
         {"name":"Leg Pop","pose":{"landmarks":_leg_pop()},"beatStart":5,"beatEnd":6},
@@ -562,8 +596,8 @@ S = [
       ],"threshold":55},
     ]},
     {"t":"Dimestop","xp":35,"steps":[
-      {"type":"video-demo","title":"Dimestop — мгновенная остановка","videos":[{"url":f"{V}/dimestop.mp4","angle":"front"}],"description":"Dimestop: двигаетесь и мгновенно замираете, как статуя. Полная остановка всего тела."},
-      {"type":"slow-motion","title":"Dimestop — slow motion","video":f"{V}/dimestop-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Dimestop — мгновенная остановка","videos":[{"url":YT["dimestop"],"angle":"front"}],"description":"Dimestop: двигаетесь и мгновенно замираете, как статуя. Полная остановка всего тела."},
+      {"type":"slow-motion","title":"Dimestop — slow motion","video":YT["dimestop"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Движение — тело в динамике"},
         {"time":1.5,"pose":{"landmarks":_dimestop()},"description":"СТОП — полная заморозка"},
         {"time":3.0,"pose":{"landmarks":_dimestop()},"description":"Удержание позы 1-2 секунды"}
@@ -571,8 +605,8 @@ S = [
       {"type":"pose-check","title":"Покажи Dimestop","description":"Замрите в позе — полная остановка, рука вытянута.","referencePose":{"landmarks":_dimestop()},"referenceImage":None,"threshold":65},
     ]},
     {"t":"Walkout","xp":30,"steps":[
-      {"type":"video-demo","title":"Walkout — выход на танцпол","videos":[{"url":f"{V}/walkout.mp4","angle":"front"}],"description":"Walkout: стильный выход с попами. Шагаем, добавляя хиты на каждый шаг."},
-      {"type":"mirror-practice","title":"Практика Walkout","referenceVideo":f"{V}/walkout-practice.mp4","duration":30,"threshold":55},
+      {"type":"video-demo","title":"Walkout — выход на танцпол","videos":[{"url":YT["walkout"],"angle":"front"}],"description":"Walkout: стильный выход с попами. Шагаем, добавляя хиты на каждый шаг."},
+      {"type":"mirror-practice","title":"Практика Walkout","referenceVideo":YT["walkout"],"duration":30,"threshold":55},
       {"type":"quiz","question":"Что такое Walkout в Popping?","options":[
         {"id":"a","text":"Обычная ходьба","correct":False},
         {"id":"b","text":"Стильный выход с хитами на каждый шаг","correct":True},
@@ -581,8 +615,8 @@ S = [
       ]},
     ]},
     {"t":"Boogaloo Roll","xp":35,"steps":[
-      {"type":"video-demo","title":"Boogaloo Roll","videos":[{"url":f"{V}/boogaloo-roll.mp4","angle":"front"}],"description":"Boogaloo Roll: круговое движение корпуса, перетекающее от плеч к бёдрам. Мягкое, волнообразное."},
-      {"type":"slow-motion","title":"Boogaloo Roll — slow motion","video":f"{V}/boogaloo-roll-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Boogaloo Roll","videos":[{"url":YT["boogaloo"],"angle":"front"}],"description":"Boogaloo Roll: круговое движение корпуса, перетекающее от плеч к бёдрам. Мягкое, волнообразное."},
+      {"type":"slow-motion","title":"Boogaloo Roll — slow motion","video":YT["boogaloo"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Исходная позиция"},
         {"time":1.5,"pose":{"landmarks":_boogaloo_roll()},"description":"Корпус уходит в круговое движение"},
         {"time":3.0,"pose":{"landmarks":_standing()},"description":"Завершение круга, возврат"}
@@ -591,7 +625,7 @@ S = [
     ]},
     {"t":"Связка Level 2","xp":40,"steps":[
       {"type":"info","title":"Связка из 6 движений","markdown":"## Связка Level 2\n\n1. **Fresno влево** (бит 1-2)\n2. **Fresno вправо** (бит 3-4)\n3. **Neck Pop** (бит 5)\n4. **Chest Pop** (бит 6)\n5. **Walkout 2 шага** (бит 7-8)\n6. **Dimestop** (бит 1 следующего такта)"},
-      {"type":"combo-challenge","title":"Связка Level 2","music":f"{M}/funk-beat-105bpm.mp3","bpm":105,"moves":[
+      {"type":"combo-challenge","title":"Связка Level 2","music":MUSIC,"bpm":105,"moves":[
         {"name":"Fresno влево","pose":{"landmarks":_fresno()},"beatStart":1,"beatEnd":2},
         {"name":"Fresno вправо","pose":{"landmarks":_fresno()},"beatStart":3,"beatEnd":4},
         {"name":"Neck Pop","pose":{"landmarks":_neck_pop()},"beatStart":5,"beatEnd":5},
@@ -602,7 +636,7 @@ S = [
     ]},
     {"t":"Мини-баттл Level 2","xp":50,"steps":[
       {"type":"info","title":"Твой первый баттл!","markdown":"## Мини-баттл\n\nИспользуй все движения Level 1 и 2.\n\n**Правила:**\n- 30 секунд под музыку\n- Используй минимум 3 разных движения\n- Попадай в бит!\n- Закончи Dimestop'ом"},
-      {"type":"battle-sim","title":"Мини-баттл 30 сек","music":f"{M}/funk-beat-105bpm.mp3","duration":30,"bpm":105},
+      {"type":"battle-sim","title":"Мини-баттл 30 сек","music":MUSIC,"duration":30,"bpm":105},
     ]},
   ]},
 
@@ -619,8 +653,8 @@ S = [
       {"type":"true-false","statement":"Изоляции используются только в стиле Robot.","correct":False},
     ]},
     {"t":"Изоляция головы","xp":35,"steps":[
-      {"type":"video-demo","title":"Изоляция головы","videos":[{"url":f"{V}/isolation-head.mp4","angle":"front"}],"description":"Изоляция головы: вперёд-назад, влево-вправо, по кругу. Плечи НЕ двигаются!"},
-      {"type":"slow-motion","title":"Изоляция головы — slow motion","video":f"{V}/isolation-head-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Изоляция головы","videos":[{"url":YT["iso-head"],"angle":"front"}],"description":"Изоляция головы: вперёд-назад, влево-вправо, по кругу. Плечи НЕ двигаются!"},
+      {"type":"slow-motion","title":"Изоляция головы — slow motion","video":YT["iso-head"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Нейтраль — голова по центру"},
         {"time":1.5,"pose":{"landmarks":_iso_head()},"description":"Голова сдвинута влево, плечи неподвижны"},
         {"time":2.5,"pose":{"landmarks":_standing()},"description":"Возврат в центр"}
@@ -628,13 +662,13 @@ S = [
       {"type":"pose-check","title":"Проверка изоляции головы","description":"Сдвиньте голову влево, не двигая плечами.","referencePose":{"landmarks":_iso_head()},"referenceImage":None,"threshold":60},
     ]},
     {"t":"Изоляция плеч","xp":35,"steps":[
-      {"type":"video-demo","title":"Изоляция плеч","videos":[{"url":f"{V}/isolation-shoulders.mp4","angle":"front"}],"description":"Одно плечо вверх, другое вниз. Поочерёдно. Голова и бёдра неподвижны."},
+      {"type":"video-demo","title":"Изоляция плеч","videos":[{"url":YT["iso-shoulders"],"angle":"front"}],"description":"Одно плечо вверх, другое вниз. Поочерёдно. Голова и бёдра неподвижны."},
       {"type":"pose-check","title":"Проверка изоляции плеч","description":"Поднимите левое плечо вверх, правое вниз.","referencePose":{"landmarks":_iso_shoulders()},"referenceImage":None,"threshold":60},
-      {"type":"mirror-practice","title":"Практика изоляции плеч","referenceVideo":f"{V}/isolation-shoulders-practice.mp4","duration":30,"threshold":55},
+      {"type":"mirror-practice","title":"Практика изоляции плеч","referenceVideo":YT["iso-shoulders"],"duration":30,"threshold":55},
     ]},
     {"t":"Изоляция груди","xp":35,"steps":[
-      {"type":"video-demo","title":"Изоляция груди","videos":[{"url":f"{V}/isolation-chest.mp4","angle":"front"}],"description":"Грудь двигается влево-вправо, вперёд-назад. Бёдра и голова остаются на месте."},
-      {"type":"slow-motion","title":"Изоляция груди — slow motion","video":f"{V}/isolation-chest-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Изоляция груди","videos":[{"url":YT["iso-chest"],"angle":"front"}],"description":"Грудь двигается влево-вправо, вперёд-назад. Бёдра и голова остаются на месте."},
+      {"type":"slow-motion","title":"Изоляция груди — slow motion","video":YT["iso-chest"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Центр — нейтральная позиция"},
         {"time":1.5,"pose":{"landmarks":_iso_chest()},"description":"Грудь сдвинута вправо"},
         {"time":2.5,"pose":{"landmarks":_standing()},"description":"Возврат"},
@@ -643,7 +677,7 @@ S = [
       {"type":"pose-check","title":"Проверка изоляции груди","description":"Сдвиньте грудь вправо, бёдра неподвижны.","referencePose":{"landmarks":_iso_chest()},"referenceImage":None,"threshold":60},
     ]},
     {"t":"Изоляция бёдер","xp":30,"steps":[
-      {"type":"video-demo","title":"Изоляция бёдер","videos":[{"url":f"{V}/isolation-hips.mp4","angle":"front"}],"description":"Бёдра двигаются влево-вправо, по кругу. Верхняя часть тела остаётся неподвижной."},
+      {"type":"video-demo","title":"Изоляция бёдер","videos":[{"url":YT["iso-hips"],"angle":"front"}],"description":"Бёдра двигаются влево-вправо, по кругу. Верхняя часть тела остаётся неподвижной."},
       {"type":"pose-check","title":"Проверка изоляции бёдер","description":"Сдвиньте бёдра влево, плечи на месте.","referencePose":{"landmarks":_iso_hips()},"referenceImage":None,"threshold":60},
       {"type":"quiz","question":"Какая часть тела должна оставаться неподвижной при изоляции бёдер?","options":[
         {"id":"a","text":"Колени","correct":False},
@@ -653,8 +687,8 @@ S = [
       ]},
     ]},
     {"t":"Изоляция рук (Tutting basics)","xp":35,"steps":[
-      {"type":"video-demo","title":"Tutting — базовые фигуры","videos":[{"url":f"{V}/tutting-basics.mp4","angle":"front"}],"description":"Tutting: создание геометрических фигур руками. Углы строго 90°. Каждый сегмент руки двигается отдельно."},
-      {"type":"slow-motion","title":"Tutting — slow motion","video":f"{V}/tutting-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Tutting — базовые фигуры","videos":[{"url":YT["tutting"],"angle":"front"}],"description":"Tutting: создание геометрических фигур руками. Углы строго 90°. Каждый сегмент руки двигается отдельно."},
+      {"type":"slow-motion","title":"Tutting — slow motion","video":YT["tutting"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Руки расслаблены"},
         {"time":1.5,"pose":{"landmarks":_tutting()},"description":"Руки вытянуты в стороны, предплечья вверх под 90°"},
         {"time":3.0,"pose":{"landmarks":_tutting()},"description":"Фиксация угловой позиции"}
@@ -663,7 +697,7 @@ S = [
     ]},
     {"t":"Комбо изоляций","xp":40,"steps":[
       {"type":"info","title":"Комбо изоляций","markdown":"## Связка изоляций\n\n1. **Бит 1-2**: Изоляция головы (влево-вправо)\n2. **Бит 3-4**: Изоляция плеч (вверх-вниз)\n3. **Бит 5-6**: Изоляция груди (влево-вправо)\n4. **Бит 7-8**: Изоляция бёдер (влево-вправо)\n\nПлавно перетекайте от одной изоляции к другой."},
-      {"type":"combo-challenge","title":"Isolation Combo","music":f"{M}/funk-beat-100bpm.mp3","bpm":100,"moves":[
+      {"type":"combo-challenge","title":"Isolation Combo","music":MUSIC,"bpm":100,"moves":[
         {"name":"Изоляция головы","pose":{"landmarks":_iso_head()},"beatStart":1,"beatEnd":2},
         {"name":"Изоляция плеч","pose":{"landmarks":_iso_shoulders()},"beatStart":3,"beatEnd":4},
         {"name":"Изоляция груди","pose":{"landmarks":_iso_chest()},"beatStart":5,"beatEnd":6},
@@ -671,8 +705,8 @@ S = [
       ],"threshold":55},
     ]},
     {"t":"Робот (Robot style)","xp":35,"steps":[
-      {"type":"video-demo","title":"Robot — механический стиль","videos":[{"url":f"{V}/robot-style.mp4","angle":"front"}],"description":"Robot: двигайтесь как робот. Каждое движение отдельное, с паузой-фиксацией. Используйте dimestop между движениями."},
-      {"type":"mirror-practice","title":"Практика Robot","referenceVideo":f"{V}/robot-practice.mp4","duration":45,"threshold":55},
+      {"type":"video-demo","title":"Robot — механический стиль","videos":[{"url":YT["robot"],"angle":"front"}],"description":"Robot: двигайтесь как робот. Каждое движение отдельное, с паузой-фиксацией. Используйте dimestop между движениями."},
+      {"type":"mirror-practice","title":"Практика Robot","referenceVideo":YT["robot"],"duration":45,"threshold":55},
       {"type":"quiz","question":"Какой принцип лежит в основе стиля Robot?","options":[
         {"id":"a","text":"Плавность и текучесть","correct":False},
         {"id":"b","text":"Изолированные механические движения с паузами","correct":True},
@@ -681,7 +715,7 @@ S = [
       ]},
     ]},
     {"t":"Связка Level 3","xp":40,"steps":[
-      {"type":"combo-challenge","title":"Связка Level 3 — 8 движений","music":f"{M}/funk-beat-105bpm.mp3","bpm":105,"moves":[
+      {"type":"combo-challenge","title":"Связка Level 3 — 8 движений","music":MUSIC,"bpm":105,"moves":[
         {"name":"Robot walk","pose":{"landmarks":_robot()},"beatStart":1,"beatEnd":2},
         {"name":"Изоляция головы","pose":{"landmarks":_iso_head()},"beatStart":3,"beatEnd":4},
         {"name":"Изоляция плеч","pose":{"landmarks":_iso_shoulders()},"beatStart":5,"beatEnd":6},
@@ -694,24 +728,24 @@ S = [
     ]},
     {"t":"Баттл Level 3","xp":50,"steps":[
       {"type":"info","title":"Баттл Level 3","markdown":"## Баттл — изоляции\n\n**45 секунд** под музыку. Покажи все изоляции + хиты.\n\n**Задание:**\n- Начни с Robot walk\n- Покажи минимум 4 разные изоляции\n- Добавь хиты\n- Финиш — Dimestop"},
-      {"type":"battle-sim","title":"Баттл Level 3 — 45 сек","music":f"{M}/funk-beat-105bpm.mp3","duration":45,"bpm":105},
+      {"type":"battle-sim","title":"Баттл Level 3 — 45 сек","music":MUSIC,"duration":45,"bpm":105},
     ]},
   ]},
 
   # ==================== Level 4: Волны и глайды ====================
   {"title":"Уровень 4: Волны и глайды","pos":3,"lessons":[
     {"t":"Arm Wave (волна рукой)","xp":35,"steps":[
-      {"type":"video-demo","title":"Arm Wave","videos":[{"url":f"{V}/arm-wave.mp4","angle":"front"}],"description":"Волна рукой: движение перетекает от кончиков пальцев одной руки через плечи к другой. Каждый сустав включается последовательно."},
-      {"type":"slow-motion","title":"Arm Wave — slow motion","video":f"{V}/arm-wave-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Arm Wave","videos":[{"url":YT["arm-wave"],"angle":"front"}],"description":"Волна рукой: движение перетекает от кончиков пальцев одной руки через плечи к другой. Каждый сустав включается последовательно."},
+      {"type":"slow-motion","title":"Arm Wave — slow motion","video":YT["arm-wave"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_arm_wave()},"description":"Начало волны — пальцы левой руки"},
         {"time":1.5,"pose":{"landmarks":_standing()},"description":"Волна проходит через плечи"},
         {"time":2.5,"pose":{"landmarks":_arm_wave()},"description":"Волна дошла до правой руки"}
       ]},
-      {"type":"mirror-practice","title":"Практика Arm Wave","referenceVideo":f"{V}/arm-wave-practice.mp4","duration":30,"threshold":50},
+      {"type":"mirror-practice","title":"Практика Arm Wave","referenceVideo":YT["arm-wave"],"duration":30,"threshold":50},
     ]},
     {"t":"Body Wave (волна телом)","xp":35,"steps":[
-      {"type":"video-demo","title":"Body Wave","videos":[{"url":f"{V}/body-wave.mp4","angle":"side"}],"description":"Волна проходит через всё тело: голова → грудь → живот → бёдра → колени. Плавное, непрерывное движение."},
-      {"type":"slow-motion","title":"Body Wave — slow motion","video":f"{V}/body-wave-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Body Wave","videos":[{"url":YT["body-wave"],"angle":"side"}],"description":"Волна проходит через всё тело: голова → грудь → живот → бёдра → колени. Плавное, непрерывное движение."},
+      {"type":"slow-motion","title":"Body Wave — slow motion","video":YT["body-wave"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Начало — нейтральная позиция"},
         {"time":1.2,"pose":{"landmarks":_body_wave()},"description":"Волна проходит через грудь"},
         {"time":2.0,"pose":{"landmarks":_iso_hips()},"description":"Волна на уровне бёдер"},
@@ -720,7 +754,7 @@ S = [
       {"type":"pose-check","title":"Проверка Body Wave","description":"Выполните волну телом — грудь вперёд, бёдра назад.","referencePose":{"landmarks":_body_wave()},"referenceImage":None,"threshold":55},
     ]},
     {"t":"Finger Wave","xp":30,"steps":[
-      {"type":"video-demo","title":"Finger Wave","videos":[{"url":f"{V}/finger-wave.mp4","angle":"front"}],"description":"Волна пальцами: каждый палец поднимается и опускается последовательно. Мизинец → безымянный → средний → указательный → большой."},
+      {"type":"video-demo","title":"Finger Wave","videos":[{"url":YT["finger-wave"],"angle":"front"}],"description":"Волна пальцами: каждый палец поднимается и опускается последовательно. Мизинец → безымянный → средний → указательный → большой."},
       {"type":"pose-check","title":"Проверка Finger Wave","description":"Вытяните руку и покажите волну пальцами.","referencePose":{"landmarks":_finger_wave()},"referenceImage":None,"threshold":55},
       {"type":"quiz","question":"В каком порядке двигаются пальцы при Finger Wave?","options":[
         {"id":"a","text":"Все одновременно","correct":False},
@@ -730,8 +764,8 @@ S = [
       ]},
     ]},
     {"t":"Glide (скольжение)","xp":30,"steps":[
-      {"type":"video-demo","title":"Glide — базовый","videos":[{"url":f"{V}/glide-basic.mp4","angle":"front"},{"url":f"{V}/glide-basic-side.mp4","angle":"side"}],"description":"Glide: иллюзия скольжения по полу. Одна нога скользит назад, пока другая поднимается на носок."},
-      {"type":"slow-motion","title":"Glide — slow motion","video":f"{V}/glide-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Glide — базовый","videos":[{"url":YT["glide"],"angle":"front"},{"url":YT["glide"],"angle":"side"}],"description":"Glide: иллюзия скольжения по полу. Одна нога скользит назад, пока другая поднимается на носок."},
+      {"type":"slow-motion","title":"Glide — slow motion","video":YT["glide"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Исходная позиция"},
         {"time":1.5,"pose":{"landmarks":_glide()},"description":"Правая нога скользит назад, левая на носке"},
         {"time":2.5,"pose":{"landmarks":_standing()},"description":"Смена ног"},
@@ -739,16 +773,16 @@ S = [
       ]},
     ]},
     {"t":"Moonwalk","xp":35,"steps":[
-      {"type":"video-demo","title":"Moonwalk","videos":[{"url":f"{V}/moonwalk.mp4","angle":"side"}],"description":"Moonwalk: классическое скольжение назад. Одна нога плоская, другая на носке. Плоская скользит назад, затем меняемся."},
-      {"type":"slow-motion","title":"Moonwalk — slow motion","video":f"{V}/moonwalk-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Moonwalk","videos":[{"url":YT["glide"],"angle":"side"}],"description":"Moonwalk: классическое скольжение назад. Одна нога плоская, другая на носке. Плоская скользит назад, затем меняемся."},
+      {"type":"slow-motion","title":"Moonwalk — slow motion","video":YT["glide"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_standing()},"description":"Начало — вес на правой ноге"},
         {"time":1.5,"pose":{"landmarks":_moonwalk()},"description":"Левая скользит назад, правая на носке"},
         {"time":2.5,"pose":{"landmarks":_moonwalk()},"description":"Смена — правая скользит, левая на носке"}
       ]},
-      {"type":"mirror-practice","title":"Практика Moonwalk","referenceVideo":f"{V}/moonwalk-practice.mp4","duration":30,"threshold":50},
+      {"type":"mirror-practice","title":"Практика Moonwalk","referenceVideo":YT["glide"],"duration":30,"threshold":50},
     ]},
     {"t":"Float / Air Walk","xp":30,"steps":[
-      {"type":"video-demo","title":"Float","videos":[{"url":f"{V}/float-airwalk.mp4","angle":"front"}],"description":"Float / Air Walk: иллюзия ходьбы по воздуху. Комбинация подъёма на носки и скольжения."},
+      {"type":"video-demo","title":"Float","videos":[{"url":YT["float"],"angle":"front"}],"description":"Float / Air Walk: иллюзия ходьбы по воздуху. Комбинация подъёма на носки и скольжения."},
       {"type":"pose-check","title":"Проверка Float","description":"Выполните Float — поднимитесь на носки одной ноги, скользите другой.","referencePose":{"landmarks":_glide()},"referenceImage":None,"threshold":55},
       {"type":"quiz","question":"Что общего между Glide, Moonwalk и Float?","options":[
         {"id":"a","text":"Все используют прыжки","correct":False},
@@ -758,13 +792,13 @@ S = [
       ]},
     ]},
     {"t":"Snake (змейка)","xp":30,"steps":[
-      {"type":"video-demo","title":"Snake","videos":[{"url":f"{V}/snake.mp4","angle":"side"}],"description":"Snake: волнообразное движение всего тела, как змея. Голова ведёт, тело следует волной."},
-      {"type":"mirror-practice","title":"Практика Snake","referenceVideo":f"{V}/snake-practice.mp4","duration":30,"threshold":50},
+      {"type":"video-demo","title":"Snake","videos":[{"url":YT["snake"],"angle":"side"}],"description":"Snake: волнообразное движение всего тела, как змея. Голова ведёт, тело следует волной."},
+      {"type":"mirror-practice","title":"Практика Snake","referenceVideo":YT["snake"],"duration":30,"threshold":50},
       {"type":"info","title":"Советы по Snake","markdown":"## Snake — ключевые моменты\n\n- Голова **ведёт** движение\n- Тело **следует** с задержкой\n- Чем медленнее — тем лучше выглядит\n- Совмещайте с Body Wave для эффекта"},
     ]},
     {"t":"Волна + Pop комбинация","xp":40,"steps":[
       {"type":"info","title":"Волны + хиты","markdown":"## Комбинация волн и хитов\n\n1. **Arm Wave** → **Pop** в конце волны\n2. **Body Wave** → **Chest Pop**\n3. **Snake** → **Dimestop**\n\nВолна создаёт плавность, Pop — акцент!"},
-      {"type":"combo-challenge","title":"Wave + Pop Combo","music":f"{M}/funk-beat-100bpm.mp3","bpm":100,"moves":[
+      {"type":"combo-challenge","title":"Wave + Pop Combo","music":MUSIC,"bpm":100,"moves":[
         {"name":"Arm Wave","pose":{"landmarks":_arm_wave()},"beatStart":1,"beatEnd":4},
         {"name":"Arm Pop","pose":{"landmarks":_pop_arms()},"beatStart":5,"beatEnd":5},
         {"name":"Body Wave","pose":{"landmarks":_body_wave()},"beatStart":6,"beatEnd":9},
@@ -774,7 +808,7 @@ S = [
       ],"threshold":55},
     ]},
     {"t":"Связка Level 4","xp":40,"steps":[
-      {"type":"combo-challenge","title":"Связка Level 4 — 10 движений","music":f"{M}/funk-beat-108bpm.mp3","bpm":108,"moves":[
+      {"type":"combo-challenge","title":"Связка Level 4 — 10 движений","music":MUSIC,"bpm":108,"moves":[
         {"name":"Arm Wave L→R","pose":{"landmarks":_arm_wave()},"beatStart":1,"beatEnd":3},
         {"name":"Pop","pose":{"landmarks":_pop_arms()},"beatStart":4,"beatEnd":4},
         {"name":"Body Wave","pose":{"landmarks":_body_wave()},"beatStart":5,"beatEnd":7},
@@ -789,7 +823,7 @@ S = [
     ]},
     {"t":"Баттл Level 4","xp":50,"steps":[
       {"type":"info","title":"Баттл Level 4","markdown":"## Баттл — волны и глайды\n\n**60 секунд!** Покажи всё: хиты, изоляции, волны, глайды.\n\n**Подсказки:**\n- Начни плавно (волна)\n- Усиль (хиты)\n- Удиви (глайд/moonwalk)\n- Финиш — мощный Dimestop"},
-      {"type":"battle-sim","title":"Баттл Level 4 — 60 сек","music":f"{M}/funk-beat-108bpm.mp3","duration":60,"bpm":108},
+      {"type":"battle-sim","title":"Баттл Level 4 — 60 сек","music":MUSIC,"duration":60,"bpm":108},
     ]},
   ]},
 
@@ -827,7 +861,7 @@ S = [
       ]},
     ]},
     {"t":"Floor work","xp":35,"steps":[
-      {"type":"video-demo","title":"Floor work — работа на полу","videos":[{"url":f"{V}/floor-work.mp4","angle":"front"}],"description":"Floor work: переходы на нижний уровень. Колени, присед, спин. Плавный вход и мощный выход."},
+      {"type":"video-demo","title":"Floor work — работа на полу","videos":[{"url":YT["floor-work"],"angle":"front"}],"description":"Floor work: переходы на нижний уровень. Колени, присед, спин. Плавный вход и мощный выход."},
       {"type":"pose-check","title":"Проверка Floor work","description":"Опуститесь на нижний уровень — присед или на колено.","referencePose":{"landmarks":_floor_work()},"referenceImage":None,"threshold":55},
       {"type":"quiz","question":"Когда лучше всего использовать Floor work в баттле?","options":[
         {"id":"a","text":"В самом начале","correct":False},
@@ -837,13 +871,13 @@ S = [
       ]},
     ]},
     {"t":"Levels (уровни)","xp":30,"steps":[
-      {"type":"video-demo","title":"Три уровня пространства","videos":[{"url":f"{V}/levels-demo.mp4","angle":"front"}],"description":"Демонстрация трёх уровней: верхний (стоя, руки вверх), средний (полуприсед, обычная стойка), нижний (floor work). Переходы между уровнями."},
+      {"type":"video-demo","title":"Три уровня пространства","videos":[{"url":YT["levels"],"angle":"front"}],"description":"Демонстрация трёх уровней: верхний (стоя, руки вверх), средний (полуприсед, обычная стойка), нижний (floor work). Переходы между уровнями."},
       {"type":"info","title":"Как использовать Levels","markdown":"## Levels — уровни пространства\n\n### Верхний\n- Руки вверх, на носках\n- Tutting на высоте\n- Энергичные хиты\n\n### Средний\n- Стандартная стойка\n- Основная зона работы\n- Большинство движений\n\n### Нижний\n- Приседы, колени\n- Floor work\n- Драматичные моменты\n\n### Правило: меняй level каждые 4-8 битов!"},
       {"type":"true-false","statement":"В баттле нужно использовать только один уровень пространства.","correct":False},
     ]},
     {"t":"Transition moves","xp":30,"steps":[
-      {"type":"video-demo","title":"Переходы между движениями","videos":[{"url":f"{V}/transitions.mp4","angle":"front"}],"description":"Transitions: как плавно переходить от одного движения к другому. Волна → хит, робот → boogaloo, стоя → floor."},
-      {"type":"slow-motion","title":"Transitions — slow motion","video":f"{V}/transitions-slowmo.mp4","keyframes":[
+      {"type":"video-demo","title":"Переходы между движениями","videos":[{"url":YT["transitions"],"angle":"front"}],"description":"Transitions: как плавно переходить от одного движения к другому. Волна → хит, робот → boogaloo, стоя → floor."},
+      {"type":"slow-motion","title":"Transitions — slow motion","video":YT["transitions"],"keyframes":[
         {"time":0.5,"pose":{"landmarks":_robot()},"description":"Robot pose — механическая"},
         {"time":2.0,"pose":{"landmarks":_body_wave()},"description":"Переход: размягчение в body wave"},
         {"time":3.5,"pose":{"landmarks":_pop_arms()},"description":"Финиш: резкий pop для контраста"}
@@ -857,7 +891,7 @@ S = [
     ]},
     {"t":"Создание комбинаций","xp":35,"steps":[
       {"type":"info","title":"Как создавать свои комбо","markdown":"## Создание комбинаций\n\n### Формула:\n1. **Вход** (2 бита) — Walkout или Fresno\n2. **Основная часть** (8 битов) — миксуй 3-4 разных техники\n3. **Кульминация** (2 бита) — самое сложное/эффектное\n4. **Финиш** (2 бита) — Dimestop или мощный хит\n\n### Правила:\n- Не повторяй одно движение подряд\n- Чередуй мягкое и резкое\n- Используй разные levels\n- Всегда заканчивай чётко\n\n### Задание:\nСоздай свою комбинацию из 6+ движений!"},
-      {"type":"combo-challenge","title":"Твоя комбинация","music":f"{M}/funk-beat-108bpm.mp3","bpm":108,"moves":[
+      {"type":"combo-challenge","title":"Твоя комбинация","music":MUSIC,"bpm":108,"moves":[
         {"name":"Fresno вход","pose":{"landmarks":_fresno()},"beatStart":1,"beatEnd":2},
         {"name":"Arm Wave","pose":{"landmarks":_arm_wave()},"beatStart":3,"beatEnd":5},
         {"name":"Pop","pose":{"landmarks":_pop_arms()},"beatStart":6,"beatEnd":6},
@@ -870,12 +904,12 @@ S = [
     ]},
     {"t":"Performance и подача","xp":20,"steps":[
       {"type":"info","title":"Подача и харизма","markdown":"## Performance\n\n### Как подать танец:\n- **Лицо**: не каменное! Эмоции, характер\n- **Глаза**: смотри на зрителя/камеру\n- **Уверенность**: даже если ошибся — продолжай\n- **Энергия**: начинай на 70%, к финалу — на 100%\n\n### В баттле:\n- Слушай музыку оппонента\n- Не повторяй его движения\n- Покажи свой стиль\n- Заканчивай МОЩНО\n\n### Совет:\nЗаписывай себя на видео и анализируй!"},
-      {"type":"video-demo","title":"Performance tips","videos":[{"url":f"{V}/performance-tips.mp4","angle":"front"}],"description":"Примеры хорошей и плохой подачи. Разница между техникой и шоу."},
+      {"type":"video-demo","title":"Performance tips","videos":[{"url":YT["performance"],"angle":"front"}],"description":"Примеры хорошей и плохой подачи. Разница между техникой и шоу."},
       {"type":"true-false","statement":"Если ты ошибся в баттле, нужно остановиться и начать заново.","correct":False},
     ]},
     {"t":"Полная комбинация","xp":40,"steps":[
       {"type":"info","title":"Финальная комбинация","markdown":"## Полная комбинация — 12+ движений\n\nВсё, что вы изучили, в одной связке.\n\n### План:\n1. Walkout вход\n2. Fresno × 2\n3. Arm Wave → Pop\n4. Изоляция плеч → груди\n5. Body Wave\n6. Robot transition\n7. Moonwalk\n8. Snake\n9. Floor work moment\n10. Встаём → Tutting\n11. Combo pops\n12. DIMESTOP финиш!"},
-      {"type":"combo-challenge","title":"Полная комбинация","music":f"{M}/funk-beat-110bpm.mp3","bpm":110,"moves":[
+      {"type":"combo-challenge","title":"Полная комбинация","music":MUSIC,"bpm":110,"moves":[
         {"name":"Walkout","pose":{"landmarks":_standing()},"beatStart":1,"beatEnd":2},
         {"name":"Fresno L","pose":{"landmarks":_fresno()},"beatStart":3,"beatEnd":4},
         {"name":"Fresno R","pose":{"landmarks":_fresno()},"beatStart":5,"beatEnd":6},
@@ -894,11 +928,11 @@ S = [
     ]},
     {"t":"Тренировочный баттл","xp":50,"steps":[
       {"type":"info","title":"Тренировочный баттл","markdown":"## 60 секунд фристайла!\n\n### Чек-лист:\n- [ ] Чистый вход\n- [ ] Минимум 5 разных техник\n- [ ] Смена levels\n- [ ] Музыкальность\n- [ ] Мощный финиш\n\nПокажи всё, что умеешь!"},
-      {"type":"battle-sim","title":"Тренировочный баттл — 60 сек","music":f"{M}/funk-beat-110bpm.mp3","duration":60,"bpm":110},
+      {"type":"battle-sim","title":"Тренировочный баттл — 60 сек","music":MUSIC,"duration":60,"bpm":110},
     ]},
     {"t":"Финальный баттл","xp":50,"steps":[
       {"type":"info","title":"Финальный экзамен","markdown":"## Финальный баттл — 90 секунд!\n\nЭто ваш выпускной экзамен.\n\n### Критерии оценки:\n- **Техника** — чистота хитов, изоляций, волн\n- **Музыкальность** — попадание в бит\n- **Разнообразие** — использование всех техник\n- **Performance** — подача, энергия, характер\n- **Оригинальность** — свой стиль, неожиданные моменты\n\n### 90 секунд. Всё или ничего. Удачи!"},
-      {"type":"battle-sim","title":"ФИНАЛЬНЫЙ БАТТЛ — 90 сек","music":f"{M}/funk-beat-112bpm.mp3","duration":90,"bpm":112},
+      {"type":"battle-sim","title":"ФИНАЛЬНЫЙ БАТТЛ — 90 сек","music":MUSIC,"duration":90,"bpm":112},
     ]},
   ]},
 
@@ -906,11 +940,11 @@ S = [
   {"title":"Бонус: Баттл-арена","pos":5,"lessons":[
     {"t":"1 раунд баттл","xp":50,"steps":[
       {"type":"info","title":"Баттл-арена: 1 раунд","markdown":"## Баттл-арена\n\nДобро пожаловать в баттл-арену! Здесь нет обучения — только практика.\n\n**1 раунд — 60 секунд.**\n\nПравила:\n- Любые техники\n- Максимум стиля\n- Попадай в бит\n- Покажи характер"},
-      {"type":"battle-sim","title":"Баттл-арена: 1 раунд","music":f"{M}/funk-beat-110bpm.mp3","duration":60,"bpm":110},
+      {"type":"battle-sim","title":"Баттл-арена: 1 раунд","music":MUSIC,"duration":60,"bpm":110},
     ]},
     {"t":"3 раунда подряд","xp":50,"steps":[
       {"type":"info","title":"3 раунда подряд!","markdown":"## Ультра-баттл: 3 раунда\n\n**90 секунд непрерывного танца!**\n\nЭто самое сложное испытание курса.\n\n### Стратегия:\n- **0-30 сек**: Разогрев, groove, базовые хиты\n- **30-60 сек**: Основная часть, все техники\n- **60-90 сек**: Финал, максимум энергии, шоу\n\nПоехали!"},
-      {"type":"battle-sim","title":"УЛЬТРА-БАТТЛ — 90 сек","music":f"{M}/funk-beat-115bpm.mp3","duration":90,"bpm":115},
+      {"type":"battle-sim","title":"УЛЬТРА-БАТТЛ — 90 сек","music":MUSIC,"duration":90,"bpm":115},
     ]},
   ]},
 ]
