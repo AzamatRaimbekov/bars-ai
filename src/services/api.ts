@@ -1,10 +1,16 @@
 const BASE_URL = "/api";
+const TOKEN_KEY = "pathmind_access_token";
 
-let accessToken: string | null = null;
+let accessToken: string | null = sessionStorage.getItem(TOKEN_KEY);
 let refreshPromise: Promise<string | null> | null = null;
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
+  if (token) {
+    sessionStorage.setItem(TOKEN_KEY, token);
+  } else {
+    sessionStorage.removeItem(TOKEN_KEY);
+  }
 }
 
 export function getAccessToken(): string | null {
@@ -19,9 +25,10 @@ async function refreshAccessToken(): Promise<string | null> {
     });
     if (!resp.ok) return null;
     const data = await resp.json();
-    accessToken = data.access_token;
+    setAccessToken(data.access_token);
     return accessToken;
-  } catch {
+  } catch (err) {
+    console.error("Failed to refresh access token:", err);
     return null;
   }
 }
@@ -45,7 +52,7 @@ export async function apiFetch<T>(
     credentials: "include",
   });
 
-  if (resp.status === 401 && accessToken) {
+  if (resp.status === 401) {
     if (!refreshPromise) {
       refreshPromise = refreshAccessToken();
     }
@@ -60,8 +67,7 @@ export async function apiFetch<T>(
         credentials: "include",
       });
     } else {
-      accessToken = null;
-      window.location.href = "/login";
+      setAccessToken(null);
       throw new Error("Session expired");
     }
   }

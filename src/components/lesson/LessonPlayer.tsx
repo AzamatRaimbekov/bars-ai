@@ -15,6 +15,7 @@ import { CodePuzzleGame } from "./games/CodePuzzleGame";
 import { buildSession, calculateStars, calculateXP } from "./autoMix";
 import { useUserStore } from "@/store/userStore";
 import { useAuthStore } from "@/store/authStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { LessonContentV2, LessonSession, LessonStep } from "@/types/lesson";
 
 interface LessonPlayerProps {
@@ -32,26 +33,42 @@ export function LessonPlayer({ lesson, nodeId, allLessonIdsForNode, onClose }: L
 
   const { completeLesson, addXP, completeNode } = useUserStore();
   const fetchUser = useAuthStore((s) => s.fetchUser);
+  const { t } = useTranslation();
 
   const currentStep = session.steps[session.currentStepIndex];
   const progress = ((session.currentStepIndex) / session.steps.length) * 100;
 
-  const advanceStep = useCallback(() => {
+  const advanceStep = useCallback(async () => {
     const nextIdx = session.currentStepIndex + 1;
     if (nextIdx >= session.steps.length) {
       setDone(true);
       const stars = calculateStars(session.errors);
       const xp = calculateXP(stars);
-      completeLesson(lesson.id);
-      addXP(xp, stars === 3 ? "perfect_quiz" : "complete_lesson");
 
-      const user = useAuthStore.getState().user;
-      if (user) {
-        const completedAfter = [...(user.completed_lessons || []), lesson.id];
-        const allDone = allLessonIdsForNode.every((id) => completedAfter.includes(id));
-        if (allDone) completeNode(nodeId);
+      try {
+        // 1. Mark this lesson as complete on backend
+        await completeLesson(lesson.id);
+
+        // 2. Award XP
+        await addXP(xp, stars === 3 ? "perfect_quiz" : "complete_lesson");
+
+        // 3. Refresh user to get latest completed_lessons from backend
+        await fetchUser();
+
+        // 4. Now check if ALL lessons in this node are done
+        const freshUser = useAuthStore.getState().user;
+        if (freshUser) {
+          const allDone = allLessonIdsForNode.every((id) =>
+            freshUser.completed_lessons.includes(id)
+          );
+          if (allDone) {
+            await completeNode(nodeId);
+            await fetchUser();
+          }
+        }
+      } catch (err) {
+        console.error("Failed to save progress:", err);
       }
-      fetchUser();
     } else {
       setSession((s) => ({ ...s, currentStepIndex: nextIdx }));
     }
@@ -94,7 +111,7 @@ export function LessonPlayer({ lesson, nodeId, allLessonIdsForNode, onClose }: L
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-bg flex flex-col">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-4 px-6 py-4">
         <button onClick={() => setShowExitConfirm(true)} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface transition-colors cursor-pointer">
@@ -128,11 +145,11 @@ export function LessonPlayer({ lesson, nodeId, allLessonIdsForNode, onClose }: L
             className="fixed inset-0 z-[60] bg-black/60 flex items-center justify-center p-6" onClick={() => setShowExitConfirm(false)}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()} className="bg-surface border border-border rounded-2xl p-6 max-w-sm w-full text-center space-y-4">
-              <h3 className="text-lg font-bold">Exit lesson?</h3>
-              <p className="text-sm text-text-secondary">Your progress will be lost.</p>
+              <h3 className="text-lg font-bold">{t("lesson.exitTitle")}</h3>
+              <p className="text-sm text-text-secondary">{t("lesson.exitMessage")}</p>
               <div className="flex gap-3">
-                <button onClick={() => setShowExitConfirm(false)} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-medium cursor-pointer hover:bg-bg transition-all">Stay</button>
-                <button onClick={onClose} className="flex-1 py-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-sm font-medium cursor-pointer hover:bg-red-500/25 transition-all">Exit</button>
+                <button onClick={() => setShowExitConfirm(false)} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-medium cursor-pointer hover:bg-bg transition-all">{t("lesson.stay")}</button>
+                <button onClick={onClose} className="flex-1 py-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-sm font-medium cursor-pointer hover:bg-red-500/25 transition-all">{t("lesson.exit")}</button>
               </div>
             </motion.div>
           </motion.div>

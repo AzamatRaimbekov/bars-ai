@@ -101,10 +101,18 @@ async def refresh(db: AsyncSession, raw_token: str) -> tuple[str, str]:
 
 
 async def logout(db: AsyncSession, raw_token: str) -> None:
-    """Revoke refresh token."""
+    """Revoke all refresh tokens for the user (not just the current one)."""
     token_hash = hash_token(raw_token)
     result = await db.execute(select(RefreshToken).where(RefreshToken.token_hash == token_hash))
     rt = result.scalar_one_or_none()
     if rt:
-        rt.revoked = True
+        # Revoke ALL tokens for this user
+        all_tokens_result = await db.execute(
+            select(RefreshToken).where(
+                RefreshToken.user_id == rt.user_id,
+                RefreshToken.revoked == False,
+            )
+        )
+        for token in all_tokens_result.scalars():
+            token.revoked = True
         await db.commit()

@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter, Depends, Response, Cookie
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,10 +18,10 @@ def _set_refresh_cookie(response: Response, raw_token: str):
         key=COOKIE_KEY,
         value=raw_token,
         httponly=True,
-        secure=False,
+        secure=os.getenv("ENV", "dev") != "dev",
         samesite="lax",
         max_age=COOKIE_MAX_AGE,
-        path="/api/auth",
+        path="/",
     )
 
 
@@ -53,4 +55,4 @@ async def refresh(response: Response, refresh_token: str | None = Cookie(None, a
 async def logout(response: Response, refresh_token: str | None = Cookie(None, alias=COOKIE_KEY), db: AsyncSession = Depends(get_db)):
     if refresh_token:
         await auth_service.logout(db, refresh_token)
-    response.delete_cookie(COOKIE_KEY, path="/api/auth")
+    response.delete_cookie(COOKIE_KEY, path="/")
