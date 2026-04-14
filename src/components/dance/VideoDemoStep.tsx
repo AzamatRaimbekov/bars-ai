@@ -39,7 +39,7 @@ export function VideoDemoStep({ step, onNext }: { step: StepVideoDemo; onNext: (
           src={step.videos[activeAngle]?.url}
           controls
           className="w-full"
-          style={{ playbackRate }}
+          style={{  }}
           onLoadedMetadata={(e) => { (e.target as HTMLVideoElement).playbackRate = playbackRate }}
         />
       </div>
