@@ -17,6 +17,7 @@ export interface UserData {
   completed_nodes: string[]
   completed_lessons: string[]
   earned_badges: string[]
+  role: string
 }
 
 interface AuthState {

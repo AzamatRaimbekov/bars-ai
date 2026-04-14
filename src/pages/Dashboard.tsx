@@ -11,6 +11,7 @@ import { useUserStore } from '@/store/userStore'
 import { DIRECTIONS } from '@/data/directions'
 import { generateTip } from '@/services/claudeApi'
 import { apiFetch } from '@/services/api'
+import { SprintBanner } from '@/components/sprint/SprintBanner'
 import { useTranslation } from '@/hooks/useTranslation'
 
 const containerVariants = {
@@ -120,6 +121,11 @@ export default function Dashboard() {
               />
             </div>
           </div>
+        </motion.div>
+
+        {/* ── Sprint Banner ── */}
+        <motion.div variants={itemVariants}>
+          <SprintBanner />
         </motion.div>
 
         {/* ── Stats Grid ── */}

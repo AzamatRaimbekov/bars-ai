@@ -19,6 +19,8 @@ import CourseLearn from '@/pages/CourseLearn'
 import CourseRoadmap from '@/pages/CourseRoadmap'
 import Teach from '@/pages/Teach'
 import CourseEditor from '@/pages/CourseEditor'
+import Sprint from '@/pages/Sprint'
+import Admin from '@/pages/Admin'
 import { Loader2 } from 'lucide-react'
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -174,6 +176,22 @@ export default function App() {
           element={
             <AuthGuard>
               <CourseEditor />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/sprint"
+          element={
+            <AuthGuard>
+              <Sprint />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AuthGuard>
+              <Admin />
             </AuthGuard>
           }
         />
