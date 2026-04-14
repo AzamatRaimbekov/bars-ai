@@ -186,6 +186,14 @@ async def get_all_course_steps(
     return await course_service.get_all_steps(db, course_id)
 
 
+@router.get("/dashboard-stats")
+async def dashboard_stats(
+    user_id: uuid.UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    return await course_service.get_dashboard_stats(db, user_id)
+
+
 @router.get("/{course_id}/progress", response_model=CourseProgressResponse)
 async def get_course_progress(
     course_id: uuid.UUID,

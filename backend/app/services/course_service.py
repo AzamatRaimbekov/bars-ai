@@ -568,6 +568,82 @@ async def add_review(db: AsyncSession, user_id: uuid.UUID, course_id: uuid.UUID,
 
 # ── Progress ──────────────────────────────────────────────
 
+async def get_dashboard_stats(db: AsyncSession, user_id: uuid.UUID) -> dict:
+    """Aggregate stats across ALL enrolled courses for dashboard."""
+    # Get all enrolled courses
+    enrolled_result = await db.execute(
+        select(Course.id, Course.title, Course.thumbnail_url, Course.category)
+        .join(CourseEnrollment, CourseEnrollment.course_id == Course.id)
+        .where(CourseEnrollment.user_id == user_id)
+    )
+    enrolled_courses = enrolled_result.all()
+
+    total_lessons = 0
+    total_completed = 0
+    total_xp_earned = 0
+    course_stats = []
+
+    for course_id, course_title, thumbnail, category in enrolled_courses:
+        # Count all lessons in course
+        lessons_result = await db.execute(
+            select(CourseLesson.id, CourseLesson.xp_reward)
+            .join(CourseSection, CourseLesson.section_id == CourseSection.id)
+            .where(CourseSection.course_id == course_id)
+        )
+        all_lessons = lessons_result.all()
+        lesson_ids = [row[0] for row in all_lessons]
+        xp_map = {row[0]: row[1] for row in all_lessons}
+
+        # Count completed lessons
+        if lesson_ids:
+            completed_result = await db.execute(
+                select(CourseLessonProgress.lesson_id).where(
+                    CourseLessonProgress.user_id == user_id,
+                    CourseLessonProgress.lesson_id.in_(lesson_ids),
+                )
+            )
+            completed_ids = [row[0] for row in completed_result.all()]
+        else:
+            completed_ids = []
+
+        course_xp = sum(xp_map.get(lid, 0) for lid in completed_ids)
+        course_total = len(all_lessons)
+        course_done = len(completed_ids)
+        pct = round(course_done / max(course_total, 1) * 100)
+
+        total_lessons += course_total
+        total_completed += course_done
+        total_xp_earned += course_xp
+
+        course_stats.append({
+            "course_id": str(course_id),
+            "title": course_title,
+            "thumbnail_url": thumbnail,
+            "category": category or "Other",
+            "total_lessons": course_total,
+            "completed_lessons": course_done,
+            "progress_percent": pct,
+            "xp_earned": course_xp,
+        })
+
+    # Sort: in-progress first, then by progress desc
+    course_stats.sort(key=lambda c: (
+        0 if 0 < c["progress_percent"] < 100 else 1,
+        -c["progress_percent"],
+    ))
+
+    overall_pct = round(total_completed / max(total_lessons, 1) * 100)
+
+    return {
+        "total_courses": len(enrolled_courses),
+        "total_lessons": total_lessons,
+        "total_completed": total_completed,
+        "total_xp": total_xp_earned,
+        "overall_progress": overall_pct,
+        "courses": course_stats,
+    }
+
+
 async def get_course_progress(db: AsyncSession, user_id: uuid.UUID, course_id: uuid.UUID) -> dict:
     await _get_enrollment(db, user_id, course_id)
 
