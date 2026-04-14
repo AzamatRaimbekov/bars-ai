@@ -9,6 +9,7 @@ from sqlalchemy.orm import selectinload
 from app.models.progress import Progress
 from app.models.badge import UserBadge
 from app.models.user import User
+from app.schemas.leagues import LEAGUE_THRESHOLDS, LEAGUE_ORDER
 
 LEVEL_THRESHOLDS = [
     ("Novice", 0),
@@ -42,6 +43,7 @@ async def add_xp(db: AsyncSession, user_id: uuid.UUID, amount: int, source: str)
     progress = await _get_progress(db, user_id)
     old_level = progress.level
     progress.xp += amount
+    progress.xp_this_week += amount
     progress.level = _calculate_level(progress.xp)
     await db.commit()
     return {"xp": progress.xp, "level": progress.level, "leveled_up": progress.level != old_level}
@@ -96,6 +98,63 @@ async def update_streak(db: AsyncSession, user_id: uuid.UUID) -> dict:
     progress.last_active_date = today
     await db.commit()
     return {"streak": progress.streak, "longest_streak": progress.longest_streak}
+
+
+async def get_league_info(db: AsyncSession, user_id: uuid.UUID) -> dict:
+    progress = await _get_progress(db, user_id)
+    league = progress.league or "bronze"
+    xp_this_week = progress.xp_this_week or 0
+
+    # Determine next league
+    idx = LEAGUE_ORDER.index(league) if league in LEAGUE_ORDER else 0
+    next_league = LEAGUE_ORDER[idx + 1] if idx < len(LEAGUE_ORDER) - 1 else None
+    xp_to_next = LEAGUE_THRESHOLDS[next_league] - xp_this_week if next_league else 0
+
+    # Calculate rank within league
+    result = await db.execute(
+        select(Progress)
+        .where(Progress.league == league)
+        .order_by(Progress.xp_this_week.desc())
+    )
+    members = result.scalars().all()
+    rank = 1
+    for i, m in enumerate(members):
+        if m.user_id == user_id:
+            rank = i + 1
+            break
+
+    return {
+        "league": league,
+        "xp_this_week": xp_this_week,
+        "next_league": next_league,
+        "xp_to_next": max(xp_to_next, 0),
+        "rank_in_league": rank,
+    }
+
+
+async def get_league_members(db: AsyncSession, user_id: uuid.UUID) -> list[dict]:
+    progress = await _get_progress(db, user_id)
+    league = progress.league or "bronze"
+
+    result = await db.execute(
+        select(Progress, User)
+        .join(User, Progress.user_id == User.id)
+        .where(Progress.league == league)
+        .order_by(Progress.xp_this_week.desc())
+        .limit(30)
+    )
+    rows = result.all()
+
+    members = []
+    for rank, (prog, user) in enumerate(rows, 1):
+        members.append({
+            "user_id": prog.user_id,
+            "name": user.name,
+            "avatar_url": user.avatar_url,
+            "xp_this_week": prog.xp_this_week or 0,
+            "rank": rank,
+        })
+    return members
 
 
 async def get_stats(db: AsyncSession, user_id: uuid.UUID) -> dict:

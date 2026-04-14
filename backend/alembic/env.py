@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from app.config import settings
 from app.database import Base
 from app.models import User, Progress, UserBadge, RefreshToken  # noqa: F401
+from app.models.course import Course, CourseSection, CourseLesson, CourseEnrollment, CourseLessonProgress, CourseReview  # noqa: F401
 
 config = context.config
 if config.config_file_name is not None:

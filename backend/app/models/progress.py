@@ -20,6 +20,8 @@ class Progress(Base):
     last_active_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     completed_nodes: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
     completed_lessons: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
+    league: Mapped[str] = mapped_column(String(20), default="bronze")
+    xp_this_week: Mapped[int] = mapped_column(Integer, default=0)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     user: Mapped["User"] = relationship(back_populates="progress")
