@@ -7,10 +7,12 @@ from app.models.course import (
     CourseEnrollment, CourseLessonProgress, CourseReview,
 )
 from app.models.mentor import MentorSession, MentorMessage, KnowledgeProfile
+from app.models.sprint import Sprint, TrophyEvent
 
 __all__ = [
     "User", "Progress", "UserBadge", "RefreshToken",
     "Course", "CourseSection", "CourseLesson",
     "CourseEnrollment", "CourseLessonProgress", "CourseReview",
     "MentorSession", "MentorMessage", "KnowledgeProfile",
+    "Sprint", "TrophyEvent",
 ]
