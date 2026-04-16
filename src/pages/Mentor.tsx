@@ -366,13 +366,13 @@ export default function Mentor() {
 
   return (
     <PageWrapper>
-      <div className="h-[calc(100dvh-11rem)] lg:h-[calc(100vh-8rem)] rounded-2xl border border-white/6 bg-[#0A0A0A] overflow-hidden relative flex">
+      <div className="h-[calc(100dvh-7rem)] sm:h-[calc(100dvh-8rem)] lg:h-[calc(100vh-8rem)] rounded-2xl border border-white/6 bg-[#0A0A0A] overflow-hidden relative flex">
         {/* Mobile sidebar toggle */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="lg:hidden absolute top-4 left-4 z-20 w-9 h-9 rounded-xl bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-text transition-colors cursor-pointer"
+          className="lg:hidden absolute top-2.5 left-2 z-20 w-8 h-8 rounded-lg bg-surface/80 backdrop-blur border border-border flex items-center justify-center text-text-secondary hover:text-text transition-colors cursor-pointer"
         >
-          <Menu size={16} />
+          <Menu size={14} />
         </button>
 
         {/* Sidebar — desktop always visible, mobile as overlay */}
@@ -452,13 +452,13 @@ export default function Mentor() {
             />
           </div>
 
-          {/* Voice lesson button — floating bottom-right */}
+          {/* Voice lesson button — floating, hidden on small mobile to save space */}
           {voice.isSupported && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleStartVoiceLesson}
-              className="absolute bottom-20 right-4 z-10 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border text-text-secondary hover:text-text hover:border-primary/30 transition-all cursor-pointer text-xs font-medium shadow-lg"
+              className="absolute bottom-16 sm:bottom-20 right-3 sm:right-4 z-10 hidden sm:flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-surface border border-border text-text-secondary hover:text-text hover:border-primary/30 transition-all cursor-pointer text-xs font-medium shadow-lg"
             >
               <BookOpen size={14} />
               {lang === "ru" ? "Голосовой урок" : "Voice lesson"}

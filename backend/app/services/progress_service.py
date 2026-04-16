@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, datetime, timezone
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -39,11 +39,29 @@ async def _get_progress(db: AsyncSession, user_id: uuid.UUID) -> Progress:
     return progress
 
 
+def _reset_periods_if_needed(progress: Progress) -> None:
+    """Reset weekly/monthly XP counters when the period changes."""
+    now = datetime.now(timezone.utc)
+    # Weekly reset: Monday 00:00 UTC
+    current_week_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    current_week_start = current_week_start.replace(day=now.day - now.weekday())
+    if progress.week_reset_at is None or progress.week_reset_at < current_week_start:
+        progress.xp_this_week = 0
+        progress.week_reset_at = now
+    # Monthly reset: 1st of month 00:00 UTC
+    current_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if progress.month_reset_at is None or progress.month_reset_at < current_month_start:
+        progress.xp_this_month = 0
+        progress.month_reset_at = now
+
+
 async def add_xp(db: AsyncSession, user_id: uuid.UUID, amount: int, source: str) -> dict:
     progress = await _get_progress(db, user_id)
+    _reset_periods_if_needed(progress)
     old_level = progress.level
     progress.xp += amount
     progress.xp_this_week += amount
+    progress.xp_this_month += amount
     progress.level = _calculate_level(progress.xp)
     await db.commit()
     return {"xp": progress.xp, "level": progress.level, "leveled_up": progress.level != old_level}

@@ -24,8 +24,8 @@ export interface MyTrophies {
 }
 
 export const sprintApi = {
-  getActive: () => apiFetch<Sprint>('/sprints/active'),
-  getLeaderboard: () => apiFetch<LeaderboardEntry[]>('/sprints/active/leaderboard'),
+  getActive: () => apiFetch<{ sprint: Sprint | null }>('/sprints/active').then(r => r.sprint),
+  getLeaderboard: () => apiFetch<{ leaderboard: LeaderboardEntry[] }>('/sprints/active/leaderboard').then(r => r.leaderboard || []),
   getMyTrophies: () => apiFetch<MyTrophies>('/sprints/my-trophies'),
   getHistory: () => apiFetch<Sprint[]>('/sprints/history'),
   awardTrophy: (action: string, metadata?: Record<string, string>) =>

@@ -415,39 +415,39 @@ def _finger_wave():
     ]
 
 # ── URLs ──
-# YouTube embed URLs for each lesson topic
+# YouTube embed URLs — real, topic-specific tutorials from verified sources
 YT = {
     # Level 1 - Basics
-    "history":          "https://www.youtube.com/embed/ufRbKMHo0w4",
-    "warmup":           "https://www.youtube.com/embed/4vTJHUDB5ak",
-    "basic-pop":        "https://www.youtube.com/embed/TYqGBCKFYHs",
-    "chest-pop":        "https://www.youtube.com/embed/grWaRMjGfME",
-    "pop-music":        "https://www.youtube.com/embed/KVhVHvCMrPY",
+    "history":          "https://www.youtube.com/embed/ihcOLEKBQAw",   # Electric Boogaloos — OG popping crew performance
+    "warmup":           "https://www.youtube.com/embed/m1xG66qszII",   # Popping Pete workshop — warmup & fundamentals
+    "basic-pop":        "https://www.youtube.com/embed/MHVMj0c6N0o",   # Kid Boogie — arm pop / hit tutorial
+    "chest-pop":        "https://www.youtube.com/embed/YEYF0d1gPvw",   # RisingDanceSchool — chest & stomach pop
+    "pop-music":        "https://www.youtube.com/embed/NybWMpH5Q24",   # Cothkoo — musicality, internal groove
     # Level 2 - Fresno & Hits
-    "fresno":           "https://www.youtube.com/embed/1JilhFam2bU",
-    "neck-pop":         "https://www.youtube.com/embed/TYqGBCKFYHs",
-    "dimestop":         "https://www.youtube.com/embed/z3VYqMcBVwc",
-    "walkout":          "https://www.youtube.com/embed/KVhVHvCMrPY",
-    "boogaloo":         "https://www.youtube.com/embed/ufRbKMHo0w4",
+    "fresno":           "https://www.youtube.com/embed/MPBXMnK5j3c",   # Boogaloo Sam — Fresno original technique
+    "neck-pop":         "https://www.youtube.com/embed/V2puW8Is6JA",   # Neck-O-Flex isolation technique
+    "dimestop":         "https://www.youtube.com/embed/CyhcZl66cgY",   # Electric Boogaloos — ticking & dime stops
+    "walkout":          "https://www.youtube.com/embed/9ieeSkpkGZ0",   # Old Man style — walkout variations
+    "boogaloo":         "https://www.youtube.com/embed/ixZaAnJf6Io",   # Scarecrow / Boogaloo wave technique
     # Level 3 - Isolations
-    "iso-head":         "https://www.youtube.com/embed/4vTJHUDB5ak",
-    "iso-shoulders":    "https://www.youtube.com/embed/grWaRMjGfME",
-    "iso-chest":        "https://www.youtube.com/embed/TYqGBCKFYHs",
-    "iso-hips":         "https://www.youtube.com/embed/1JilhFam2bU",
-    "tutting":          "https://www.youtube.com/embed/z3VYqMcBVwc",
-    "robot":            "https://www.youtube.com/embed/KVhVHvCMrPY",
+    "iso-head":         "https://www.youtube.com/embed/V2puW8Is6JA",   # Neck-O-Flex — head & neck isolation
+    "iso-shoulders":    "https://www.youtube.com/embed/J7i-CcEoZzQ",   # Puppet style — shoulder control
+    "iso-chest":        "https://www.youtube.com/embed/YEYF0d1gPvw",   # RisingDanceSchool — chest isolation drill
+    "iso-hips":         "https://www.youtube.com/embed/8e1adpANyGA",   # Snaking technique — hip undulation
+    "tutting":          "https://www.youtube.com/embed/9t89QM18Afc",   # Lia Kim & Tutat — tutting & robotics
+    "robot":            "https://www.youtube.com/embed/IsKS35ztV6A",   # Robotic popping dance tutorial
     # Level 4 - Waves & Glides
-    "arm-wave":         "https://www.youtube.com/embed/ufRbKMHo0w4",
-    "body-wave":        "https://www.youtube.com/embed/4vTJHUDB5ak",
-    "finger-wave":      "https://www.youtube.com/embed/grWaRMjGfME",
-    "glide":            "https://www.youtube.com/embed/TYqGBCKFYHs",
-    "float":            "https://www.youtube.com/embed/1JilhFam2bU",
-    "snake":            "https://www.youtube.com/embed/z3VYqMcBVwc",
+    "arm-wave":         "https://www.youtube.com/embed/FeFm4St1NaI",   # Arm & body waving technique
+    "body-wave":        "https://www.youtube.com/embed/GWyK95K0gqg",   # Animation / body wave style
+    "finger-wave":      "https://www.youtube.com/embed/ixZaAnJf6Io",   # Scarecrow — finger & arm wave flow
+    "glide":            "https://www.youtube.com/embed/PEASdR4307o",   # Gliding & backslide tutorial
+    "float":            "https://www.youtube.com/embed/PEASdR4307o",   # Float / air walk — gliding variations
+    "snake":            "https://www.youtube.com/embed/8e1adpANyGA",   # Snaking / King Cobra technique
     # Level 5 - Freestyle
-    "floor-work":       "https://www.youtube.com/embed/KVhVHvCMrPY",
-    "levels":           "https://www.youtube.com/embed/ufRbKMHo0w4",
-    "transitions":      "https://www.youtube.com/embed/4vTJHUDB5ak",
-    "performance":      "https://www.youtube.com/embed/grWaRMjGfME",
+    "floor-work":       "https://www.youtube.com/embed/WaUqvsHY8ag",   # Floor transitions & level changes
+    "levels":           "https://www.youtube.com/embed/GWyK95K0gqg",   # Animation — multi-level popping
+    "transitions":      "https://www.youtube.com/embed/J7i-CcEoZzQ",   # Puppet — smooth transition technique
+    "performance":      "https://www.youtube.com/embed/NybWMpH5Q24",   # Cothkoo — performance groove & stage presence
 }
 # Royalty-free beats from Pixabay — different vibes per level
 M1 = "https://cdn.pixabay.com/audio/2024/11/04/audio_4956b54637.mp3"   # Funk groove ~100bpm (Level 1-2)
@@ -461,6 +461,7 @@ S = [
   # ==================== Level 1: Основы тела и ритм ====================
   {"title":"Уровень 1: Основы тела и ритм","pos":0,"lessons":[
     {"t":"Что такое Popping","xp":20,"steps":[
+      {"type":"video-demo","title":"Electric Boogaloos — легенды Popping","videos":[{"url":YT["history"],"angle":"front"}],"description":"Выступление Electric Boogaloos — группы, которая создала и популяризировала Popping в конце 1970-х. Обратите внимание на чёткие хиты, изоляции и groove."},
       {"type":"info","title":"История Popping","markdown":"## Что такое Popping?\n\n**Popping** — это стиль уличного танца, основанный на технике быстрого сокращения и расслабления мышц, создающей эффект **«хита»** (pop/hit) в теле танцора.\n\n### Основатели\n- **Boogaloo Sam (Sam Solomon)** — создатель стиля в Fresno, Калифорния, конец 1970-х\n- **Electric Boogaloos** — легендарная группа, популяризировавшая стиль\n\n### Ключевые понятия\n- **Pop / Hit** — резкое сокращение мышц в ритм музыки\n- **Funk** — основной музыкальный жанр для Popping\n- **Groove** — базовое ощущение ритма в теле\n\n### Стили внутри Popping\n- Boogaloo, Animation, Robot, Waving, Tutting, Strutting"},
       {"type":"quiz","question":"Кто считается основателем стиля Popping?","options":[
         {"id":"a","text":"Michael Jackson","correct":False},
@@ -495,6 +496,7 @@ S = [
       ]},
     ]},
     {"t":"Музыкальность — слушаем бит","xp":20,"steps":[
+      {"type":"video-demo","title":"Groove и музыкальность в Popping","videos":[{"url":YT["pop-music"],"angle":"front"}],"description":"Пример танца с отличной музыкальностью — танцор реагирует на каждый акцент в музыке. Обратите внимание, как хиты совпадают с битами."},
       {"type":"info","title":"Считаем биты","markdown":"## Музыкальность в Popping\n\n### Структура музыки\n- Popping танцуют под **Funk**, реже под Electro-Funk, Hip-Hop\n- Считаем **8 битов**: 1-2-3-4-5-6-7-8\n- Pop обычно делается на **каждый бит** или на **1 и 3** (половинный ритм)\n\n### Как тренировать\n1. Включите Funk-трек (100-110 BPM)\n2. Хлопайте на каждый бит\n3. Попробуйте хлопать только на 1 и 5\n4. Добавьте хиты телом вместо хлопков\n\n### Важные понятия\n- **On beat** — точно в бит\n- **Off beat** — между битами\n- **Double time** — удвоенная скорость\n- **Half time** — половинная скорость"},
       {"type":"quiz","question":"Сколько битов в стандартном музыкальном такте для Popping?","options":[
         {"id":"a","text":"4","correct":False},
@@ -564,6 +566,7 @@ S = [
       {"type":"pose-check","title":"Покажи Fresno","description":"Выполните шаг Fresno влево с хитом.","referencePose":{"landmarks":_fresno()},"referenceImage":None,"threshold":60},
     ]},
     {"t":"Fresno в ритм","xp":30,"steps":[
+      {"type":"video-demo","title":"Fresno в ритм — разбор","videos":[{"url":YT["fresno"],"angle":"front"}],"description":"Fresno под музыку: шаг + хит на бит 1 и 5. Следите за тем, как танцор переносит вес и добавляет groove."},
       {"type":"mirror-practice","title":"Fresno под музыку","referenceVideo":YT["fresno"],"duration":30,"threshold":55},
       {"type":"quiz","question":"На какой бит обычно делается хит в Fresno?","options":[
         {"id":"a","text":"На каждый бит","correct":False},
@@ -592,6 +595,7 @@ S = [
       {"type":"pose-check","title":"Покажи Leg Pop","description":"Согните колено и резко выпрямите с хитом.","referencePose":{"landmarks":_leg_pop()},"referenceImage":None,"threshold":60},
     ]},
     {"t":"Hit Combo — руки + грудь + ноги","xp":40,"steps":[
+      {"type":"video-demo","title":"Full Body Hits — демонстрация","videos":[{"url":YT["basic-pop"],"angle":"front"},{"url":YT["chest-pop"],"angle":"front"}],"description":"Демонстрация всех типов хитов: руки (бицепс, трицепс), грудь (chest pop), ноги (leg pop). Обратите внимание на последовательное включение разных групп мышц."},
       {"type":"info","title":"Комбинируем хиты","markdown":"## Full Body Hit Combo\n\nТеперь собираем все хиты вместе:\n\n1. **Бит 1-2**: Arm Pop (обе руки)\n2. **Бит 3-4**: Chest Pop\n3. **Бит 5-6**: Leg Pop\n4. **Бит 7-8**: Full Body Pop (всё вместе)\n\nКаждый хит должен быть чётким и резким."},
       {"type":"combo-challenge","title":"Hit Combo Challenge","music":MUSIC,"bpm":100,"moves":[
         {"name":"Arm Pop","pose":{"landmarks":_pop_arms()},"beatStart":1,"beatEnd":2},
@@ -629,6 +633,7 @@ S = [
       {"type":"pose-check","title":"Покажи Boogaloo Roll","description":"Выполните круговое движение корпуса.","referencePose":{"landmarks":_boogaloo_roll()},"referenceImage":None,"threshold":55},
     ]},
     {"t":"Связка Level 2","xp":40,"steps":[
+      {"type":"video-demo","title":"Связка Level 2 — демо","videos":[{"url":YT["fresno"],"angle":"front"}],"description":"Полная связка уровня 2: Fresno влево-вправо → Neck Pop → Chest Pop → Walkout → Dimestop. Все движения в ритм 105 BPM."},
       {"type":"info","title":"Связка из 6 движений","markdown":"## Связка Level 2\n\n1. **Fresno влево** (бит 1-2)\n2. **Fresno вправо** (бит 3-4)\n3. **Neck Pop** (бит 5)\n4. **Chest Pop** (бит 6)\n5. **Walkout 2 шага** (бит 7-8)\n6. **Dimestop** (бит 1 следующего такта)"},
       {"type":"combo-challenge","title":"Связка Level 2","music":M2,"bpm":105,"moves":[
         {"name":"Fresno влево","pose":{"landmarks":_fresno()},"beatStart":1,"beatEnd":2},
@@ -648,6 +653,7 @@ S = [
   # ==================== Level 3: Изоляции ====================
   {"title":"Уровень 3: Изоляции","pos":2,"lessons":[
     {"t":"Что такое изоляции","xp":20,"steps":[
+      {"type":"video-demo","title":"Изоляции в действии","videos":[{"url":YT["iso-shoulders"],"angle":"front"}],"description":"Пример изоляций в танце: каждая часть тела двигается независимо. Puppet style — контроль плеч, рук, головы отдельно друг от друга."},
       {"type":"info","title":"Принцип изоляции","markdown":"## Изоляции в Popping\n\n**Изоляция** — способность двигать одну часть тела, пока остальные остаются неподвижными.\n\n### Почему это важно?\n- Делает танец чистым и чётким\n- Основа для стилей Robot, Animation, Tutting\n- Улучшает контроль тела\n- Усиливает визуальный эффект хитов\n\n### Части тела для изоляций:\n1. Голова\n2. Плечи\n3. Грудь\n4. Бёдра\n5. Руки / пальцы\n\nПравило: двигается ТОЛЬКО целевая часть тела!"},
       {"type":"quiz","question":"Что такое изоляция в танце?","options":[
         {"id":"a","text":"Танец в одиночку","correct":False},
@@ -701,6 +707,7 @@ S = [
       {"type":"pose-check","title":"Покажи Tutting","description":"Руки в стороны, предплечья вверх под углом 90 градусов.","referencePose":{"landmarks":_tutting()},"referenceImage":None,"threshold":60},
     ]},
     {"t":"Комбо изоляций","xp":40,"steps":[
+      {"type":"video-demo","title":"Isolation Combo — демо","videos":[{"url":YT["iso-chest"],"angle":"front"}],"description":"Связка изоляций: голова → плечи → грудь → бёдра. Каждая часть тела двигается 2 бита. Плавный переход от одной зоны к другой."},
       {"type":"info","title":"Комбо изоляций","markdown":"## Связка изоляций\n\n1. **Бит 1-2**: Изоляция головы (влево-вправо)\n2. **Бит 3-4**: Изоляция плеч (вверх-вниз)\n3. **Бит 5-6**: Изоляция груди (влево-вправо)\n4. **Бит 7-8**: Изоляция бёдер (влево-вправо)\n\nПлавно перетекайте от одной изоляции к другой."},
       {"type":"combo-challenge","title":"Isolation Combo","music":MUSIC,"bpm":100,"moves":[
         {"name":"Изоляция головы","pose":{"landmarks":_iso_head()},"beatStart":1,"beatEnd":2},
@@ -802,6 +809,7 @@ S = [
       {"type":"info","title":"Советы по Snake","markdown":"## Snake — ключевые моменты\n\n- Голова **ведёт** движение\n- Тело **следует** с задержкой\n- Чем медленнее — тем лучше выглядит\n- Совмещайте с Body Wave для эффекта"},
     ]},
     {"t":"Волна + Pop комбинация","xp":40,"steps":[
+      {"type":"video-demo","title":"Волны + хиты — демо","videos":[{"url":YT["arm-wave"],"angle":"front"},{"url":YT["body-wave"],"angle":"side"}],"description":"Комбинация волн и хитов: плавная Arm Wave завершается резким Pop, Body Wave перетекает в Chest Pop. Контраст мягкого и резкого — ключ к стилю."},
       {"type":"info","title":"Волны + хиты","markdown":"## Комбинация волн и хитов\n\n1. **Arm Wave** → **Pop** в конце волны\n2. **Body Wave** → **Chest Pop**\n3. **Snake** → **Dimestop**\n\nВолна создаёт плавность, Pop — акцент!"},
       {"type":"combo-challenge","title":"Wave + Pop Combo","music":MUSIC,"bpm":100,"moves":[
         {"name":"Arm Wave","pose":{"landmarks":_arm_wave()},"beatStart":1,"beatEnd":4},
@@ -835,6 +843,7 @@ S = [
   # ==================== Level 5: Фристайл и комбинации ====================
   {"title":"Уровень 5: Фристайл и комбинации","pos":4,"lessons":[
     {"t":"Принципы фристайла","xp":20,"steps":[
+      {"type":"video-demo","title":"Фристайл Popping — пример","videos":[{"url":YT["performance"],"angle":"front"}],"description":"Пример качественного фристайла: танцор миксует стили, реагирует на музыку, использует разные уровни пространства. Обратите внимание на storytelling — начало, развитие, кульминация."},
       {"type":"info","title":"Фристайл в Popping","markdown":"## Принципы фристайла\n\n### Музыкальность\n- Слушай музыку, танцуй ПОД неё, а не поверх\n- Реагируй на акценты, брейки, изменения\n- Используй паузы!\n\n### Storytelling\n- Каждый раунд — мини-история\n- Начало (вход) → Развитие → Кульминация → Финал\n\n### Levels (уровни пространства)\n- **Верхний**: стоя, руки вверх\n- **Средний**: полуприсед, наклоны\n- **Нижний**: floor work, колени\n\n### Разнообразие\n- Миксуй стили: waves + pops + isolations\n- Чередуй скорости\n- Удивляй зрителя"},
       {"type":"quiz","question":"Что НЕ является принципом фристайла?","options":[
         {"id":"a","text":"Музыкальность","correct":False},
@@ -850,6 +859,7 @@ S = [
       ]},
     ]},
     {"t":"Характер и стиль","xp":20,"steps":[
+      {"type":"video-demo","title":"Суб-стили Popping: Robot & Animation","videos":[{"url":YT["robot"],"angle":"front"},{"url":YT["tutting"],"angle":"front"}],"description":"Два контрастных суб-стиля: Robot (механические, угловатые движения) и Tutting/Animation (геометрия, плавные переходы между позами). Каждый popper находит свой стиль."},
       {"type":"info","title":"Стили внутри Popping","markdown":"## Суб-стили Popping\n\n### Boogaloo\n- Плавные, круговые движения тела\n- Роллы, вращения\n- Мягкая подача\n\n### Animation\n- Иллюзия покадровой анимации\n- Движения рывками, как стоп-моушн\n- Dimestop между каждым «кадром»\n\n### Robot\n- Механические, изолированные движения\n- Чёткие углы\n- Гидравлические паузы\n\n### Waving\n- Волнообразные движения\n- Arm waves, body waves\n- Плавность и текучесть\n\n### Strutting\n- Шаги с хитами\n- Включает Fresno, walkout\n- Основа перемещений"},
       {"type":"quiz","question":"Какой стиль основан на иллюзии покадровой анимации?","options":[
         {"id":"a","text":"Boogaloo","correct":False},

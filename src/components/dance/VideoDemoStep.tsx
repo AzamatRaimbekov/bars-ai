@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Play, SkipForward } from "lucide-react"
+import { SkipForward } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 
 interface StepVideoDemo {
@@ -9,10 +9,27 @@ interface StepVideoDemo {
   description?: string
 }
 
+function isYouTubeUrl(url: string) {
+  return url.includes("youtube.com") || url.includes("youtu.be")
+}
+
+function toYouTubeEmbed(url: string): string {
+  // Already an embed URL
+  if (url.includes("/embed/")) return url
+  // Watch URL → embed
+  const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?&]+)/)
+  if (match) return `https://www.youtube.com/embed/${match[1]}`
+  return url
+}
+
 export function VideoDemoStep({ step, onNext }: { step: StepVideoDemo; onNext: () => void }) {
   const [activeAngle, setActiveAngle] = useState(0)
   const [playbackRate, setPlaybackRate] = useState(1)
   const rates = [0.25, 0.5, 1]
+
+  const currentUrl = step.videos[activeAngle]?.url || ""
+  const isYT = isYouTubeUrl(currentUrl)
+  const embedUrl = isYT ? toYouTubeEmbed(currentUrl) : currentUrl
 
   return (
     <div className="space-y-4">
@@ -32,30 +49,42 @@ export function VideoDemoStep({ step, onNext }: { step: StepVideoDemo; onNext: (
         </div>
       )}
 
-      {/* Video player */}
-      <div className="relative rounded-2xl overflow-hidden bg-black">
-        <video
-          key={step.videos[activeAngle]?.url}
-          src={step.videos[activeAngle]?.url}
-          controls
-          className="w-full"
-          style={{  }}
-          onLoadedMetadata={(e) => { (e.target as HTMLVideoElement).playbackRate = playbackRate }}
-        />
+      {/* Video player — YouTube iframe or native video */}
+      <div className="relative rounded-2xl overflow-hidden bg-black aspect-video">
+        {isYT ? (
+          <iframe
+            key={embedUrl}
+            src={`${embedUrl}?rel=0&modestbranding=1`}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={step.title}
+          />
+        ) : (
+          <video
+            key={currentUrl}
+            src={currentUrl}
+            controls
+            className="w-full h-full object-contain"
+            onLoadedMetadata={(e) => { (e.target as HTMLVideoElement).playbackRate = playbackRate }}
+          />
+        )}
       </div>
 
-      {/* Speed controls */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-white/40">Скорость:</span>
-        {rates.map(r => (
-          <button key={r} onClick={() => setPlaybackRate(r)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer ${
-              r === playbackRate ? "bg-primary/20 text-primary" : "bg-white/5 text-white/50"
-            }`}>
-            {r}x
-          </button>
-        ))}
-      </div>
+      {/* Speed controls — only for native video */}
+      {!isYT && (
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-white/40">Скорость:</span>
+          {rates.map(r => (
+            <button key={r} onClick={() => setPlaybackRate(r)}
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer ${
+                r === playbackRate ? "bg-primary/20 text-primary" : "bg-white/5 text-white/50"
+              }`}>
+              {r}x
+            </button>
+          ))}
+        </div>
+      )}
 
       {step.description && <p className="text-sm text-white/50">{step.description}</p>}
 

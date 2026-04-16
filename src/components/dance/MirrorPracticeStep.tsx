@@ -70,7 +70,17 @@ export function MirrorPracticeStep({ step, onAnswer }: { step: StepMirrorPractic
 
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl overflow-hidden bg-black border border-white/10 aspect-[4/3]">
-              <video ref={videoRef} src={step.referenceVideo} className="w-full h-full object-cover" loop muted playsInline />
+              {step.referenceVideo.includes("youtube.com") || step.referenceVideo.includes("youtu.be") ? (
+                <iframe
+                  src={`${step.referenceVideo.includes("/embed/") ? step.referenceVideo : `https://www.youtube.com/embed/${(step.referenceVideo.match(/[?&]v=([^&]+)/) || step.referenceVideo.match(/youtu\.be\/([^?&]+)/) || [,""])[1]}`}?autoplay=1&mute=1&loop=1&rel=0&modestbranding=1`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={step.title}
+                />
+              ) : (
+                <video ref={videoRef} src={step.referenceVideo} className="w-full h-full object-cover" loop muted playsInline />
+              )}
             </div>
             <CameraView onFrame={handleFrame} active={!finished} className="aspect-[4/3]" />
           </div>

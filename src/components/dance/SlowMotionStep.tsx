@@ -15,11 +15,24 @@ interface StepSlowMotion {
   keyframes: Keyframe[]
 }
 
+function isYouTubeUrl(url: string) {
+  return url.includes("youtube.com") || url.includes("youtu.be")
+}
+
+function toYouTubeEmbed(url: string): string {
+  if (url.includes("/embed/")) return url
+  const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?&]+)/)
+  if (match) return `https://www.youtube.com/embed/${match[1]}`
+  return url
+}
+
 export function SlowMotionStep({ step, onNext }: { step: StepSlowMotion; onNext: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [currentKF, setCurrentKF] = useState(0)
   const [paused, setPaused] = useState(true)
   const [allViewed, setAllViewed] = useState(false)
+
+  const isYT = isYouTubeUrl(step.video)
 
   const handleTimeUpdate = () => {
     if (!videoRef.current) return
@@ -37,11 +50,17 @@ export function SlowMotionStep({ step, onNext }: { step: StepSlowMotion; onNext:
       return
     }
     setCurrentKF(prev => prev + 1)
-    setPaused(false)
-    videoRef.current?.play()
+    if (!isYT) {
+      setPaused(false)
+      videoRef.current?.play()
+    }
   }
 
   const handleStart = () => {
+    if (isYT) {
+      setPaused(false)
+      return
+    }
     if (!videoRef.current) return
     videoRef.current.playbackRate = 0.25
     videoRef.current.play()
@@ -61,21 +80,33 @@ export function SlowMotionStep({ step, onNext }: { step: StepSlowMotion; onNext:
         ))}
       </div>
 
-      <div className="relative rounded-2xl overflow-hidden bg-black">
-        <video
-          ref={videoRef}
-          src={step.video}
-          onTimeUpdate={handleTimeUpdate}
-          className="w-full"
-          playsInline
-        />
-        <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded-lg text-xs text-white/70">
-          0.25x
-        </div>
+      <div className="relative rounded-2xl overflow-hidden bg-black aspect-video">
+        {isYT ? (
+          <iframe
+            src={`${toYouTubeEmbed(step.video)}?rel=0&modestbranding=1`}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={step.title}
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            src={step.video}
+            onTimeUpdate={handleTimeUpdate}
+            className="w-full h-full object-contain"
+            playsInline
+          />
+        )}
+        {!isYT && (
+          <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded-lg text-xs text-white/70">
+            0.25x
+          </div>
+        )}
       </div>
 
       {/* Keyframe description */}
-      {paused && step.keyframes[currentKF] && (
+      {step.keyframes[currentKF] && (
         <div className="bg-primary/10 border border-primary/20 rounded-xl p-4">
           <p className="text-sm text-text font-medium">Ключевой момент {currentKF + 1}/{step.keyframes.length}</p>
           <p className="text-sm text-white/60 mt-1">{step.keyframes[currentKF].description}</p>
@@ -83,19 +114,13 @@ export function SlowMotionStep({ step, onNext }: { step: StepSlowMotion; onNext:
       )}
 
       {!allViewed ? (
-        paused ? (
-          currentKF === 0 && !videoRef.current?.currentTime ? (
-            <Button onClick={handleStart} className="w-full">
-              <Play size={14} /> Начать разбор
-            </Button>
-          ) : (
-            <Button onClick={handleContinue} className="w-full">
-              <SkipForward size={14} /> Далее
-            </Button>
-          )
+        currentKF === 0 && paused ? (
+          <Button onClick={handleStart} className="w-full">
+            <Play size={14} /> Начать разбор
+          </Button>
         ) : (
-          <Button variant="secondary" onClick={() => { videoRef.current?.pause(); setPaused(true) }} className="w-full">
-            <Pause size={14} /> Пауза
+          <Button onClick={handleContinue} className="w-full">
+            <SkipForward size={14} /> {currentKF >= step.keyframes.length - 1 ? "Завершить" : "Далее"}
           </Button>
         )
       ) : (
