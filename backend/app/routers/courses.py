@@ -29,7 +29,7 @@ async def list_courses(
     max_price: Optional[int] = Query(None, ge=0),
     sort: str = Query("newest", pattern=r"^(newest|popular|rating|price_asc|price_desc)$"),
     page: int = Query(1, ge=1),
-    per_page: int = Query(20, ge=1, le=100),
+    per_page: int = Query(50, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
     return await course_service.list_courses(

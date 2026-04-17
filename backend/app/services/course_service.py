@@ -120,7 +120,7 @@ async def list_courses(
     max_price: int | None = None,
     sort: str = "newest",
     page: int = 1,
-    per_page: int = 20,
+    per_page: int = 50,
 ) -> dict:
     query = (
         select(Course, User.name.label("author_name"))
