@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
     await redis_pool.aclose()
 
 
-app = FastAPI(title="PathMind API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="Bars AI API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

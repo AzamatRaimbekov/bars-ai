@@ -19,7 +19,7 @@ export function TopBar() {
       {/* Mobile: logo wordmark + greeting */}
       <div className="flex items-center gap-2.5 lg:hidden">
         <div>
-          <span className="text-[13px] font-bold leading-none text-white">PathMind</span>
+          <span className="text-[13px] font-bold leading-none text-white">Bars AI</span>
           <p className="text-[10px] text-white/40 leading-tight mt-0.5">
             {greeting}, {profile.name}
           </p>

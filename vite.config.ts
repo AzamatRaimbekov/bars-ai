@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["images/*.png"],
       manifest: {
-        name: "PathMind — AI Learning Platform",
-        short_name: "PathMind",
-        description: "Interactive AI-powered learning platform",
+        name: "Bars AI — Платформа обучения",
+        short_name: "Bars AI",
+        description: "Интерактивная AI-платформа обучения с геймификацией и coding-упражнениями",
         theme_color: "#0A0A0F",
         background_color: "#0A0A0F",
         display: "standalone",

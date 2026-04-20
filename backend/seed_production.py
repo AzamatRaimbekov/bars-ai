@@ -142,12 +142,12 @@ async def seed():
         r = await db.execute(select(User).limit(1))
         user = r.scalar_one_or_none()
         if not user:
-            user = User(id=uuid.uuid4(), email="admin@pathmind.com", name="PathMind Admin",
-                        password=hash_password("admin2026!"), direction="frontend",
+            user = User(id=uuid.uuid4(), email="admin@bars-ai.com", name="Bars AI Admin",
+                        password=hash_password("BarsAI2026!Prod"), direction="frontend",
                         assessment_level="advanced", language="ru")
             db.add(user)
             await db.flush()
-            print(f"Created admin user: admin@pathmind.com / admin2026!")
+            print(f"Created admin user: admin@bars-ai.com")
 
         for c_data in COURSES_DATA:
             existing = await db.execute(select(Course).where(Course.title == c_data["title"]))

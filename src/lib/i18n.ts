@@ -2,10 +2,10 @@ export type Lang = "ru" | "en";
 
 const translations = {
   // ===== COMMON =====
-  "app.name.path": { en: "Path", ru: "Path" },
-  "app.name.mind": { en: "Mind", ru: "Mind" },
+  "app.name.path": { en: "Bars", ru: "Bars" },
+  "app.name.mind": { en: "AI", ru: "AI" },
   "app.tagline": { en: "AI-Powered Learning", ru: "Обучение с ИИ" },
-  "app.version": { en: "PathMind v1.0", ru: "PathMind v1.0" },
+  "app.version": { en: "Bars AI v1.0", ru: "Bars AI v1.0" },
   "common.back": { en: "Back", ru: "Назад" },
   "common.continue": { en: "Continue", ru: "Продолжить" },
   "common.start": { en: "Start", ru: "Начать" },

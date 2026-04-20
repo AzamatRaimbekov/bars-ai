@@ -30,7 +30,7 @@ export function Sidebar() {
     <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 border-r border-white/[0.06] bg-[#0A0A0A] z-40 flex-col">
       {/* Logo */}
       <div className="p-6 flex items-center gap-3">
-        <h1 className="text-xl font-bold text-white">PathMind</h1>
+        <h1 className="text-xl font-bold text-white">Bars AI</h1>
       </div>
 
       {/* Nav */}
