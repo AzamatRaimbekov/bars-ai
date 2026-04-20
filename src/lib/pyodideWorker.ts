@@ -1,10 +1,10 @@
-declare const self: DedicatedWorkerGlobalScope;
+/// <reference lib="webworker" />
 
 let pyodide: any = null;
 
 async function loadPyodideRuntime() {
   if (pyodide) return pyodide;
-  importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js");
+  (self as any).importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js");
   pyodide = await (self as any).loadPyodide({
     indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.0/full/",
   });

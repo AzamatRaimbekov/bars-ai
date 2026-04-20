@@ -42,7 +42,7 @@ function getWorker(): Promise<Worker> {
 export function usePyodide() {
   const [isLoading, setIsLoading] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     getWorker().then(() => setIsLoading(false));

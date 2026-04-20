@@ -234,6 +234,13 @@ function defaultStep(type: StepType): LessonStep {
       };
     case "tower-defense":
       return { type: "tower-defense" };
+    case "python-coding":
+      return {
+        type: "python-coding",
+        prompt: "",
+        starterCode: "",
+        expectedOutput: "",
+      };
   }
 }
 
