@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Search, Users, ChevronDown, Plus, BookOpen } from 'lucide-react'
+import { Search, Users, ChevronDown, Plus, BookOpen, Sparkles, Zap, ArrowRight } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -116,6 +116,33 @@ export default function Courses() {
             </div>
           )}
         </motion.div>
+
+        {/* Create Course Banner */}
+        {isAuthenticated && (
+          <motion.div variants={itemVariants}>
+            <div
+              className="relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-r from-purple-900/40 via-indigo-900/30 to-purple-900/40 p-4 cursor-pointer hover:border-purple-500/40 transition-all group"
+              onClick={() => navigate('/teach')}
+            >
+              <div className="absolute inset-0 opacity-20 pointer-events-none"
+                style={{ background: 'radial-gradient(ellipse at 80% 50%, #7C3AED 0%, transparent 60%)' }} />
+              <div className="relative flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <Sparkles size={20} className="text-purple-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-bold text-white">Создай курс — получи 500 XP!</h3>
+                  <p className="text-xs text-white/50">Поделись знаниями с сообществом</p>
+                </div>
+                <div className="flex items-center gap-1 text-purple-400 text-sm font-medium shrink-0">
+                  <Zap size={14} />
+                  <span className="hidden sm:inline">+500 XP</span>
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Search */}
         <motion.div variants={itemVariants}>

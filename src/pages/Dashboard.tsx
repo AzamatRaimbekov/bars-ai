@@ -128,6 +128,37 @@ export default function Dashboard() {
           <SprintBanner />
         </motion.div>
 
+        {/* ── Create Course Banner ── */}
+        <motion.div variants={itemVariants}>
+          <div
+            className="relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-r from-purple-900/40 via-indigo-900/30 to-purple-900/40 p-5 cursor-pointer hover:border-purple-500/40 transition-all group"
+            onClick={() => navigate('/teach')}
+          >
+            <div className="absolute inset-0 opacity-20 pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse at 80% 50%, #7C3AED 0%, transparent 60%)' }} />
+            <div className="relative flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Sparkles size={24} className="text-purple-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-bold text-white mb-0.5">
+                  {lang === 'ru' ? 'Создай свой курс — получи XP!' : 'Create a course — earn XP!'}
+                </h3>
+                <p className="text-sm text-white/50">
+                  {lang === 'ru'
+                    ? 'Поделись знаниями и получи 500 XP за каждый опубликованный курс'
+                    : 'Share your knowledge and earn 500 XP for each published course'}
+                </p>
+              </div>
+              <div className="hidden sm:flex items-center gap-1 text-purple-400 text-sm font-medium shrink-0">
+                <Zap size={16} />
+                <span>+500 XP</span>
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* ── Stats Grid ── */}
         <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
           {topStats.map((stat) => (
