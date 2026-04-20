@@ -1770,10 +1770,11 @@ function VideoStep({ step, onNext }: { step: StepVideo; onNext: () => void }) {
           <iframe
             src={embedUrl}
             title={step.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
-            referrerPolicy="no-referrer"
+            loading="lazy"
             className="w-full aspect-video"
+            style={{ border: 0 }}
           />
         ) : (
           // eslint-disable-next-line jsx-a11y/media-has-caption
