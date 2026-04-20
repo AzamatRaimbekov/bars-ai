@@ -51,6 +51,8 @@ SEED_MODULES = [
     "seed_uiux_design",
     "seed_vibecoding_course",
     "seed_video_editing",
+    # Post-processing: thumbnails for all courses
+    "seed_thumbnails",
 ]
 
 
