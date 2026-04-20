@@ -11,6 +11,7 @@
 - `src/pages/*`, `src/App.tsx` → `docs/фронтенд/Роутинг.md`
 - `src/store/*` → `docs/фронтенд/Сторы.md`
 - `src/components/*` → `docs/фронтенд/Компоненты.md`
+- `src/lib/pyodideWorker.ts`, `src/hooks/usePyodide.ts`, `src/components/courses/steps/PythonCodingStep.tsx` → `docs/фронтенд/Python Coding.md`
 - `backend/app/config.py` → `docs/бэкенд/Конфигурация.md`
 
 Используй `[[вики-линки]]` для связей между заметками.
