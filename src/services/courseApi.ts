@@ -85,7 +85,8 @@ export type StepType =
   | "word-builder"
   | "sentence-translation"
   | "cloze-passage"
-  | "tower-defense";
+  | "tower-defense"
+  | "python-coding";
 
 export interface StepInfo {
   type: "info";
@@ -156,6 +157,14 @@ export interface StepCodeEditor {
   prompt: string;
   starterCode: string;
   expectedOutput: string; // substring that must be in the result
+}
+
+export interface StepPythonCoding {
+  type: "python-coding";
+  prompt: string;
+  starterCode: string;
+  expectedOutput: string;
+  hint?: string;
 }
 
 export interface StepTimeline {
@@ -289,6 +298,7 @@ export type LessonStep =
   | StepTypeAnswer
   | StepImageHotspot
   | StepCodeEditor
+  | StepPythonCoding
   | StepTimeline
   | StepCategorySort
   | StepVideo
