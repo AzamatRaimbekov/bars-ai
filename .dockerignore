@@ -4,6 +4,13 @@ backend/__pycache__
 backend/app/__pycache__
 backend/app/**/__pycache__
 .git
+.github
+.claude
+.superpowers
+.zed
+docs
 dist
 *.pyc
+*.tsbuildinfo
 .env
+.DS_Store

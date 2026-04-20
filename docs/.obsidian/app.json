@@ -1,0 +1,18 @@
+{
+  "theme": "obsidian",
+  "accentColor": "#7c3aed",
+  "translucency": false,
+  "showLineNumber": true,
+  "spellcheck": true,
+  "spellcheckLanguages": ["ru", "en"],
+  "defaultViewMode": "preview",
+  "foldHeading": true,
+  "foldIndent": true,
+  "showFrontmatter": false,
+  "strictLineBreaks": false,
+  "readableLineLength": true,
+  "tabSize": 2,
+  "newLinkFormat": "relative",
+  "attachmentFolderPath": "assets",
+  "alwaysUpdateLinks": true
+}
