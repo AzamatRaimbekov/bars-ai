@@ -1,8 +1,11 @@
 """Run ALL seed scripts to populate the database with all courses."""
 import asyncio
 import importlib
+import traceback
 import sys
 import os
+
+sys.stdout.reconfigure(line_buffering=True)
 
 # All seed modules in order: production first, then individual courses
 SEED_MODULES = [
@@ -65,8 +68,10 @@ async def run_all():
             ok += 1
         except Exception as e:
             print(f"  FAIL {mod_name}: {e}")
+            traceback.print_exc()
             fail += 1
-    print(f"\nDone: {ok} OK, {fail} failed, {len(SEED_MODULES)} total")
+    print(f"\nSeed done: {ok} OK, {fail} failed, {len(SEED_MODULES)} total")
+    sys.stdout.flush()
 
 
 if __name__ == "__main__":
