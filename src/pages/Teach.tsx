@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Users, Pencil } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Card } from '@/components/ui/Card'
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { StarRating } from '@/components/courses/StarRating'
 import { useTranslation } from '@/hooks/useTranslation'
 import { courseApi, type CourseCard } from '@/services/courseApi'
+import { useAuthStore } from '@/store/authStore'
 
 const GRADIENT_THUMBNAILS = [
   'linear-gradient(135deg, #F97316 0%, #FB923C 100%)',
@@ -38,6 +39,8 @@ export default function Teach() {
   const { t } = useTranslation()
   const [courses, setCourses] = useState<CourseCard[]>([])
   const [loading, setLoading] = useState(true)
+  const [toast, setToast] = useState<string | null>(null)
+  const user = useAuthStore((s) => s.user)
 
   useEffect(() => {
     courseApi
@@ -46,6 +49,12 @@ export default function Teach() {
       .catch(() => setCourses([]))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    if (!toast) return
+    const timer = setTimeout(() => setToast(null), 5000)
+    return () => clearTimeout(timer)
+  }, [toast])
 
   const handleCreate = async () => {
     try {
@@ -56,6 +65,9 @@ export default function Teach() {
         difficulty: 'Beginner',
         price: 0,
       })
+      if (user?.role !== 'admin') {
+        setToast('Ваш курс отправлен на модерацию. Вы получите уведомление когда он будет одобрён.')
+      }
       navigate(`/teach/${res.id}`)
     } catch {
       // handle error
@@ -171,6 +183,20 @@ export default function Teach() {
           </motion.div>
         )}
       </motion.div>
+
+      {/* Moderation toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-[90vw] bg-[#1A1A1A] border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white shadow-2xl"
+          >
+            {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PageWrapper>
   )
 }

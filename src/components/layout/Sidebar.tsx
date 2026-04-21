@@ -11,6 +11,7 @@ import {
   User,
   BookOpen,
 } from "lucide-react";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 
 export function Sidebar() {
   const { t } = useTranslation();
@@ -28,9 +29,10 @@ export function Sidebar() {
 
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 border-r border-white/[0.06] bg-[#0A0A0A] z-40 flex-col">
-      {/* Logo */}
-      <div className="p-6 flex items-center gap-3">
+      {/* Logo + notification bell */}
+      <div className="p-6 flex items-center justify-between">
         <h1 className="text-xl font-bold text-white">Bars AI</h1>
+        <NotificationBell />
       </div>
 
       {/* Nav */}

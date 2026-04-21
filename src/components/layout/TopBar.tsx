@@ -3,6 +3,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { XPBar } from "@/components/gamification/XPBar";
 import { StreakCounter } from "@/components/gamification/StreakCounter";
 import { TrophyCounter } from "@/components/sprint/TrophyCounter";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Flame } from "lucide-react";
 
 export function TopBar() {
@@ -55,6 +56,7 @@ export function TopBar() {
         <div className="hidden lg:block">
           <TrophyCounter />
         </div>
+        <NotificationBell />
       </div>
     </header>
   );
