@@ -5,6 +5,7 @@ import {
   BookOpen,
   CreditCard,
   Zap,
+  Shield,
   LogOut,
 } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
@@ -14,6 +15,7 @@ const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Дашборд" },
   { to: "/users", icon: Users, label: "Пользователи" },
   { to: "/courses", icon: BookOpen, label: "Курсы" },
+  { to: "/moderation", icon: Shield, label: "Модерация" },
   { to: "/payments", icon: CreditCard, label: "Платежи" },
   { to: "/sprints", icon: Zap, label: "Спринты" },
 ];

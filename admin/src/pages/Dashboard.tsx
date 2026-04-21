@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, BookOpen, Trophy, CreditCard, Zap } from "lucide-react";
+import { Users, BookOpen, Trophy, CreditCard, Zap, Shield } from "lucide-react";
 import { apiFetch } from "../lib/api";
 import PageTransition from "../components/PageTransition";
 import StatusBadge from "../components/StatusBadge";
@@ -9,6 +9,10 @@ interface Stats {
   total_courses: number;
   total_trophies: number;
   active_sprint: { id: string; title: string; end_date: string } | null;
+}
+
+interface PendingCourse {
+  id: string;
 }
 
 interface Payment {
@@ -26,18 +30,21 @@ export default function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
+  const [moderationCount, setModerationCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const [s, p] = await Promise.all([
+        const [s, p, pending] = await Promise.all([
           apiFetch<Stats>("/api/admin/stats"),
           apiFetch<Payment[]>("/api/admin/payments"),
+          apiFetch<PendingCourse[]>("/api/admin/courses/pending").catch(() => [] as PendingCourse[]),
         ]);
         setStats(s);
         setPayments(p.slice(0, 5));
         setPendingCount(p.filter((x) => x.status === "pending").length);
+        setModerationCount(pending.length);
       } catch {
         /* handled by apiFetch */
       } finally {
@@ -75,6 +82,12 @@ export default function Dashboard() {
       color: "text-yellow-400",
     },
     {
+      icon: Shield,
+      label: "Курсы на модерации",
+      value: moderationCount,
+      color: "text-orange-400",
+    },
+    {
       icon: CreditCard,
       label: "Ожидают оплаты",
       value: pendingCount,
@@ -87,7 +100,7 @@ export default function Dashboard() {
       <h1 className="text-xl font-bold text-white mb-6">Дашборд</h1>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {cards.map((card) => (
           <div
             key={card.label}

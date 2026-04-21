@@ -9,6 +9,7 @@ import UsersPage from "./pages/UsersPage";
 import CoursesPage from "./pages/CoursesPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import SprintsPage from "./pages/SprintsPage";
+import ModerationPage from "./pages/ModerationPage";
 
 export default function App() {
   const hydrate = useAuthStore((s) => s.hydrate);
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/courses" element={<CoursesPage />} />
+          <Route path="/moderation" element={<ModerationPage />} />
           <Route path="/payments" element={<PaymentsPage />} />
           <Route path="/sprints" element={<SprintsPage />} />
         </Route>
