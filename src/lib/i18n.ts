@@ -22,7 +22,7 @@ const translations = {
   // ===== NAVIGATION =====
   "nav.dashboard": { en: "Dashboard", ru: "Главная" },
   "nav.roadmap": { en: "Roadmap", ru: "Дорожная карта" },
-  "nav.mentor": { en: "AI Mentor", ru: "ИИ Ментор" },
+  "nav.mentor": { en: "Barsbek", ru: "Barsbek" },
   "nav.simulator": { en: "Simulator", ru: "Тренажёр" },
   "nav.achievements": { en: "Achievements", ru: "Достижения" },
   "nav.leaderboard": { en: "Leaderboard", ru: "Рейтинг" },
@@ -113,22 +113,22 @@ const translations = {
     ru: "Учитесь каждый день — постоянство важнее интенсивности!",
   },
   "dashboard.chatWith": { en: "Chat with {name}", ru: "Чат с {name}" },
-  "dashboard.aiMentor": { en: "AI Mentor", ru: "ИИ Ментор" },
+  "dashboard.aiMentor": { en: "Barsbek", ru: "Barsbek" },
   "dashboard.practiceInterview": { en: "Practice Interview", ru: "Тренировка интервью" },
   "dashboard.simulator": { en: "Simulator", ru: "Тренажёр" },
   "dashboard.viewAchievements": { en: "View Achievements", ru: "Достижения" },
   "dashboard.badgesEarned": { en: "badges earned", ru: "наград получено" },
 
   // ===== ROADMAP =====
-  "roadmap.startWithAI": { en: "Start with AI Mentor", ru: "Начать с ИИ Ментором" },
+  "roadmap.startWithAI": { en: "Start with Barsbek", ru: "Начать с Barsbek" },
   "roadmap.completePrevious": { en: "Complete previous lessons to unlock", ru: "Пройдите предыдущие уроки, чтобы разблокировать" },
 
   // ===== MENTOR =====
-  "mentor.aiMentor": { en: "AI Mentor", ru: "ИИ Ментор" },
-  "mentor.askAnything": { en: "Ask {name} anything...", ru: "Спросите {name} что угодно..." },
+  "mentor.aiMentor": { en: "Barsbek", ru: "Barsbek" },
+  "mentor.askAnything": { en: "Ask Barsbek anything...", ru: "Спросите Barsbek что угодно..." },
   "mentor.greeting": {
-    en: "Hi! I'm {name}, your AI mentor. Ask me anything or switch to Voice Mode for a conversation.",
-    ru: "Привет! Я {name}, ваш ИИ-ментор. Спрашивайте что угодно или включите голосовой режим для разговора.",
+    en: "Hi! I'm Barsbek, your AI learning assistant from Bars AI. Ask me anything or switch to Voice Mode for a conversation.",
+    ru: "Салам! Я Barsbek — ваш ИИ-ассистент на платформе Bars AI. Спрашивайте что угодно или включите голосовой режим для разговора.",
   },
   "mentor.voiceModeOn": { en: "Voice Mode ON", ru: "Голос ВКЛ" },
   "mentor.voiceModeOff": { en: "Voice Mode OFF", ru: "Голос ВЫКЛ" },

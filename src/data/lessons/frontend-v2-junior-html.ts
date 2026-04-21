@@ -772,7 +772,7 @@ export const FRONTEND_V2_JUNIOR_HTML: Record<string, LessonContentV2> = {
         code: {
           language: "html",
           code: `<!-- Good: descriptive alt text -->
-<img src="logo.png" alt="PathMind company logo">
+<img src="logo.png" alt="Bars AI company logo">
 
 <!-- Good: decorative image with empty alt -->
 <img src="divider.png" alt="">
