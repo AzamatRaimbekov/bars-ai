@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Trophy, Users, BarChart3, Plus, X, Clock, Loader2, Search, Ban } from 'lucide-react'
+import { Trophy, Users, BarChart3, Plus, X, Clock, Loader2, Search, Ban, CreditCard, CheckCircle2, XCircle, Eye, Image as ImageIcon } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { SprintLeaderboard } from '@/components/sprint/SprintLeaderboard'
 import { useAuthStore } from '@/store/authStore'
 import { adminApi, sprintApi, type Sprint, type LeaderboardEntry } from '@/services/sprintApi'
+import { paymentApi, type PaymentRequest } from '@/services/paymentApi'
 
-type Tab = 'sprints' | 'users' | 'stats'
+type Tab = 'sprints' | 'payments' | 'users' | 'stats'
 
 const TABS: { key: Tab; label: string; icon: typeof Trophy }[] = [
   { key: 'sprints', label: 'Спринты', icon: Trophy },
+  { key: 'payments', label: 'Платежи', icon: CreditCard },
   { key: 'users', label: 'Пользователи', icon: Users },
   { key: 'stats', label: 'Статистика', icon: BarChart3 },
 ]
@@ -383,11 +385,174 @@ function StatsTab() {
   )
 }
 
+/* ─────────────── Payments Tab ─────────────── */
+
+function PaymentsTab({ onCountUpdate }: { onCountUpdate: (count: number) => void }) {
+  const [payments, setPayments] = useState<PaymentRequest[]>([])
+  const [loading, setLoading] = useState(true)
+  const [reviewing, setReviewing] = useState<string | null>(null)
+  const [previewImg, setPreviewImg] = useState<string | null>(null)
+
+  const fetchPayments = () => {
+    setLoading(true)
+    paymentApi.adminList()
+      .then((data) => {
+        setPayments(data)
+        onCountUpdate(data.filter((p) => p.status === 'pending').length)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => { fetchPayments() }, [])
+
+  const handleReview = async (paymentId: string, action: 'approve' | 'reject') => {
+    setReviewing(paymentId)
+    try {
+      await paymentApi.review(paymentId, action)
+      fetchPayments()
+    } catch (err) {
+      console.error('Failed to review payment:', err)
+    } finally {
+      setReviewing(null)
+    }
+  }
+
+  const statusBadge = (status: PaymentRequest['status']) => {
+    switch (status) {
+      case 'pending':
+        return <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-400 font-medium">Ожидает</span>
+      case 'approved':
+        return <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 font-medium">Одобрен</span>
+      case 'rejected':
+        return <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 font-medium">Отклонен</span>
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-16">
+        <Loader2 className="animate-spin text-[#F97316]" size={28} />
+      </div>
+    )
+  }
+
+  if (payments.length === 0) {
+    return (
+      <div className="text-center py-16 text-white/30 text-sm">Заявок на оплату пока нет</div>
+    )
+  }
+
+  return (
+    <>
+      <div className="bg-[#0A0A0A] border border-white/6 rounded-2xl overflow-hidden">
+        {/* Header */}
+        <div className="grid grid-cols-12 gap-2 px-4 py-2.5 border-b border-white/6 text-[11px] text-white/30 uppercase tracking-wider">
+          <span className="col-span-2">Пользователь</span>
+          <span className="col-span-3">Курс</span>
+          <span className="col-span-1 text-center">Сумма</span>
+          <span className="col-span-1 text-center">Скрин</span>
+          <span className="col-span-2 text-center">Дата</span>
+          <span className="col-span-1 text-center">Статус</span>
+          <span className="col-span-2 text-center">Действия</span>
+        </div>
+
+        {/* Rows */}
+        <div className="divide-y divide-white/[0.04]">
+          {payments.map((p) => (
+            <div key={p.id} className="grid grid-cols-12 gap-2 px-4 py-3 items-center hover:bg-white/[0.02] transition-colors">
+              <div className="col-span-2 min-w-0">
+                <p className="text-sm text-white truncate">{p.user_name}</p>
+                <p className="text-[10px] text-white/30 truncate">{p.user_email}</p>
+              </div>
+              <span className="col-span-3 text-sm text-white/60 truncate">{p.course_title}</span>
+              <span className="col-span-1 text-center text-sm text-[#F97316] font-medium">
+                {(p.amount / 100).toFixed(0)} {p.currency}
+              </span>
+              <div className="col-span-1 flex justify-center">
+                {p.screenshot_url ? (
+                  <button
+                    onClick={() => setPreviewImg(p.screenshot_url)}
+                    className="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center hover:border-white/20 transition-colors cursor-pointer overflow-hidden"
+                  >
+                    <img src={p.screenshot_url} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ) : (
+                  <ImageIcon size={14} className="text-white/20" />
+                )}
+              </div>
+              <span className="col-span-2 text-center text-xs text-white/30">
+                {new Date(p.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+              </span>
+              <div className="col-span-1 flex justify-center">
+                {statusBadge(p.status)}
+              </div>
+              <div className="col-span-2 flex justify-center gap-1.5">
+                {p.status === 'pending' ? (
+                  <>
+                    <button
+                      onClick={() => handleReview(p.id, 'approve')}
+                      disabled={reviewing === p.id}
+                      className="w-8 h-8 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 hover:bg-green-500/20 transition-colors cursor-pointer disabled:opacity-40"
+                      title="Подтвердить"
+                    >
+                      {reviewing === p.id ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                    </button>
+                    <button
+                      onClick={() => handleReview(p.id, 'reject')}
+                      disabled={reviewing === p.id}
+                      className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-colors cursor-pointer disabled:opacity-40"
+                      title="Отклонить"
+                    >
+                      {reviewing === p.id ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-[10px] text-white/20">—</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p className="text-[11px] text-white/20 text-right mt-2">
+        {payments.filter((p) => p.status === 'pending').length} ожидают из {payments.length} заявок
+      </p>
+
+      {/* Full-size image preview */}
+      {previewImg && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setPreviewImg(null)}
+        >
+          <div className="relative max-w-2xl max-h-[80vh]">
+            <img src={previewImg} alt="Скриншот оплаты" className="max-w-full max-h-[80vh] object-contain rounded-2xl border border-white/10" />
+            <button
+              onClick={() => setPreviewImg(null)}
+              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/70 border border-white/10 flex items-center justify-center text-white/60 hover:text-white cursor-pointer"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
 /* ─────────────── Admin Page ─────────────── */
 
 export default function Admin() {
   const user = useAuthStore((s) => s.user)
   const [activeTab, setActiveTab] = useState<Tab>('sprints')
+  const [pendingPaymentsCount, setPendingPaymentsCount] = useState(0)
+
+  useEffect(() => {
+    paymentApi.adminList()
+      .then((data) => setPendingPaymentsCount(data.filter((p) => p.status === 'pending').length))
+      .catch(() => {})
+  }, [])
 
   // Admin guard
   if (user && user.role !== 'admin') {
@@ -418,12 +583,18 @@ export default function Admin() {
             >
               <tab.icon size={14} />
               {tab.label}
+              {tab.key === 'payments' && pendingPaymentsCount > 0 && (
+                <span className="ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#F97316] text-white text-[10px] font-bold flex items-center justify-center">
+                  {pendingPaymentsCount}
+                </span>
+              )}
             </button>
           ))}
         </div>
 
         {/* Tab Content */}
         {activeTab === 'sprints' && <SprintsTab />}
+        {activeTab === 'payments' && <PaymentsTab onCountUpdate={setPendingPaymentsCount} />}
         {activeTab === 'users' && <UsersTab />}
         {activeTab === 'stats' && <StatsTab />}
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft, Users, ChevronDown, ChevronRight, CheckCircle2,
-  BookOpen, Pencil, Play,
+  BookOpen, Pencil, Play, Clock, CreditCard,
 } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Card } from '@/components/ui/Card'
@@ -13,6 +13,8 @@ import { StarRating } from '@/components/courses/StarRating'
 import { ReviewForm } from '@/components/courses/ReviewForm'
 import { useTranslation } from '@/hooks/useTranslation'
 import { courseApi, type CourseDetail as CourseDetailType, type CourseProgress } from '@/services/courseApi'
+import { paymentApi, type PaymentRequest } from '@/services/paymentApi'
+import { PaymentModal } from '@/components/courses/PaymentModal'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -34,6 +36,8 @@ export default function CourseDetail() {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
   const [showReviewForm, setShowReviewForm] = useState(false)
   const [hasReviewed, setHasReviewed] = useState(false)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [myPayments, setMyPayments] = useState<PaymentRequest[]>([])
 
   useEffect(() => {
     if (!id) return
@@ -41,10 +45,12 @@ export default function CourseDetail() {
     Promise.all([
       courseApi.get(id),
       courseApi.getProgress(id).catch(() => null),
+      paymentApi.myPayments().catch(() => [] as PaymentRequest[]),
     ])
-      .then(([courseData, progressData]) => {
+      .then(([courseData, progressData, payments]) => {
         setCourse(courseData)
         setProgress(progressData)
+        setMyPayments(payments)
         // Expand first section by default
         if (courseData.sections.length > 0) {
           setExpandedSections(new Set([courseData.sections[0].id]))
@@ -93,6 +99,10 @@ export default function CourseDetail() {
   }
 
   const completedSet = new Set(progress?.completed_lesson_ids ?? [])
+  const pendingPayment = course ? myPayments.find(
+    (p) => p.course_id === course.id && p.status === 'pending'
+  ) : null
+  const isPaid = course ? course.price > 0 : false
 
   // Find first incomplete lesson for "Continue Learning"
   const allLessons = course?.sections
@@ -377,15 +387,49 @@ export default function CourseDetail() {
                     {t('teach.edit')}
                   </Button>
                 )}
-                <Button size="sm" onClick={handleStart} disabled={enrolling}>
-                  <BookOpen size={14} />
-                  {enrolling ? t('common.loading') : course.is_enrolled ? t('courses.continue') : 'Начать курс'}
-                </Button>
+                {course.is_enrolled ? (
+                  <Button size="sm" onClick={handleStart} disabled={enrolling}>
+                    <BookOpen size={14} />
+                    {enrolling ? t('common.loading') : t('courses.continue')}
+                  </Button>
+                ) : pendingPayment ? (
+                  <Button size="sm" disabled className="!bg-yellow-500/15 !text-yellow-400 !border-yellow-500/20">
+                    <Clock size={14} />
+                    Ожидает подтверждения
+                  </Button>
+                ) : isPaid ? (
+                  <Button size="sm" onClick={() => setShowPaymentModal(true)}>
+                    <CreditCard size={14} />
+                    Купить за {(course.price / 100).toFixed(0)} сом
+                  </Button>
+                ) : (
+                  <Button size="sm" onClick={handleStart} disabled={enrolling}>
+                    <BookOpen size={14} />
+                    {enrolling ? t('common.loading') : 'Записаться бесплатно'}
+                  </Button>
+                )}
               </div>
             </div>
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && course && (
+        <PaymentModal
+          course={{
+            id: course.id,
+            title: course.title,
+            price: course.price,
+            currency: course.currency,
+          }}
+          onClose={() => setShowPaymentModal(false)}
+          onSuccess={() => {
+            setShowPaymentModal(false)
+            paymentApi.myPayments().then(setMyPayments).catch(() => {})
+          }}
+        />
+      )}
     </PageWrapper>
   )
 }
