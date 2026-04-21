@@ -3,6 +3,7 @@ import asyncio
 from app.database import engine, Base
 from app.models import *  # noqa
 from app.models.course import *  # noqa
+from app.models.payment import *  # noqa
 
 async def main():
     async with engine.begin() as conn:

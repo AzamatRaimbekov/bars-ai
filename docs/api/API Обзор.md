@@ -68,10 +68,18 @@ GET /api/health → { "status": "ok" }
 | GET | `/api/sprint/current` | Текущий спринт |
 | POST | `/api/sprint/trophy` | Получение трофея |
 
+## Оплата (`/api/payments`)
+| Метод | Путь | Описание |
+|---|---|---|
+| POST | `/api/payments/request` | Создать запрос на оплату (скриншот) |
+| GET | `/api/payments/my` | Мои запросы на оплату |
+
 ## Админ (`/api/admin`)
 | Метод | Путь | Описание |
 |---|---|---|
 | GET | `/api/admin/stats` | Статистика платформы |
+| GET | `/api/admin/payments` | Список запросов на оплату |
+| POST | `/api/admin/payments/:id/review` | Подтвердить/отклонить оплату |
 
 ---
 

@@ -8,6 +8,7 @@ from app.models.course import (
 )
 from app.models.mentor import MentorSession, MentorMessage, KnowledgeProfile
 from app.models.sprint import Sprint, TrophyEvent
+from app.models.payment import PaymentRequest
 
 __all__ = [
     "User", "Progress", "UserBadge", "RefreshToken",
@@ -15,4 +16,5 @@ __all__ = [
     "CourseEnrollment", "CourseLessonProgress", "CourseReview",
     "MentorSession", "MentorMessage", "KnowledgeProfile",
     "Sprint", "TrophyEvent",
+    "PaymentRequest",
 ]
