@@ -74,12 +74,22 @@ GET /api/health → { "status": "ok" }
 | POST | `/api/payments/request` | Создать запрос на оплату (скриншот) |
 | GET | `/api/payments/my` | Мои запросы на оплату |
 
+## Уведомления (`/api/notifications`)
+| Метод | Путь | Описание |
+|---|---|---|
+| GET | `/api/notifications` | Список уведомлений пользователя |
+| GET | `/api/notifications/unread-count` | Количество непрочитанных |
+| POST | `/api/notifications/:id/read` | Отметить прочитанным |
+| POST | `/api/notifications/read-all` | Отметить все прочитанными |
+
 ## Админ (`/api/admin`)
 | Метод | Путь | Описание |
 |---|---|---|
 | GET | `/api/admin/stats` | Статистика платформы |
 | GET | `/api/admin/payments` | Список запросов на оплату |
 | POST | `/api/admin/payments/:id/review` | Подтвердить/отклонить оплату |
+| GET | `/api/admin/courses/pending` | Курсы на модерации |
+| POST | `/api/admin/courses/:id/review` | Одобрить/отклонить курс |
 
 ---
 

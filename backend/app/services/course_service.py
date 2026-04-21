@@ -62,6 +62,11 @@ async def _get_progress(db: AsyncSession, user_id: uuid.UUID) -> Progress:
 # ── Course CRUD ───────────────────────────────────────────
 
 async def create_course(db: AsyncSession, user_id: uuid.UUID, data) -> dict:
+    # Check if user is admin — admins publish instantly, others go to review
+    user_result = await db.execute(select(User).where(User.id == user_id))
+    author_obj = user_result.scalar_one()
+    is_admin = author_obj.role == "admin"
+
     slug = _generate_slug(data.title)
     course = Course(
         title=data.title,
@@ -73,14 +78,11 @@ async def create_course(db: AsyncSession, user_id: uuid.UUID, data) -> dict:
         difficulty=data.difficulty,
         price=data.price,
         currency=data.currency,
+        status="draft" if is_admin else "pending_review",
     )
     db.add(course)
     await db.commit()
     await db.refresh(course)
-
-    # Fetch author name
-    author = await db.execute(select(User).where(User.id == user_id))
-    author_obj = author.scalar_one()
 
     return {
         **_course_to_dict(course),
