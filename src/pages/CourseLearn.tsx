@@ -7,6 +7,7 @@ import { CourseStepPlayer } from '@/components/courses/CourseStepPlayer'
 import { useTranslation } from '@/hooks/useTranslation'
 import { LESSONS_V2 } from '@/data/lessons'
 import { courseApi, type LessonStep } from '@/services/courseApi'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
 
 // Shape we care about after fetching
 interface ResolvedLesson {
@@ -82,11 +83,7 @@ export default function CourseLearn() {
   // ── Loading ──────────────────────────────────────────────────────────────
 
   if (loading) {
-    return (
-      <div className="min-h-screen min-h-[100dvh] flex items-center justify-center bg-black">
-        <p className="text-white/40 text-sm">{t('common.loading')}</p>
-      </div>
-    )
+    return <LoadingScreen tip="Загружаем урок..." />
   }
 
   // ── V2 static lesson ─────────────────────────────────────────────────────

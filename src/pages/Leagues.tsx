@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { useTranslation } from "@/hooks/useTranslation";
 import { apiFetch } from "@/services/api";
-import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 interface LeagueInfo {
   league: string;
@@ -81,13 +82,7 @@ export default function Leagues() {
   }, []);
 
   if (loading) {
-    return (
-      <PageWrapper>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="animate-spin text-primary" size={32} />
-        </div>
-      </PageWrapper>
-    );
+    return <LoadingScreen tip="Загружаем лиги..." />;
   }
 
   if (!info) return null;

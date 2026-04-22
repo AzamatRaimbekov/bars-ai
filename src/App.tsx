@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 import Onboarding from '@/pages/Onboarding'
@@ -28,11 +29,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation()
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin text-primary" size={32} />
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!isAuthenticated) return <Navigate to="/login" replace />
