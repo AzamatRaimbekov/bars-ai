@@ -17,7 +17,7 @@ async def get_me(user_id: uuid.UUID = Depends(get_current_user_id), db: AsyncSes
 
 @router.patch("/me", response_model=UserWithProgressResponse)
 async def update_me(body: UserUpdateRequest, user_id: uuid.UUID = Depends(get_current_user_id), db: AsyncSession = Depends(get_db)):
-    return await user_service.update_me(db, user_id, body.name, body.language, body.avatar_url)
+    return await user_service.update_me(db, user_id, body.model_dump(exclude_none=True))
 
 
 @router.get("/{target_id}", response_model=PublicUserResponse)

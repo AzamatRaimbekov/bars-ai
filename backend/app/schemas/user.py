@@ -12,6 +12,8 @@ class UserResponse(BaseModel):
     assessment_level: str
     language: str
     avatar_url: str | None
+    interests: list[str] = []
+    onboarding_complete: bool = False
     created_at: datetime
 
     model_config = {"from_attributes": True}
@@ -31,6 +33,11 @@ class UserUpdateRequest(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=100)
     language: str | None = Field(None, pattern=r"^(ru|en)$")
     avatar_url: str | None = None
+    interests: list[str] | None = None
+    onboarding_complete: bool | None = None
+    assessment_context: str | None = None
+    direction: str | None = None
+    assessment_level: str | None = None
 
 
 class PublicUserResponse(BaseModel):

@@ -27,6 +27,8 @@ async def get_me(db: AsyncSession, user_id: uuid.UUID) -> dict:
         "assessment_level": user.assessment_level,
         "language": user.language,
         "avatar_url": user.avatar_url,
+        "interests": user.interests or [],
+        "onboarding_complete": user.onboarding_complete,
         "created_at": user.created_at,
         "xp": progress.xp if progress else 0,
         "level": progress.level if progress else "Novice",
@@ -38,18 +40,17 @@ async def get_me(db: AsyncSession, user_id: uuid.UUID) -> dict:
     }
 
 
-async def update_me(db: AsyncSession, user_id: uuid.UUID, name: str | None, language: str | None, avatar_url: str | None) -> dict:
+async def update_me(db: AsyncSession, user_id: uuid.UUID, body: dict) -> dict:
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if name is not None:
-        user.name = name
-    if language is not None:
-        user.language = language
-    if avatar_url is not None:
-        user.avatar_url = avatar_url
+    allowed_fields = ["name", "language", "avatar_url", "interests", "onboarding_complete", "assessment_context", "direction", "assessment_level"]
+    for field in allowed_fields:
+        value = body.get(field)
+        if value is not None:
+            setattr(user, field, value)
 
     await db.commit()
     return await get_me(db, user_id)
