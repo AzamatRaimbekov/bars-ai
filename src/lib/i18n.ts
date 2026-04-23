@@ -321,6 +321,14 @@ const translations = {
   "profile.hours": { en: "Hours", ru: "Часы" },
   "profile.xpToNext": { en: "XP to", ru: "XP до" },
   "profile.logout": { en: "Log Out", ru: "Выйти из аккаунта" },
+  "profile.security": { en: "Security", ru: "Безопасность" },
+  "profile.changePassword": { en: "Change Password", ru: "Сменить пароль" },
+  "profile.currentPassword": { en: "Current Password", ru: "Текущий пароль" },
+  "profile.newPassword": { en: "New Password", ru: "Новый пароль" },
+  "profile.confirmPassword": { en: "Confirm Password", ru: "Подтвердите пароль" },
+  "profile.passwordChanged": { en: "Password changed!", ru: "Пароль изменён!" },
+  "profile.wrongPassword": { en: "Wrong current password", ru: "Неверный текущий пароль" },
+  "profile.passwordMismatch": { en: "Passwords don't match", ru: "Пароли не совпадают" },
 
   // ===== LEADERBOARD =====
   "leaderboard.title": { en: "Leaderboard", ru: "Рейтинг" },
