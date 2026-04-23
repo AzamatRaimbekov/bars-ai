@@ -38,6 +38,8 @@ export default function CourseDetail() {
   const [hasReviewed, setHasReviewed] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [myPayments, setMyPayments] = useState<PaymentRequest[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [enrollError, setEnrollError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -56,7 +58,10 @@ export default function CourseDetail() {
           setExpandedSections(new Set([courseData.sections[0].id]))
         }
       })
-      .catch(() => navigate('/courses'))
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : 'Не удалось загрузить курс'
+        setError(msg)
+      })
       .finally(() => setLoading(false))
   }, [id])
 
@@ -70,11 +75,12 @@ export default function CourseDetail() {
       return
     }
     setEnrolling(true)
+    setEnrollError(null)
     try {
       await courseApi.enroll(id)
       navigate(`/courses/${course.id}/learn/${firstLesson.id}`)
-    } catch {
-      // handle error silently
+    } catch (err: unknown) {
+      setEnrollError(err instanceof Error ? err.message : 'Не удалось записаться на курс')
     } finally {
       setEnrolling(false)
     }
@@ -115,6 +121,22 @@ export default function CourseDetail() {
       <PageWrapper>
         <div className="flex items-center justify-center py-20">
           <p className="text-text-secondary text-sm">{t('common.loading')}</p>
+        </div>
+      </PageWrapper>
+    )
+  }
+
+  if (error) {
+    return (
+      <PageWrapper>
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <p className="text-red-400 text-sm text-center">{error}</p>
+          <button
+            onClick={() => navigate('/courses')}
+            className="text-sm text-text-secondary hover:text-text transition-colors"
+          >
+            ← {t('common.back')}
+          </button>
         </div>
       </PageWrapper>
     )
@@ -366,6 +388,9 @@ export default function CourseDetail() {
             variants={itemVariants}
             className="mx-3 lg:mx-0 mb-2 lg:mb-0"
           >
+            {enrollError && (
+              <p className="text-red-400 text-xs text-center mb-2">{enrollError}</p>
+            )}
             <div className="bg-[#0A0A0A]/90 backdrop-blur-xl border border-white/6 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-xl lg:shadow-none">
               <div>
                 {course.price === 0 ? (
@@ -426,7 +451,9 @@ export default function CourseDetail() {
           onClose={() => setShowPaymentModal(false)}
           onSuccess={() => {
             setShowPaymentModal(false)
-            paymentApi.myPayments().then(setMyPayments).catch(() => {})
+            paymentApi.myPayments().then(setMyPayments).catch((err: unknown) => {
+              setError(err instanceof Error ? err.message : 'Не удалось обновить статус оплаты')
+            })
           }}
         />
       )}

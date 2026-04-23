@@ -30,6 +30,7 @@ export default function CourseLearn() {
 
   const [mode, setMode] = useState<PlayerMode | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!lessonId) return
@@ -59,8 +60,8 @@ export default function CourseLearn() {
         // Priority 3: no content available yet
         setMode({ kind: 'empty' })
       })
-      .catch(() => {
-        navigate(`/courses/${courseId}/roadmap`)
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : 'Не удалось загрузить урок')
       })
       .finally(() => setLoading(false))
   }, [lessonId, courseId, navigate])
@@ -71,8 +72,9 @@ export default function CourseLearn() {
     if (!lessonId) return
     try {
       await courseApi.completeLesson(lessonId)
-    } catch {
+    } catch (err: unknown) {
       // Award attempt failed — still allow the user to see the congrats screen
+      console.warn('XP award failed:', err instanceof Error ? err.message : err)
     }
   }
 
@@ -84,6 +86,17 @@ export default function CourseLearn() {
 
   if (loading) {
     return <LoadingScreen tip="Загружаем урок..." />
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center bg-black px-6">
+        <p className="text-red-400 text-sm text-center mb-4">{error}</p>
+        <Button variant="secondary" size="sm" onClick={() => navigate(`/courses/${courseId}/roadmap`)}>
+          <ArrowLeft size={14} /> Назад к роадмапу
+        </Button>
+      </div>
+    )
   }
 
   // ── V2 static lesson ─────────────────────────────────────────────────────

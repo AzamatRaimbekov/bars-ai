@@ -40,6 +40,7 @@ export default function Teach() {
   const [courses, setCourses] = useState<CourseCard[]>([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<string | null>(null)
+  const [createError, setCreateError] = useState<string | null>(null)
   const user = useAuthStore((s) => s.user)
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function Teach() {
   }, [toast])
 
   const handleCreate = async () => {
+    setCreateError(null)
     try {
       const res = await courseApi.create({
         title: 'Untitled Course',
@@ -69,8 +71,8 @@ export default function Teach() {
         setToast('Ваш курс отправлен на модерацию. Вы получите уведомление когда он будет одобрён.')
       }
       navigate(`/teach/${res.id}`)
-    } catch {
-      // handle error
+    } catch (err: unknown) {
+      setCreateError(err instanceof Error ? err.message : 'Не удалось создать курс')
     }
   }
 
@@ -90,6 +92,13 @@ export default function Teach() {
             {t('teach.create')}
           </Button>
         </motion.div>
+
+        {/* Create error */}
+        {createError && (
+          <motion.div variants={itemVariants}>
+            <p className="text-red-400 text-sm text-center">{createError}</p>
+          </motion.div>
+        )}
 
         {/* Course grid */}
         {loading ? (
