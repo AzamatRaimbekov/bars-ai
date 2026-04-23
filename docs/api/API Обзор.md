@@ -14,6 +14,8 @@ GET /api/health → { "status": "ok" }
 | POST | `/api/auth/register` | Регистрация |
 | POST | `/api/auth/login` | Логин → access + refresh |
 | POST | `/api/auth/refresh` | Обновление access token |
+| POST | `/api/auth/forgot-password` | Запрос сброса пароля (204, silent) |
+| POST | `/api/auth/reset-password` | Установка нового пароля по токену (204) |
 
 ## Пользователи (`/api/users`)
 | Метод | Путь | Описание |

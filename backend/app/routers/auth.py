@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Response, Cookie
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies import get_db
-from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse
+from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse, ForgotPasswordRequest, ResetPasswordRequest
 from app.services import auth_service
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -56,3 +56,13 @@ async def logout(response: Response, refresh_token: str | None = Cookie(None, al
     if refresh_token:
         await auth_service.logout(db, refresh_token)
     response.delete_cookie(COOKIE_KEY, path="/")
+
+
+@router.post("/forgot-password", status_code=204)
+async def forgot_password(body: ForgotPasswordRequest, db: AsyncSession = Depends(get_db)):
+    await auth_service.request_password_reset(db, body.email)
+
+
+@router.post("/reset-password", status_code=204)
+async def reset_password(body: ResetPasswordRequest, db: AsyncSession = Depends(get_db)):
+    await auth_service.reset_password(db, body.token, body.new_password)

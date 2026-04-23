@@ -1,4 +1,4 @@
-from app.models.user import User
+from app.models.user import User, PasswordResetToken
 from app.models.progress import Progress
 from app.models.badge import UserBadge
 from app.models.refresh_token import RefreshToken
@@ -12,7 +12,7 @@ from app.models.payment import PaymentRequest
 from app.models.notification import Notification
 
 __all__ = [
-    "User", "Progress", "UserBadge", "RefreshToken",
+    "User", "PasswordResetToken", "Progress", "UserBadge", "RefreshToken",
     "Course", "CourseSection", "CourseLesson",
     "CourseEnrollment", "CourseLessonProgress", "CourseReview",
     "MentorSession", "MentorMessage", "KnowledgeProfile",
