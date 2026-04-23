@@ -11,6 +11,7 @@ class CreateCourseRequest(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     description: str = Field(default="", max_length=5000)
     category: str = Field(default="other", max_length=50)
+    tags: list[str] = Field(default_factory=list)
     difficulty: str = Field(default="beginner", max_length=20)
     price: int = Field(default=0, ge=0)
     currency: str = Field(default="USD", max_length=3)
@@ -21,6 +22,7 @@ class UpdateCourseRequest(BaseModel):
     title: str | None = Field(default=None, max_length=200)
     description: str | None = Field(default=None, max_length=5000)
     category: str | None = Field(default=None, max_length=50)
+    tags: list[str] | None = None
     difficulty: str | None = Field(default=None, max_length=20)
     price: int | None = Field(default=None, ge=0)
     currency: str | None = Field(default=None, max_length=3)

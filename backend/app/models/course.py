@@ -18,6 +18,7 @@ class Course(Base):
     thumbnail_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     author_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
     category: Mapped[str] = mapped_column(String(50), default="other")
+    tags: Mapped[list | None] = mapped_column(JSON, nullable=True, default=list)
     difficulty: Mapped[str] = mapped_column(String(20), default="beginner")
     price: Mapped[int] = mapped_column(Integer, default=0)  # in cents, 0 = free
     currency: Mapped[str] = mapped_column(String(3), default="USD")
