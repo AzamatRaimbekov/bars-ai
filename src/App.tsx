@@ -34,8 +34,8 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (!isAuthenticated) return <Navigate to="/login" replace />
 
-  // If user hasn't completed onboarding (no direction set), redirect to /
-  const onboardingComplete = !!(user?.direction && user.direction !== '')
+  // If user hasn't completed onboarding, redirect to /
+  const onboardingComplete = !!user?.onboarding_complete
   const isOnboardingRoute = location.pathname === '/'
 
   if (!onboardingComplete && !isOnboardingRoute) {
