@@ -429,7 +429,7 @@ export const courseApi = {
 export async function transcribeAudio(audioBlob: Blob): Promise<{ text: string; confidence: number }> {
   const formData = new FormData();
   formData.append("audio", audioBlob, "recording.webm");
-  const token = sessionStorage.getItem("pathmind_access_token");
+  const token = sessionStorage.getItem("barsai_access_token");
   const resp = await fetch("/api/ai/transcribe", {
     method: "POST",
     headers: token ? { Authorization: `Bearer ${token}` } : {},

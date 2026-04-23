@@ -425,11 +425,11 @@ const translations = {
 
 export type TranslationKey = keyof typeof translations;
 
-let currentLang: Lang = (localStorage.getItem("pathmind-lang") as Lang) || "ru";
+let currentLang: Lang = (localStorage.getItem("barsai-lang") as Lang) || "ru";
 
 export function setLanguage(lang: Lang) {
   currentLang = lang;
-  localStorage.setItem("pathmind-lang", lang);
+  localStorage.setItem("barsai-lang", lang);
   window.dispatchEvent(new Event("lang-change"));
 }
 

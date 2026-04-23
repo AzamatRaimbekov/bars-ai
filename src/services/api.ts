@@ -1,5 +1,5 @@
 const BASE_URL = "/api";
-const TOKEN_KEY = "pathmind_access_token";
+const TOKEN_KEY = "barsai_access_token";
 
 let accessToken: string | null = sessionStorage.getItem(TOKEN_KEY);
 let refreshPromise: Promise<string | null> | null = null;
