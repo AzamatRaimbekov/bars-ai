@@ -694,6 +694,57 @@ async def get_all_steps(db: AsyncSession, course_id: uuid.UUID) -> dict:
 
 # ── Utility ───────────────────────────────────────────────
 
+async def get_course_tags(db: AsyncSession) -> list[str]:
+    """Return unique tags from all published courses."""
+    result = await db.execute(
+        select(Course.tags).where(Course.status == "published", Course.tags.isnot(None))
+    )
+    all_tags: set[str] = set()
+    for (tags,) in result:
+        if tags:
+            all_tags.update(tags)
+    return sorted(all_tags)
+
+
+async def recommend_by_tags(db: AsyncSession, tags: list[str], limit: int = 20) -> list[dict]:
+    """Return published courses that have at least one matching tag."""
+    result = await db.execute(
+        select(Course)
+        .where(Course.status == "published")
+        .order_by(Course.total_enrolled.desc())
+        .limit(100)
+    )
+    courses = result.scalars().all()
+
+    tag_set = set(t.lower() for t in tags)
+    matched = []
+    for course in courses:
+        course_tags = set(t.lower() for t in (course.tags or []))
+        if course_tags & tag_set:
+            matched.append(course)
+        if len(matched) >= limit:
+            break
+
+    return [
+        {
+            "id": c.id,
+            "title": c.title,
+            "slug": c.slug,
+            "description": c.description,
+            "thumbnail_url": c.thumbnail_url,
+            "category": c.category,
+            "tags": c.tags or [],
+            "difficulty": c.difficulty,
+            "price": c.price,
+            "currency": c.currency,
+            "total_enrolled": c.total_enrolled,
+            "rating_avg": c.rating_avg,
+            "rating_count": c.rating_count,
+        }
+        for c in matched
+    ]
+
+
 def _course_to_dict(course: Course) -> dict:
     return {
         "id": course.id,

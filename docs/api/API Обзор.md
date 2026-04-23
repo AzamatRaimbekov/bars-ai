@@ -25,6 +25,8 @@ GET /api/health → { "status": "ok" }
 | Метод | Путь | Описание |
 |---|---|---|
 | GET | `/api/courses` | Список курсов (пагинация) |
+| GET | `/api/courses/tags` | Уникальные теги всех опубликованных курсов |
+| GET | `/api/courses/recommend?tags=...` | Рекомендованные курсы по тегам (через запятую) |
 | GET | `/api/courses/:id` | Детали курса |
 | POST | `/api/courses` | Создание курса |
 | PATCH | `/api/courses/:id` | Редактирование |

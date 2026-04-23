@@ -55,6 +55,20 @@ async def get_enrolled_courses(
     return await course_service.get_enrolled_courses(db, user_id)
 
 
+@router.get("/tags", response_model=list[str])
+async def get_tags(db: AsyncSession = Depends(get_db)):
+    return await course_service.get_course_tags(db)
+
+
+@router.get("/recommend")
+async def recommend(
+    tags: str = Query(..., description="Comma-separated tags"),
+    db: AsyncSession = Depends(get_db),
+):
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    return await course_service.recommend_by_tags(db, tag_list)
+
+
 @router.get("/{course_id}")
 async def get_course(
     course_id: uuid.UUID,
