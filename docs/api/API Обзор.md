@@ -34,6 +34,8 @@ GET /api/health → { "status": "ok" }
 | POST | `/api/courses` | Создание курса |
 | PATCH | `/api/courses/:id` | Редактирование |
 
+Все ответы курса (`CourseResponse`, `CourseLessonsResponse`) содержат поле `tags: list[str]`.
+
 ## Прогресс (`/api/progress`)
 | Метод | Путь | Описание |
 |---|---|---|
