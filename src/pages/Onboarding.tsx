@@ -1,34 +1,45 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Code2, Languages, Headphones, Building2, ArrowRight, Sparkles, Loader2 } from 'lucide-react'
-import { DIRECTIONS } from '@/data/directions'
+import { ArrowRight, Loader2, Check, BookOpen, Star } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
-import { assessLevel } from '@/services/claudeApi'
 import { useTranslation } from '@/hooks/useTranslation'
-import type { Direction } from '@/types'
-import type { TranslationKey } from '@/lib/i18n'
+import { courseApi, type CourseCard } from '@/services/courseApi'
 
-const iconMap = { Code2, Languages, Headphones, Building2 }
-const directionList = Object.values(DIRECTIONS)
+const MASCOT_IMAGES: Record<number, string> = {
+  0: '/images/mascot-happy.png',
+  1: '/images/mascot-thinking.png',
+  2: '/images/mascot-study.png',
+  3: '/images/mascot-happy.png',
+}
 
-const ASSESSMENT_QUESTION_KEYS: Record<Direction, TranslationKey[]> = {
-  frontend: [
-    'assessment.frontend.q1', 'assessment.frontend.q2', 'assessment.frontend.q3',
-    'assessment.frontend.q4', 'assessment.frontend.q5',
-  ],
-  english: [
-    'assessment.english.q1', 'assessment.english.q2', 'assessment.english.q3',
-    'assessment.english.q4', 'assessment.english.q5',
-  ],
-  callcenter: [
-    'assessment.callcenter.q1', 'assessment.callcenter.q2', 'assessment.callcenter.q3',
-    'assessment.callcenter.q4', 'assessment.callcenter.q5',
-  ],
-  cib: [
-    'assessment.cib.q1', 'assessment.cib.q2', 'assessment.cib.q3',
-    'assessment.cib.q4', 'assessment.cib.q5',
-  ],
+function SpeechBubble({ text }: { text: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative bg-white/8 border border-white/10 rounded-2xl rounded-bl-md px-5 py-3 text-sm text-white/80 max-w-sm"
+    >
+      {text}
+    </motion.div>
+  )
+}
+
+function MascotWithBubble({ step, text }: { step: number; text: string }) {
+  return (
+    <div className="flex items-end gap-3 mb-6">
+      <motion.img
+        key={step}
+        src={MASCOT_IMAGES[step]}
+        alt="Barsbek"
+        className="w-20 h-20 object-contain"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 200 }}
+      />
+      <SpeechBubble text={text} />
+    </div>
+  )
 }
 
 export default function Onboarding() {
@@ -36,104 +47,130 @@ export default function Onboarding() {
   const { t } = useTranslation()
   const { user, updateUser, fetchUser } = useAuthStore()
   const [step, setStep] = useState(0)
-  const [selectedDirection, setSelectedDirection] = useState<Direction | null>(null)
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<string[]>([])
+
+  // Step 1
+  const [nameInput, setNameInput] = useState(user?.name || '')
+
+  // Step 2
+  const [availableTags, setAvailableTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [tagsLoading, setTagsLoading] = useState(false)
+
+  // Step 3
+  const [chatStep, setChatStep] = useState(0)
+  const [chatAnswers, setChatAnswers] = useState<string[]>([])
   const [currentAnswer, setCurrentAnswer] = useState('')
-  const [chatMessages, setChatMessages] = useState<Array<{ role: 'bot' | 'user'; text: string }>>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [assessmentResult, setAssessmentResult] = useState<'beginner' | 'intermediate' | 'advanced' | null>(null)
-  const chatScrollRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll chat to bottom when new messages appear
+  // Step 4
+  const [recommendedCourses, setRecommendedCourses] = useState<CourseCard[]>([])
+  const [coursesLoading, setCoursesLoading] = useState(false)
+  const [enrolledIds, setEnrolledIds] = useState<Set<string>>(new Set())
+  const [saving, setSaving] = useState(false)
+
+  // Load tags when entering step 2
   useEffect(() => {
-    if (chatScrollRef.current) {
-      chatScrollRef.current.scrollTo({ top: chatScrollRef.current.scrollHeight, behavior: 'smooth' })
+    if (step === 1 && availableTags.length === 0) {
+      setTagsLoading(true)
+      courseApi.getTags().then((tags) => {
+        setAvailableTags(tags)
+        setTagsLoading(false)
+      })
     }
-  }, [chatMessages, isLoading])
+  }, [step, availableTags.length])
 
-  const handleDirectionSelect = (dir: Direction) => {
-    setSelectedDirection(dir)
-    setStep(1)
-    const questionKeys = ASSESSMENT_QUESTION_KEYS[dir]
-    setChatMessages([
-      { role: 'bot', text: t('onboarding.chatHi', { name: user?.name || 'there' }) },
-      { role: 'bot', text: t(questionKeys[0]) },
-    ])
+  // Load recommendations when entering step 4
+  useEffect(() => {
+    if (step === 3) {
+      setCoursesLoading(true)
+      courseApi.recommend(selectedTags).then((courses) => {
+        setRecommendedCourses(courses)
+        setCoursesLoading(false)
+      })
+    }
+  }, [step, selectedTags])
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    )
   }
 
-  const handleAnswer = async () => {
-    if (!currentAnswer.trim() || !selectedDirection) return
+  const handleNameNext = async () => {
+    if (!nameInput.trim()) return
+    if (nameInput !== user?.name) {
+      await updateUser({ name: nameInput.trim() })
+    }
+    setStep(1)
+  }
 
-    const newAnswers = [...answers, currentAnswer]
-    setAnswers(newAnswers)
-    setChatMessages((prev) => [...prev, { role: 'user', text: currentAnswer }])
+  const handleTagsNext = () => {
+    if (selectedTags.length === 0) return
+    setStep(2)
+  }
+
+  const handleChatAnswer = () => {
+    if (!currentAnswer.trim()) return
+    const newAnswers = [...chatAnswers, currentAnswer.trim()]
+    setChatAnswers(newAnswers)
     setCurrentAnswer('')
-
-    const questionKeys = ASSESSMENT_QUESTION_KEYS[selectedDirection]
-    if (currentQuestion < questionKeys.length - 1) {
-      setCurrentQuestion((q) => q + 1)
-      setChatMessages((prev) => [
-        ...prev,
-        { role: 'bot', text: t(questionKeys[currentQuestion + 1]) },
-      ])
+    if (chatStep < 1) {
+      setChatStep(chatStep + 1)
     } else {
-      setIsLoading(true)
-      setChatMessages((prev) => [
-        ...prev,
-        { role: 'bot', text: t('onboarding.analyzing') },
-      ])
+      setStep(3)
+    }
+  }
 
-      let level: 'beginner' | 'intermediate' | 'advanced' = 'beginner'
-      try {
-        level = await assessLevel(DIRECTIONS[selectedDirection].name, newAnswers)
-      } catch {
-        // fallback to beginner
-      }
+  const handleSkipChat = () => {
+    setStep(3)
+  }
 
-      setAssessmentResult(level)
-      setIsLoading(false)
-      setStep(2)
+  const handleEnroll = async (courseId: string) => {
+    try {
+      await courseApi.enroll(courseId)
+      setEnrolledIds((prev) => new Set([...prev, courseId]))
+    } catch {
+      // already enrolled or error
     }
   }
 
   const handleFinish = async () => {
-    if (!selectedDirection || !assessmentResult) return
-    setIsSaving(true)
+    setSaving(true)
     try {
       await updateUser({
-        direction: selectedDirection,
-        assessment_level: assessmentResult,
-      })
+        interests: selectedTags,
+        onboarding_complete: true,
+        assessment_context: chatAnswers.length > 0 ? chatAnswers.join(' | ') : undefined,
+      } as any)
       await fetchUser()
       navigate('/dashboard')
     } catch (err) {
-      console.error('Failed to save onboarding data', err)
+      console.error('Failed to save onboarding', err)
     } finally {
-      setIsSaving(false)
+      setSaving(false)
     }
   }
 
+  const chatQuestions = [t('onboarding.chatQ1'), t('onboarding.chatQ2')]
+
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Ambient radial glow */}
+      {/* Ambient glow */}
       <div
         className="absolute pointer-events-none"
         style={{
           width: 700,
           height: 700,
-          background: "radial-gradient(circle, rgba(249,115,22,0.05), transparent 70%)",
-          transform: "translate(-50%, -50%)",
-          left: "50%",
-          top: "50%",
+          background: 'radial-gradient(circle, rgba(249,115,22,0.05), transparent 70%)',
+          transform: 'translate(-50%, -50%)',
+          left: '50%',
+          top: '50%',
         }}
       />
 
       <div className="w-full max-w-2xl relative z-10">
         {/* Progress dots */}
         <div className="flex justify-center gap-2 mb-8">
-          {[0, 1, 2].map((i) => (
+          {[0, 1, 2, 3].map((i) => (
             <motion.div
               key={i}
               className="h-2 rounded-full"
@@ -147,6 +184,7 @@ export default function Onboarding() {
         </div>
 
         <AnimatePresence mode="wait">
+          {/* ── Step 0: Welcome ── */}
           {step === 0 && (
             <motion.div
               key="step0"
@@ -155,170 +193,246 @@ export default function Onboarding() {
               exit={{ opacity: 0, x: -50 }}
               className="space-y-6"
             >
-              <div className="text-center mb-8">
-                {/* Clean brand mark — no mascot */}
-                <motion.div
-                  className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-                >
-                  <Sparkles size={28} className="text-white" />
-                </motion.div>
-                <h1 className="text-3xl font-bold mb-2 tracking-tight text-white">
-                  {t('onboarding.welcome')} <span className="text-[#F97316]">{t('app.name.path')}</span>
-                  <span className="text-white">{t('app.name.mind')}</span>
-                </h1>
-                <p className="text-white/40 text-sm">{t('onboarding.choosePath')}</p>
-                {user?.name && (
-                  <p className="text-sm text-[#FB923C] mt-2">{user.name}</p>
-                )}
+              <div className="flex flex-col items-center">
+                <MascotWithBubble step={0} text={t('onboarding.barsbek.hello')} />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                {directionList.map((dir) => {
-                  const Icon = iconMap[dir.icon as keyof typeof iconMap]
-                  return (
-                    <motion.div
-                      key={dir.id}
-                      whileHover={{ y: -2, scale: 1.01 }}
-                      onClick={() => handleDirectionSelect(dir.id)}
-                      className="flex flex-col items-center gap-3 text-center cursor-pointer p-6 rounded-2xl bg-[#0A0A0A] border border-white/6 transition-colors hover:border-[#F97316]/30"
-                    >
-                      <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center"
-                        style={{ backgroundColor: "#F9731615" }}
-                      >
-                        <Icon size={24} className="text-[#FB923C]" />
-                      </div>
-                      <h3 className="font-semibold text-sm text-white">{t(`direction.${dir.id}.name` as any)}</h3>
-                      <p className="text-xs text-white/40 leading-relaxed">
-                        {t(`direction.${dir.id}.desc` as any)}
-                      </p>
-                    </motion.div>
-                  )
-                })}
+              <div className="text-center">
+                <h1 className="text-3xl font-bold tracking-tight text-white">
+                  {t('onboarding.welcome')} <span className="text-[#F97316]">Bars</span> AI
+                </h1>
+              </div>
+
+              {!user?.name && (
+                <div className="bg-[#0A0A0A] border border-white/6 rounded-2xl p-6">
+                  <label className="text-sm text-white/40 mb-2 block">{t('onboarding.nameLabel')}</label>
+                  <input
+                    className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#F97316]/50 placeholder:text-white/30"
+                    placeholder={t('onboarding.namePlaceholder')}
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleNameNext()}
+                  />
+                </div>
+              )}
+
+              <div className="flex justify-center">
+                <button
+                  onClick={handleNameNext}
+                  disabled={!nameInput.trim()}
+                  className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white text-sm disabled:opacity-40 transition-opacity"
+                  style={{ background: 'linear-gradient(135deg, #F97316, #FB923C)' }}
+                >
+                  {t('onboarding.letsGo')} <ArrowRight size={18} />
+                </button>
               </div>
             </motion.div>
           )}
 
+          {/* ── Step 1: Interests ── */}
           {step === 1 && (
             <motion.div
               key="step1"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
-              className="space-y-4"
+              className="space-y-6"
             >
-              <div className="text-center mb-4">
-                <h2 className="text-xl font-bold text-white">{t('onboarding.assessment')}</h2>
-                <p className="text-white/40 text-sm">
-                  {t('onboarding.question')} {Math.min(currentQuestion + 1, 5)} / 5
-                </p>
-              </div>
+              <MascotWithBubble step={1} text={t('onboarding.barsbek.interests')} />
 
-              <div className="h-80 overflow-hidden rounded-2xl bg-[#0A0A0A] border border-white/6">
-                <div ref={chatScrollRef} className="h-full overflow-y-auto space-y-3 p-6">
-                  {chatMessages.map((msg, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
-                          msg.role === 'user'
-                            ? 'text-white rounded-br-md'
-                            : 'bg-white/6 text-white/80 rounded-bl-md'
-                        }`}
-                        style={
-                          msg.role === 'user'
-                            ? { background: "linear-gradient(135deg, #F97316, #FB923C)" }
-                            : undefined
-                        }
-                      >
-                        {msg.text}
-                      </div>
-                    </motion.div>
-                  ))}
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-white/6 px-4 py-2.5 rounded-2xl rounded-bl-md">
-                        <Loader2 className="animate-spin text-[#FB923C]" size={16} />
-                      </div>
-                    </div>
-                  )}
+              {tagsLoading ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="animate-spin text-[#F97316]" size={24} />
                 </div>
-              </div>
-
-              {!isLoading && currentQuestion < 5 && (
-                <div className="flex gap-2">
-                  <input
-                    className="flex-1 bg-[#0A0A0A] border border-white/6 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#F97316]/50 placeholder:text-white/30"
-                    placeholder={t('onboarding.answerPlaceholder')}
-                    value={currentAnswer}
-                    onChange={(e) => setCurrentAnswer(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAnswer()}
-                  />
-                  <button
-                    onClick={handleAnswer}
-                    disabled={!currentAnswer.trim()}
-                    className="px-4 py-2.5 rounded-xl text-white font-semibold text-sm disabled:opacity-40 transition-opacity"
-                    style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
-                  >
-                    <ArrowRight size={18} />
-                  </button>
+              ) : (
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {availableTags.map((tag) => {
+                    const selected = selectedTags.includes(tag)
+                    return (
+                      <motion.button
+                        key={tag}
+                        onClick={() => toggleTag(tag)}
+                        whileTap={{ scale: 0.95 }}
+                        className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                          selected
+                            ? 'border-[#F97316] text-white'
+                            : 'border-white/10 text-white/50 hover:border-white/20'
+                        }`}
+                        style={selected ? { background: 'linear-gradient(135deg, #F97316, #FB923C)' } : {}}
+                      >
+                        {tag}
+                      </motion.button>
+                    )
+                  })}
                 </div>
               )}
+
+              {selectedTags.length === 0 && !tagsLoading && (
+                <p className="text-center text-white/30 text-xs">{t('onboarding.pickInterests')}</p>
+              )}
+
+              <div className="flex justify-center">
+                <button
+                  onClick={handleTagsNext}
+                  disabled={selectedTags.length === 0}
+                  className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white text-sm disabled:opacity-40 transition-opacity"
+                  style={{ background: 'linear-gradient(135deg, #F97316, #FB923C)' }}
+                >
+                  {t('onboarding.nextStep')} <ArrowRight size={18} />
+                </button>
+              </div>
             </motion.div>
           )}
 
-          {step === 2 && assessmentResult && (
+          {/* ── Step 2: Mini Chat ── */}
+          {step === 2 && (
             <motion.div
               key="step2"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
-              className="text-center space-y-6"
+              className="space-y-6"
             >
-              {/* Clean result indicator — no mascot */}
-              <motion.div
-                className="w-20 h-20 rounded-2xl mx-auto flex items-center justify-center"
-                style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
-                animate={{ scale: [0.8, 1.1, 1] }}
-                transition={{ duration: 0.6 }}
-              >
-                <Sparkles size={32} className="text-white" />
-              </motion.div>
+              <MascotWithBubble step={2} text={t('onboarding.barsbek.chat')} />
 
-              <h2 className="text-2xl font-bold text-white tracking-tight">{t('onboarding.ready')}</h2>
+              <div className="bg-[#0A0A0A] border border-white/6 rounded-2xl p-6 space-y-4">
+                {/* Show previous Q&A */}
+                {chatAnswers.map((ans, i) => (
+                  <div key={i} className="space-y-2">
+                    <p className="text-sm text-white/60">{chatQuestions[i]}</p>
+                    <p className="text-sm text-white bg-white/5 rounded-xl px-4 py-2">{ans}</p>
+                  </div>
+                ))}
 
-              <div
-                className="text-left space-y-3 p-6 rounded-2xl bg-[#0A0A0A] border border-white/6"
-                style={{ boxShadow: "0 0 40px rgba(249,115,22,0.08)" }}
-              >
-                <p className="text-sm text-white/40">{t('onboarding.result')}</p>
-                <p className="text-lg font-semibold capitalize text-[#FB923C]">
-                  {t(`onboarding.level.${assessmentResult}` as any)}
-                </p>
-                <p className="text-sm text-white/40">
-                  {t('onboarding.direction')} {selectedDirection && t(`direction.${selectedDirection}.name` as any)}
-                </p>
-                <p className="text-sm text-white/40">
-                  {t('onboarding.planDescription')}
-                </p>
+                {/* Current question */}
+                {chatStep < 2 && (
+                  <>
+                    <p className="text-sm text-white/80 font-medium">{chatQuestions[chatStep]}</p>
+                    <div className="flex gap-2">
+                      <input
+                        className="flex-1 bg-transparent border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#F97316]/50 placeholder:text-white/30"
+                        placeholder={t('onboarding.answerPlaceholder')}
+                        value={currentAnswer}
+                        onChange={(e) => setCurrentAnswer(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleChatAnswer()}
+                      />
+                      <button
+                        onClick={handleChatAnswer}
+                        disabled={!currentAnswer.trim()}
+                        className="px-4 py-2.5 rounded-xl text-white font-semibold text-sm disabled:opacity-40 transition-opacity"
+                        style={{ background: 'linear-gradient(135deg, #F97316, #FB923C)' }}
+                      >
+                        <ArrowRight size={18} />
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
 
-              <button
-                onClick={handleFinish}
-                disabled={isSaving}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white text-sm disabled:opacity-50 transition-opacity"
-                style={{ background: "linear-gradient(135deg, #F97316, #FB923C)" }}
-              >
-                {isSaving ? <Loader2 className="animate-spin" size={18} /> : null}
-                {t('onboarding.startLearning')} <ArrowRight size={18} />
-              </button>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleSkipChat}
+                  className="text-sm text-white/30 hover:text-white/50 transition-colors"
+                >
+                  {t('onboarding.skip')}
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── Step 3: Course Recommendations ── */}
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              className="space-y-6"
+            >
+              <MascotWithBubble step={3} text={t('onboarding.barsbek.results')} />
+
+              {coursesLoading ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="animate-spin text-[#F97316]" size={24} />
+                </div>
+              ) : recommendedCourses.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-white/40 text-sm">{t('onboarding.barsbek.noCourses')}</p>
+                </div>
+              ) : (
+                <div className="grid gap-3 max-h-[400px] overflow-y-auto pr-1">
+                  {recommendedCourses.map((course) => {
+                    const isEnrolled = enrolledIds.has(course.id)
+                    return (
+                      <motion.div
+                        key={course.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-[#0A0A0A] border border-white/6 rounded-2xl p-4 flex gap-4 items-center"
+                      >
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-[#F97316]/10">
+                          {course.thumbnail_url ? (
+                            <img src={course.thumbnail_url} alt="" className="w-12 h-12 rounded-xl object-cover" />
+                          ) : (
+                            <BookOpen size={20} className="text-[#F97316]" />
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-semibold text-white truncate">{course.title}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-white/30">{course.difficulty}</span>
+                            {course.rating_avg > 0 && (
+                              <span className="text-xs text-white/30 flex items-center gap-0.5">
+                                <Star size={10} className="text-[#FFB800]" fill="#FFB800" />
+                                {course.rating_avg.toFixed(1)}
+                              </span>
+                            )}
+                            <span className="text-xs text-white/30">
+                              {course.total_enrolled} {t('courses.enrolled')}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleEnroll(course.id)}
+                          disabled={isEnrolled}
+                          className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 ${
+                            isEnrolled
+                              ? 'bg-green-500/15 text-green-400'
+                              : 'text-white'
+                          }`}
+                          style={!isEnrolled ? { background: 'linear-gradient(135deg, #F97316, #FB923C)' } : {}}
+                        >
+                          {isEnrolled ? (
+                            <span className="flex items-center gap-1"><Check size={12} /> {t('onboarding.enrolled')}</span>
+                          ) : (
+                            t('onboarding.enrollAndContinue')
+                          )}
+                        </button>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              )}
+
+              <div className="flex flex-col items-center gap-3">
+                <button
+                  onClick={handleFinish}
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white text-sm disabled:opacity-50 transition-opacity"
+                  style={{ background: 'linear-gradient(135deg, #F97316, #FB923C)' }}
+                >
+                  {saving ? <Loader2 className="animate-spin" size={18} /> : null}
+                  {t('onboarding.startLearning')} <ArrowRight size={18} />
+                </button>
+                <button
+                  onClick={() => { handleFinish().then(() => navigate('/courses')) }}
+                  className="text-sm text-white/30 hover:text-white/50 transition-colors"
+                >
+                  {t('onboarding.exploreCourses')}
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
