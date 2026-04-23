@@ -256,17 +256,6 @@ export default function Dashboard() {
           </button>
 
           <button
-            onClick={() => navigate('/simulator')}
-            className="bg-[#0A0A0A] border border-white/6 rounded-2xl p-5 lg:p-6 text-center hover:border-white/12 hover:bg-white/[0.02] transition-all cursor-pointer group"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-[#FB923C]/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-[#FB923C]/15 transition-colors">
-              <Mic size={22} className="text-[#FB923C]" />
-            </div>
-            <p className="text-sm font-medium text-white">{t('dashboard.practiceInterview')}</p>
-            <p className="text-xs text-white/40 mt-1">{t('dashboard.simulator')}</p>
-          </button>
-
-          <button
             onClick={() => navigate('/achievements')}
             className="bg-[#0A0A0A] border border-white/6 rounded-2xl p-5 lg:p-6 text-center hover:border-white/12 hover:bg-white/[0.02] transition-all cursor-pointer group"
           >

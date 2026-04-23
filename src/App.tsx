@@ -8,7 +8,6 @@ import Onboarding from '@/pages/Onboarding'
 import Dashboard from '@/pages/Dashboard'
 import Roadmap from '@/pages/Roadmap'
 import Mentor from '@/pages/Mentor'
-import Simulator from '@/pages/Simulator'
 import Lesson from '@/pages/Lesson'
 import Achievements from '@/pages/Achievements'
 import Leaderboard from '@/pages/Leaderboard'
@@ -95,14 +94,6 @@ export default function App() {
           element={
             <AuthGuard>
               <Mentor />
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/simulator"
-          element={
-            <AuthGuard>
-              <Simulator />
             </AuthGuard>
           }
         />

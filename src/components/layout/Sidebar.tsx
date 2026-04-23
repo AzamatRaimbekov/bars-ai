@@ -20,7 +20,6 @@ export function Sidebar() {
     { to: "/dashboard", icon: LayoutDashboard, label: t("nav.dashboard") },
     { to: "/courses", icon: BookOpen, label: t("nav.courses") },
     { to: "/mentor", icon: MessageCircle, label: t("nav.mentor") },
-    { to: "/simulator", icon: Mic, label: t("nav.simulator") },
     { to: "/achievements", icon: Trophy, label: t("nav.achievements") },
     { to: "/leaderboard", icon: Medal, label: t("nav.leaderboard") },
     { to: "/leagues", icon: Shield, label: t("nav.leagues") },
