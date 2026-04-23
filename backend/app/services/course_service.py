@@ -78,6 +78,7 @@ async def create_course(db: AsyncSession, user_id: uuid.UUID, data) -> dict:
         difficulty=data.difficulty,
         price=data.price,
         currency=data.currency,
+        tags=data.tags,
         status="draft" if is_admin else "pending_review",
     )
     db.add(course)
@@ -761,6 +762,7 @@ def _course_to_dict(course: Course) -> dict:
         "total_enrolled": course.total_enrolled,
         "rating_avg": course.rating_avg,
         "rating_count": course.rating_count,
+        "tags": course.tags,
         "roadmap_nodes": course.roadmap_nodes,
         "roadmap_edges": course.roadmap_edges,
         "created_at": course.created_at,
