@@ -1,14 +1,16 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   BookOpen, Clock, Flame, Trophy, Star, Target, Zap,
-  LogOut, ChevronRight, Globe, Award, TrendingUp, Shield,
+  LogOut, ChevronRight, Globe, Award, TrendingUp, Shield, Lock,
 } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { ProgressRing } from '@/components/ui/ProgressRing'
+import { apiFetch } from '@/services/api'
 import { useUserStore } from '@/store/userStore'
 import { useAuthStore } from '@/store/authStore'
 import { DIRECTIONS } from '@/data/directions'
@@ -51,6 +53,14 @@ export default function Profile() {
   const navigate = useNavigate()
   const { t, lang, changeLanguage } = useTranslation()
 
+  const [showPasswordForm, setShowPasswordForm] = useState(false)
+  const [currentPw, setCurrentPw] = useState('')
+  const [newPw, setNewPw] = useState('')
+  const [confirmPw, setConfirmPw] = useState('')
+  const [pwError, setPwError] = useState('')
+  const [pwSuccess, setPwSuccess] = useState(false)
+  const [pwLoading, setPwLoading] = useState(false)
+
   if (!profile) return null
 
   const dirConfig = DIRECTIONS[profile.direction]
@@ -78,6 +88,29 @@ export default function Profile() {
     if (window.confirm(t('profile.resetConfirm'))) {
       await logout()
       navigate('/login')
+    }
+  }
+
+  const handleChangePassword = async () => {
+    setPwError('')
+    setPwSuccess(false)
+    if (newPw.length < 8) { setPwError(t('profile.newPassword') + ' — min 8'); return }
+    if (newPw !== confirmPw) { setPwError(t('profile.passwordMismatch')); return }
+    setPwLoading(true)
+    try {
+      await apiFetch('/users/me/password', {
+        method: 'POST',
+        body: JSON.stringify({ current_password: currentPw, new_password: newPw }),
+      })
+      setPwSuccess(true)
+      setCurrentPw('')
+      setNewPw('')
+      setConfirmPw('')
+      setShowPasswordForm(false)
+    } catch (err: any) {
+      setPwError(err.message?.includes('Wrong') ? t('profile.wrongPassword') : (err.message || 'Error'))
+    } finally {
+      setPwLoading(false)
     }
   }
 
@@ -301,6 +334,67 @@ export default function Profile() {
                 </Button>
               </div>
             </div>
+          </div>
+        </motion.div>
+
+        {/* ── Security ── */}
+        <motion.div variants={itemVariants}>
+          <div className="bg-[#0A0A0A] border border-white/6 rounded-2xl p-5">
+            <button
+              onClick={() => { setShowPasswordForm(!showPasswordForm); setPwError(''); setPwSuccess(false) }}
+              className="flex items-center justify-between w-full"
+            >
+              <div className="flex items-center gap-2">
+                <Lock size={16} className="text-white/40" />
+                <span className="text-sm font-medium text-white">{t('profile.security')}</span>
+              </div>
+              <ChevronRight
+                size={16}
+                className={`text-white/30 transition-transform ${showPasswordForm ? 'rotate-90' : ''}`}
+              />
+            </button>
+
+            {showPasswordForm && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mt-4 space-y-3"
+              >
+                <input
+                  type="password"
+                  placeholder={t('profile.currentPassword')}
+                  value={currentPw}
+                  onChange={(e) => setCurrentPw(e.target.value)}
+                  className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#F97316]/50 placeholder:text-white/30"
+                />
+                <input
+                  type="password"
+                  placeholder={t('profile.newPassword')}
+                  value={newPw}
+                  onChange={(e) => setNewPw(e.target.value)}
+                  className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#F97316]/50 placeholder:text-white/30"
+                />
+                <input
+                  type="password"
+                  placeholder={t('profile.confirmPassword')}
+                  value={confirmPw}
+                  onChange={(e) => setConfirmPw(e.target.value)}
+                  className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#F97316]/50 placeholder:text-white/30"
+                />
+
+                {pwError && <p className="text-red-400 text-xs">{pwError}</p>}
+                {pwSuccess && <p className="text-green-400 text-xs">{t('profile.passwordChanged')}</p>}
+
+                <button
+                  onClick={handleChangePassword}
+                  disabled={pwLoading || !currentPw || !newPw || !confirmPw}
+                  className="w-full py-2.5 rounded-xl font-semibold text-sm text-white disabled:opacity-40 transition-opacity"
+                  style={{ background: 'linear-gradient(135deg, #F97316, #FB923C)' }}
+                >
+                  {pwLoading ? '...' : t('profile.changePassword')}
+                </button>
+              </motion.div>
+            )}
           </div>
         </motion.div>
 
