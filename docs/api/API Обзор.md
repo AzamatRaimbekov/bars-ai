@@ -20,6 +20,7 @@ GET /api/health → { "status": "ok" }
 |---|---|---|
 | GET | `/api/users/me` | Текущий пользователь |
 | PATCH | `/api/users/me` | Обновление профиля |
+| POST | `/api/users/me/password` | Смена пароля (204 No Content) |
 
 ## Курсы (`/api/courses`)
 | Метод | Путь | Описание |

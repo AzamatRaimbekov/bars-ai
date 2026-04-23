@@ -71,3 +71,18 @@ async def get_public_profile(db: AsyncSession, user_id: uuid.UUID) -> dict:
         "level": user.progress.level if user.progress else "Novice",
         "earned_badges": [b.badge_id for b in user.badges],
     }
+
+
+async def change_password(db: AsyncSession, user_id: uuid.UUID, current_password: str, new_password: str) -> None:
+    from app.utils.security import verify_password, hash_password
+
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not verify_password(current_password, user.password):
+        raise HTTPException(status_code=400, detail="Wrong current password")
+
+    user.password = hash_password(new_password)
+    await db.commit()
