@@ -18,6 +18,8 @@ export interface UserData {
   completed_lessons: string[]
   earned_badges: string[]
   role: string
+  interests: string[]
+  onboarding_complete: boolean
 }
 
 interface AuthState {
@@ -35,7 +37,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   fetchUser: () => Promise<void>
-  updateUser: (data: Partial<Pick<UserData, 'name' | 'language' | 'avatar_url' | 'direction' | 'assessment_level'>>) => Promise<void>
+  updateUser: (data: Partial<Pick<UserData, 'name' | 'language' | 'avatar_url' | 'direction' | 'assessment_level' | 'interests' | 'onboarding_complete'>> & { assessment_context?: string }) => Promise<void>
   tryRestore: () => Promise<void>
 }
 

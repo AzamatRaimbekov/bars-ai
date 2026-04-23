@@ -9,6 +9,7 @@ export interface CourseCard {
   author_name: string;
   author_id: string;
   category: string;
+  tags: string[];
   difficulty: string;
   price: number;
   currency: string;
@@ -410,6 +411,19 @@ export const courseApi = {
     }>(`/courses/lessons/${lessonId}`),
   getAllSteps: (courseId: string) =>
     apiFetch<{ steps: LessonStep[] }>(`/courses/${courseId}/all-steps`),
+
+  getTags: async (): Promise<string[]> => {
+    const resp = await fetch("/api/courses/tags");
+    if (!resp.ok) return [];
+    return resp.json();
+  },
+
+  recommend: async (tags: string[]): Promise<CourseCard[]> => {
+    const query = tags.join(",");
+    const resp = await fetch(`/api/courses/recommend?tags=${encodeURIComponent(query)}`);
+    if (!resp.ok) return [];
+    return resp.json();
+  },
 };
 
 export async function transcribeAudio(audioBlob: Blob): Promise<{ text: string; confidence: number }> {
