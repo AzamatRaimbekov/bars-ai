@@ -51,6 +51,41 @@ const translations = {
 
   // ===== ONBOARDING =====
   "onboarding.welcome": { en: "Welcome to", ru: "Добро пожаловать в" },
+  "onboarding.barsbek.hello": {
+    en: "Hi! I'm Barsbek, your learning guide. Let's find the perfect courses for you!",
+    ru: "Салам! Я Barsbek, твой гид в обучении. Давай подберём идеальные курсы для тебя!",
+  },
+  "onboarding.barsbek.interests": {
+    en: "What are you interested in? Pick everything that catches your eye!",
+    ru: "Что тебе интересно? Выбери всё, что нравится!",
+  },
+  "onboarding.barsbek.chat": {
+    en: "Great choices! Let me ask a couple of quick questions.",
+    ru: "Отличный выбор! Задам пару быстрых вопросов.",
+  },
+  "onboarding.barsbek.results": {
+    en: "Here's what I picked for you!",
+    ru: "Вот что я подобрал для тебя!",
+  },
+  "onboarding.barsbek.noCourses": {
+    en: "No courses match your interests yet. Explore the marketplace!",
+    ru: "Пока нет курсов по твоим интересам. Загляни в маркетплейс!",
+  },
+  "onboarding.letsGo": { en: "Let's go!", ru: "Поехали!" },
+  "onboarding.pickInterests": { en: "Pick at least one", ru: "Выбери хотя бы один" },
+  "onboarding.nextStep": { en: "Continue", ru: "Продолжить" },
+  "onboarding.skip": { en: "Skip", ru: "Пропустить" },
+  "onboarding.exploreCourses": { en: "Explore Courses", ru: "Смотреть все курсы" },
+  "onboarding.enrollAndContinue": { en: "Enroll", ru: "Записаться" },
+  "onboarding.enrolled": { en: "Enrolled!", ru: "Записан!" },
+  "onboarding.chatQ1": {
+    en: "What's your experience with the topics you picked?",
+    ru: "Какой у тебя опыт в выбранных темах?",
+  },
+  "onboarding.chatQ2": {
+    en: "Are you learning for yourself or for work?",
+    ru: "Учишься для себя или для работы?",
+  },
   "onboarding.choosePath": { en: "Choose your learning path", ru: "Выберите направление обучения" },
   "onboarding.nameLabel": { en: "What's your name?", ru: "Как вас зовут?" },
   "onboarding.namePlaceholder": { en: "Enter your name", ru: "Введите имя" },
