@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { PageWrapper } from "@/components/layout/PageWrapper";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { TopBar } from "@/components/layout/TopBar";
+import { TabBar } from "@/components/layout/TabBar";
 import { ChatWindow } from "@/components/chat/ChatWindow";
 import { VoiceModeOverlay } from "@/components/chat/VoiceModeOverlay";
 import { SessionList } from "@/components/mentor/SessionList";
@@ -365,8 +367,18 @@ export default function Mentor() {
   const isLoading = isSending || sessionsLoading;
 
   return (
-    <PageWrapper>
-      <div className="h-[calc(100dvh-7rem)] sm:h-[calc(100dvh-8rem)] lg:h-[calc(100vh-8rem)] rounded-2xl border border-white/6 bg-[#0A0A0A] overflow-hidden relative flex">
+    <div className="min-h-screen min-h-[100dvh] bg-black">
+      {/* Desktop: sidebar + topbar via PageWrapper layout */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
+      <div className="lg:pl-64">
+        {/* TopBar only on desktop */}
+        <div className="hidden lg:block">
+          <TopBar />
+        </div>
+        <main className="lg:px-6 lg:pt-6 lg:pb-6">
+      <div className="h-[100dvh] pb-[76px] lg:h-[calc(100vh-8rem)] lg:pb-0 lg:rounded-2xl border-0 lg:border border-white/6 bg-[#0A0A0A] overflow-hidden relative flex">
         {/* Mobile sidebar toggle */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -494,6 +506,10 @@ export default function Mentor() {
           />
         )}
       </div>
-    </PageWrapper>
+        </main>
+      </div>
+      {/* TabBar on mobile */}
+      <TabBar />
+    </div>
   );
 }
