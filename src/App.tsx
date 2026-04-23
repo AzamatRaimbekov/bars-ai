@@ -22,6 +22,8 @@ import Teach from '@/pages/Teach'
 import CourseEditor from '@/pages/CourseEditor'
 import Sprint from '@/pages/Sprint'
 import Admin from '@/pages/Admin'
+import ForgotPassword from '@/pages/ForgotPassword'
+import ResetPassword from '@/pages/ResetPassword'
 import { Loader2 } from 'lucide-react'
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -62,6 +64,8 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/"
           element={

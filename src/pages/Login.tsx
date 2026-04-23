@@ -57,7 +57,7 @@ export default function Login() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            Path<span className="text-[#F97316]">Mind</span>
+            Bars<span className="text-[#F97316]"> AI</span>
           </motion.h1>
           <p className="text-white/40 mt-2 text-sm">{t("auth.signInSubtitle")}</p>
         </div>
@@ -85,6 +85,12 @@ export default function Login() {
             {error && (
               <p className="text-red-400 text-sm">{error}</p>
             )}
+
+            <div className="text-right">
+              <Link to="/forgot-password" className="text-xs text-white/30 hover:text-[#FB923C] transition-colors">
+                {t("auth.forgotPassword")}
+              </Link>
+            </div>
 
             <button
               type="submit"

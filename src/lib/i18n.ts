@@ -308,6 +308,16 @@ const translations = {
   "auth.passwordPlaceholder": { en: "At least 8 characters", ru: "Минимум 8 символов" },
   "auth.loginFailed": { en: "Login failed", ru: "Ошибка входа" },
   "auth.registerFailed": { en: "Registration failed", ru: "Ошибка регистрации" },
+  "auth.forgotPassword": { en: "Forgot password?", ru: "Забыли пароль?" },
+  "auth.resetPassword": { en: "Reset Password", ru: "Сбросить пароль" },
+  "auth.sendResetLink": { en: "Send Reset Link", ru: "Отправить ссылку" },
+  "auth.resetSent": { en: "If this email exists, you'll receive a reset link.", ru: "Если email существует, вы получите ссылку для сброса." },
+  "auth.newPassword": { en: "New Password", ru: "Новый пароль" },
+  "auth.confirmPassword": { en: "Confirm Password", ru: "Подтвердите пароль" },
+  "auth.passwordReset": { en: "Password reset! You can now sign in.", ru: "Пароль сброшен! Теперь можете войти." },
+  "auth.invalidToken": { en: "Invalid or expired reset link", ru: "Недействительная или устаревшая ссылка" },
+  "auth.backToLogin": { en: "Back to Sign In", ru: "Назад к входу" },
+  "auth.passwordMismatch": { en: "Passwords don't match", ru: "Пароли не совпадают" },
 
   // ===== LESSON PLAYER =====
   "lesson.exitTitle": { en: "Exit lesson?", ru: "Выйти из урока?" },
