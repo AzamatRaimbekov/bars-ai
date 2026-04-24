@@ -47,6 +47,7 @@ GET /api/health → { "status": "ok" }
 | Метод | Путь | Описание |
 |---|---|---|
 | POST | `/api/ai/generate` | Генерация контента |
+| POST | `/api/ai/generate-course` | Генерация полного курса через Claude AI (только admin) |
 
 ## Ментор (`/api/mentor`)
 | Метод | Путь | Описание |

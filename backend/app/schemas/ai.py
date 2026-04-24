@@ -61,3 +61,18 @@ class CheckTranslationResponse(BaseModel):
     correct: bool
     feedback: str
     suggested: str
+
+
+class GenerateCourseRequest(BaseModel):
+    topic: str = Field(min_length=3, max_length=200)
+    language: str = Field(default="ru", pattern=r"^(ru|en)$")
+    sections_count: int = Field(default=5, ge=3, le=10)
+    difficulty: str = Field(default="intermediate", pattern=r"^(beginner|intermediate|advanced)$")
+
+
+class GenerateCourseResponse(BaseModel):
+    course_id: str
+    title: str
+    sections_count: int
+    lessons_count: int
+    status: str

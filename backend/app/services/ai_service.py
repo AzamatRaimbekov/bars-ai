@@ -150,3 +150,162 @@ async def check_translation(
         }
     except (json.JSONDecodeError, KeyError):
         return {"correct": False, "feedback": "Ошибка проверки.", "suggested": ""}
+
+
+async def generate_course(db, admin_id, topic: str, language: str, sections_count: int, difficulty: str) -> dict:
+    """Generate a full course using Claude AI and save to DB."""
+    from app.models.course import Course, CourseSection, CourseLesson
+    import uuid as uuid_mod
+
+    lang_instruction = "Respond entirely in Russian." if language == "ru" else "Respond entirely in English."
+
+    system_prompt = f"""You are an expert course creator for the Bars AI learning platform.
+You create comprehensive, professional courses for adults.
+{lang_instruction}
+
+IMPORTANT: Return ONLY valid JSON, no markdown, no code blocks, no explanations."""
+
+    user_prompt = f"""Create a course on the topic: "{topic}"
+Difficulty level: {difficulty}
+Number of sections: {sections_count}
+Each section should have 4-6 lessons.
+
+Return a JSON object with this EXACT structure:
+{{
+  "title": "Course title",
+  "description": "Course description (2-3 sentences)",
+  "category": "one of: management, programming, design, marketing, languages, finance, other",
+  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+  "sections": [
+    {{
+      "title": "Section title",
+      "lessons": [
+        {{
+          "title": "Lesson title",
+          "xp": 20,
+          "steps": [
+            {{
+              "type": "info",
+              "title": "Step title",
+              "markdown": "## Heading\\n\\nDetailed content with **bold**, lists, examples, references to real books/frameworks. At least 200 words per info step."
+            }},
+            {{
+              "type": "quiz",
+              "question": "Question text?",
+              "options": [
+                {{"id": "a", "text": "Option A", "correct": false}},
+                {{"id": "b", "text": "Option B", "correct": true}},
+                {{"id": "c", "text": "Option C", "correct": false}},
+                {{"id": "d", "text": "Option D", "correct": false}}
+              ]
+            }},
+            {{
+              "type": "flashcards",
+              "cards": [
+                {{"front": "Term", "back": "Definition"}},
+                {{"front": "Term 2", "back": "Definition 2"}}
+              ]
+            }}
+          ]
+        }}
+      ]
+    }}
+  ]
+}}
+
+Each lesson must have 3-5 steps. Use these step types:
+- "info" (with detailed markdown content, include real book/framework references)
+- "quiz" (single choice, 4 options)
+- "true-false" (statement + correct: true/false)
+- "matching" (pairs: left/right)
+- "flashcards" (cards: front/back)
+- "fill-blank" (sentence with ___ + answer)
+- "drag-order" (items in correct order)
+- "resources" (items with label, url, type:"link")
+
+Mix step types for engagement. Every lesson should start with "info" step.
+Make content professional, detailed, and reference real frameworks/books."""
+
+    raw = await _call_claude(system_prompt, [{"role": "user", "content": user_prompt}], max_tokens=8000)
+
+    # Parse JSON - strip markdown code blocks if present
+    text = raw.strip()
+    if text.startswith("```"):
+        text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+    if text.endswith("```"):
+        text = text[:-3]
+    if text.startswith("json"):
+        text = text[4:]
+    text = text.strip()
+
+    import json as json_mod
+    course_data = json_mod.loads(text)
+
+    # Create course in DB
+    slug = topic.lower().replace(" ", "-").replace(".", "")[:200]
+    # Ensure unique slug
+    slug = f"{slug}-{uuid_mod.uuid4().hex[:6]}"
+
+    course = Course(
+        title=course_data["title"],
+        slug=slug,
+        description=course_data.get("description", ""),
+        author_id=admin_id,
+        category=course_data.get("category", "other"),
+        tags=course_data.get("tags", []),
+        difficulty=difficulty,
+        price=0,
+        status="draft",
+    )
+    db.add(course)
+    await db.flush()
+
+    total_lessons = 0
+    nodes = []
+    edges = []
+    lc = 0
+
+    SNAKE_X = [0.50, 0.75, 0.50, 0.25, 0.50]
+    CANVAS_W, ROW_H, V_PAD = 500, 148, 90
+
+    for si, section_data in enumerate(course_data.get("sections", [])):
+        section = CourseSection(
+            course_id=course.id,
+            title=section_data["title"],
+            position=si,
+        )
+        db.add(section)
+        await db.flush()
+
+        for li, lesson_data in enumerate(section_data.get("lessons", [])):
+            lesson = CourseLesson(
+                section_id=section.id,
+                title=lesson_data["title"],
+                position=li,
+                content_type="interactive",
+                xp_reward=lesson_data.get("xp", 20),
+                steps=lesson_data.get("steps", []),
+            )
+            db.add(lesson)
+            await db.flush()
+
+            r, c = lc // 5, lc % 5
+            x = SNAKE_X[c] * CANVAS_W
+            y = V_PAD + r * ROW_H
+            nodes.append({"id": str(lesson.id), "x": x, "y": y})
+            if lc > 0:
+                edges.append({"id": f"e-{lc}", "source": nodes[-2]["id"], "target": nodes[-1]["id"]})
+            lc += 1
+            total_lessons += 1
+
+    course.roadmap_nodes = nodes
+    course.roadmap_edges = edges
+    await db.commit()
+
+    return {
+        "course_id": str(course.id),
+        "title": course_data["title"],
+        "sections_count": len(course_data.get("sections", [])),
+        "lessons_count": total_lessons,
+        "status": "draft",
+    }

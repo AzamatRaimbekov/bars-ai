@@ -12,6 +12,7 @@ from app.schemas.ai import (
     ScoreRequest, ScoreResponse,
     TranscribeResponse,
     CheckTranslationRequest, CheckTranslationResponse,
+    GenerateCourseRequest, GenerateCourseResponse,
 )
 from app.services import ai_service
 from app.utils.rate_limiter import rate_limit
@@ -85,3 +86,18 @@ async def check_translation(
         body.sentence, body.user_answer, body.source_language, body.target_language
     )
     return CheckTranslationResponse(**result)
+
+
+@router.post("/generate-course", response_model=GenerateCourseResponse)
+async def generate_course(
+    body: GenerateCourseRequest,
+    user_id: uuid.UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if not user or user.role != "admin":
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    return await ai_service.generate_course(db, user_id, body.topic, body.language, body.sections_count, body.difficulty)
