@@ -33,7 +33,7 @@ async def health():
     return {"status": "ok"}
 
 
-from app.routers import auth, users, progress, ai, quests, leaderboard, leagues, courses, mentor, sprint, admin, payments, notifications
+from app.routers import auth, users, progress, ai, quests, leaderboard, leagues, courses, mentor, sprint, admin, payments, notifications, uploads
 
 app.include_router(auth.router)
 app.include_router(users.router)
@@ -48,6 +48,7 @@ app.include_router(sprint.router)
 app.include_router(admin.router)
 app.include_router(payments.router)
 app.include_router(notifications.router)
+app.include_router(uploads.router)
 
 # Serve frontend static files in production
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"

@@ -90,6 +90,16 @@ GET /api/health → { "status": "ok" }
 | POST | `/api/notifications/:id/read` | Отметить прочитанным |
 | POST | `/api/notifications/read-all` | Отметить все прочитанными |
 
+## Загрузка файлов (`/api/uploads`)
+| Метод | Путь | Описание |
+|---|---|---|
+| POST | `/api/uploads` | Загрузить файл (max 50MB, требует auth) |
+| GET | `/api/uploads/files/:filename` | Получить загруженный файл |
+
+Поддерживаемые типы: pdf, doc/docx, xls/xlsx, ppt/pptx, txt, csv, json, xml, png, jpg, jpeg, gif, svg, webp, mp4, webm, mp3, wav, ogg, zip, rar, 7z.
+
+Ответ POST: `{ url, filename, size, type }`
+
 ## Админ (`/api/admin`)
 | Метод | Путь | Описание |
 |---|---|---|
