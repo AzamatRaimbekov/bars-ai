@@ -51,6 +51,12 @@ export default function Courses() {
   const [priceFilter, setPriceFilter] = useState<typeof PRICE_FILTERS[number]>('All')
   const [sort, setSort] = useState('popular')
   const [showSort, setShowSort] = useState(false)
+  const [availableTags, setAvailableTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+
+  useEffect(() => {
+    courseApi.getTags().then(setAvailableTags).catch(() => setAvailableTags([]))
+  }, [])
 
   const sortOptions = [
     { value: 'popular', label: t('courses.popular') },
@@ -67,6 +73,7 @@ export default function Courses() {
     if (difficulty !== 'All') params.difficulty = difficulty
     if (priceFilter === 'Free') params.max_price = '0'
     if (priceFilter === 'Paid') params.min_price = '1'
+    if (selectedTags.length > 0) params.tags = selectedTags.join(',')
 
     courseApi
       .list(params)
@@ -79,7 +86,7 @@ export default function Courses() {
         setTotal(0)
       })
       .finally(() => setLoading(false))
-  }, [search, category, difficulty, priceFilter, sort])
+  }, [search, category, difficulty, priceFilter, sort, selectedTags])
 
   return (
     <PageWrapper>
@@ -241,6 +248,40 @@ export default function Courses() {
           </div>
         </motion.div>
 
+        {/* Tag Filter Chips */}
+        {availableTags.length > 0 && (
+          <motion.div variants={itemVariants} className="flex flex-wrap gap-2">
+            {availableTags.map((tag) => {
+              const active = selectedTags.includes(tag)
+              return (
+                <button
+                  key={tag}
+                  onClick={() =>
+                    setSelectedTags((prev) =>
+                      active ? prev.filter((t) => t !== tag) : [...prev, tag]
+                    )
+                  }
+                  className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
+                    active
+                      ? 'bg-[#F97316]/15 text-[#F97316] border border-[#F97316]/30'
+                      : 'bg-[#0A0A0A] border border-white/6 text-text-secondary hover:text-text hover:border-[#F97316]/30'
+                  }`}
+                >
+                  #{tag}
+                </button>
+              )
+            })}
+            {selectedTags.length > 0 && (
+              <button
+                onClick={() => setSelectedTags([])}
+                className="px-3 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer bg-[#0A0A0A] border border-white/6 text-text-secondary hover:text-text"
+              >
+                Сбросить
+              </button>
+            )}
+          </motion.div>
+        )}
+
         {/* Course Grid */}
         {loading ? (
           <motion.div variants={itemVariants} className="text-center py-12">
@@ -332,6 +373,17 @@ export default function Courses() {
                         </span>
                       )}
                     </div>
+
+                    {/* Tags */}
+                    {course.tags?.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {course.tags.slice(0, 3).map(tag => (
+                          <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-[#F97316]/10 text-[#FB923C]">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </Card>
               </motion.div>
