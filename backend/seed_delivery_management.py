@@ -74,6 +74,23 @@ S = [
                     {"type": "true-false", "statement": "По данным исследования Accelerate, высокая частота деплоев ведёт к большему числу инцидентов.", "correct": False},
                 ],
             },
+            {
+                "t": "Ресурсы: Основы DM",
+                "xp": 10,
+                "steps": [
+                    {
+                        "type": "resources",
+                        "title": "Книги, статьи и шаблоны",
+                        "description": "Изучите эти материалы для углубления знаний по теме.",
+                        "items": [
+                            {"label": "Accelerate — книга (Goodreads)", "url": "https://www.goodreads.com/book/show/35747076-accelerate", "type": "link"},
+                            {"label": "The Phoenix Project — книга", "url": "https://www.goodreads.com/book/show/17255186-the-phoenix-project", "type": "link"},
+                            {"label": "DORA Metrics — официальный сайт", "url": "https://dora.dev", "type": "link"},
+                            {"label": "What is a Delivery Manager? — Atlassian", "url": "https://www.atlassian.com/agile/project-management/delivery-manager", "type": "link"},
+                        ],
+                    }
+                ],
+            },
         ],
     },
     # ===== SECTION 2: Agile и Kanban на практике =====
@@ -132,6 +149,23 @@ S = [
                     {"type": "multi-select", "question": "Какие форматы ретроспектив перечислены в уроке?", "options": [{"id": "a", "text": "Start/Stop/Continue", "correct": True}, {"id": "b", "text": "RICE", "correct": False}, {"id": "c", "text": "4L's", "correct": True}, {"id": "d", "text": "Sailboat", "correct": True}, {"id": "e", "text": "MoSCoW", "correct": False}]},
                 ],
             },
+            {
+                "t": "Ресурсы: Agile и Kanban",
+                "xp": 10,
+                "steps": [
+                    {
+                        "type": "resources",
+                        "title": "Книги, статьи и шаблоны",
+                        "description": "Изучите эти материалы для углубления знаний по теме.",
+                        "items": [
+                            {"label": "Kanban — David Anderson (книга)", "url": "https://www.goodreads.com/book/show/8086552-kanban", "type": "link"},
+                            {"label": "Scrum Guide — официальный", "url": "https://scrumguides.org", "type": "link"},
+                            {"label": "Atlassian — Kanban Guide", "url": "https://www.atlassian.com/agile/kanban", "type": "link"},
+                            {"label": "Retrospective Formats — FunRetrospectives", "url": "https://www.funretrospectives.com", "type": "link"},
+                        ],
+                    }
+                ],
+            },
         ],
     },
     # ===== SECTION 3: Управление рисками =====
@@ -179,6 +213,23 @@ S = [
                     {"type": "matching", "pairs": [{"left": "SEV1", "right": "Production полностью недоступен"}, {"left": "SEV2", "right": "Критическая функциональность нарушена"}, {"left": "Post-mortem", "back": "Разбор инцидента с root cause и action items"}, {"left": "Blameless Culture", "right": "Фокус на системе, а не на поиске виноватых"}]},
                 ],
             },
+            {
+                "t": "Ресурсы: Управление рисками",
+                "xp": 10,
+                "steps": [
+                    {
+                        "type": "resources",
+                        "title": "Книги, статьи и шаблоны",
+                        "description": "Изучите эти материалы для углубления знаний по теме.",
+                        "items": [
+                            {"label": "RAID Log Template — Atlassian", "url": "https://www.atlassian.com/software/confluence/templates/raid-log", "type": "link"},
+                            {"label": "Martin Fowler — Technical Debt", "url": "https://martinfowler.com/bliki/TechnicalDebt.html", "type": "link"},
+                            {"label": "Blameless Post-Mortems — Etsy", "url": "https://www.etsy.com/codeascraft/blameless-postmortems", "type": "link"},
+                            {"label": "Pre-mortem — HBR", "url": "https://hbr.org/2007/09/performing-a-project-premortem", "type": "link"},
+                        ],
+                    }
+                ],
+            },
         ],
     },
     # ===== SECTION 4: Работа со стейкхолдерами =====
@@ -224,6 +275,23 @@ S = [
                     {"type": "matching", "pairs": [{"left": "Timeboxing", "right": "Ограничение времени на каждый пункт повестки"}, {"left": "DACI", "right": "Driver, Approver, Contributor, Informed"}, {"left": "RACI", "right": "Responsible, Accountable, Consulted, Informed"}, {"left": "Action Items", "right": "Решения с ответственным и дедлайном"}]},
                     {"type": "quiz", "question": "Сколько времени по стандарту Scrum занимает Daily Standup?", "options": [{"id": "a", "text": "5 минут", "correct": False}, {"id": "b", "text": "15 минут", "correct": True}, {"id": "c", "text": "30 минут", "correct": False}, {"id": "d", "text": "1 час", "correct": False}]},
                     {"type": "multi-select", "question": "Какие элементы делают встречу эффективной?", "options": [{"id": "a", "text": "Чёткая цель встречи", "correct": True}, {"id": "b", "text": "Максимальное число участников", "correct": False}, {"id": "c", "text": "Повестка, отправленная заранее", "correct": True}, {"id": "d", "text": "Action items с ответственным и сроком", "correct": True}, {"id": "e", "text": "Встреча без конкретных решений", "correct": False}]},
+                ],
+            },
+            {
+                "t": "Ресурсы: Стейкхолдеры",
+                "xp": 10,
+                "steps": [
+                    {
+                        "type": "resources",
+                        "title": "Книги, статьи и шаблоны",
+                        "description": "Изучите эти материалы для углубления знаний по теме.",
+                        "items": [
+                            {"label": "Stakeholder Mapping — MindTools", "url": "https://www.mindtools.com/aol0rms/stakeholder-analysis", "type": "link"},
+                            {"label": "RACI Matrix Guide — ProjectManager", "url": "https://www.projectmanager.com/blog/raci-chart-definition", "type": "link"},
+                            {"label": "How to Run Better Meetings — HBR", "url": "https://hbr.org/2017/07/stop-the-meeting-madness", "type": "link"},
+                            {"label": "Decision Making Frameworks — Untools", "url": "https://untools.co", "type": "link"},
+                        ],
+                    }
                 ],
             },
         ],
@@ -283,6 +351,23 @@ S = [
                     {"type": "flashcards", "cards": [{"front": "Value Stream", "back": "Полная цепочка шагов от идеи до ценности для клиента"}, {"front": "VSM", "back": "Value Stream Mapping — визуализация потока и поиск потерь"}, {"front": "Bottleneck", "back": "Узкое место — шаг, ограничивающий пропускную способность всей системы"}, {"front": "Lean Thinking", "back": "Книга Womack & Jones о устранении потерь и создании ценности"}, {"front": "8 видов потерь (Lean)", "back": "Транспортировка, Запасы, Движение, Ожидание, Перепроизводство, Переработка, Дефекты, Таланты"}]},
                 ],
             },
+            {
+                "t": "Ресурсы: Масштабирование",
+                "xp": 10,
+                "steps": [
+                    {
+                        "type": "resources",
+                        "title": "Книги, статьи и шаблоны",
+                        "description": "Изучите эти материалы для углубления знаний по теме.",
+                        "items": [
+                            {"label": "SAFe Framework — Official", "url": "https://www.scaledagileframework.com", "type": "link"},
+                            {"label": "Lean Thinking — книга", "url": "https://www.goodreads.com/book/show/289467.Lean_Thinking", "type": "link"},
+                            {"label": "Feature Flags — Martin Fowler", "url": "https://martinfowler.com/articles/feature-toggles.html", "type": "link"},
+                            {"label": "Value Stream Mapping Guide", "url": "https://www.lean.org/lexicon-terms/value-stream-mapping", "type": "link"},
+                        ],
+                    }
+                ],
+            },
         ],
     },
     # ===== SECTION 6: Люди и команды =====
@@ -328,6 +413,23 @@ S = [
                     {"type": "matching", "pairs": [{"left": "Competing", "right": "Напористый, некооперативный — «Я должен выиграть»"}, {"left": "Collaborating", "right": "Напористый и кооперативный — Win-Win"}, {"left": "Avoiding", "right": "Избегает конфликта, откладывает проблему"}, {"left": "Accommodating", "right": "Уступает — «Ладно, ты прав»"}]},
                     {"type": "quiz", "question": "Какой стиль по Thomas-Kilmann наилучший для разрешения конфликтов на работе?", "options": [{"id": "a", "text": "Competing — напористо отстаивать свою позицию", "correct": False}, {"id": "b", "text": "Avoiding — избегать конфликтов", "correct": False}, {"id": "c", "text": "Collaborating — напористый и кооперативный Win-Win", "correct": True}, {"id": "d", "text": "Accommodating — всегда уступать", "correct": False}]},
                     {"type": "true-false", "statement": "Стиль Avoiding (избегание конфликта) решает проблему, так как конфликт сам исчезает.", "correct": False},
+                ],
+            },
+            {
+                "t": "Ресурсы: Люди и команды",
+                "xp": 10,
+                "steps": [
+                    {
+                        "type": "resources",
+                        "title": "Книги, статьи и шаблоны",
+                        "description": "Изучите эти материалы для углубления знаний по теме.",
+                        "items": [
+                            {"label": "Team Topologies — книга", "url": "https://www.goodreads.com/book/show/44135420-team-topologies", "type": "link"},
+                            {"label": "Drive — Daniel Pink (книга)", "url": "https://www.goodreads.com/book/show/6452796-drive", "type": "link"},
+                            {"label": "Google re:Work — Psychological Safety", "url": "https://rework.withgoogle.com/guides/understanding-team-effectiveness", "type": "link"},
+                            {"label": "GROW Model — MindTools", "url": "https://www.mindtools.com/a3mi0ly/the-grow-model", "type": "link"},
+                        ],
+                    }
                 ],
             },
         ],
@@ -377,6 +479,23 @@ S = [
                     {"type": "true-false", "statement": "Любая повторяющаяся ручная задача — кандидат для автоматизации.", "correct": True},
                 ],
             },
+            {
+                "t": "Ресурсы: Инструменты DM",
+                "xp": 10,
+                "steps": [
+                    {
+                        "type": "resources",
+                        "title": "Книги, статьи и шаблоны",
+                        "description": "Изучите эти материалы для углубления знаний по теме.",
+                        "items": [
+                            {"label": "Jira Best Practices — Atlassian", "url": "https://www.atlassian.com/software/jira/guides", "type": "link"},
+                            {"label": "CI/CD — GitLab Guide", "url": "https://docs.gitlab.com/ee/ci", "type": "link"},
+                            {"label": "SLO/SLI/SLA — Google SRE Book", "url": "https://sre.google/sre-book/service-level-objectives", "type": "link"},
+                            {"label": "ChatOps — Atlassian", "url": "https://www.atlassian.com/blog/software-teams/what-is-chatops", "type": "link"},
+                        ],
+                    }
+                ],
+            },
         ],
     },
     # ===== SECTION 8: Карьера =====
@@ -423,6 +542,23 @@ S = [
                     {"type": "matching", "pairs": [{"left": "AI-assisted planning", "right": "Прогнозирование сроков на основе исторических данных"}, {"left": "Remote-first", "right": "Async-first коммуникация и документация как культура"}, {"left": "Platform Engineering", "right": "Внутренние платформы для повышения Developer Experience"}, {"left": "FinOps", "right": "Управление и оптимизация cloud-расходов"}]},
                     {"type": "flashcards", "cards": [{"front": "Outcome-based Delivery", "back": "Фокус на бизнес-результатах, а не на выпуске фич в срок"}, {"front": "Platform Engineering", "back": "Создание внутренних платформ и инструментов для разработчиков"}, {"front": "Developer Experience (DevEx)", "back": "Качество инструментов, процессов и среды для разработчиков"}, {"front": "FinOps", "back": "Практика управления cloud-затратами: прозрачность, оптимизация"}]},
                     {"type": "multi-select", "question": "Какие тренды в Delivery Management актуальны в 2025+?", "options": [{"id": "a", "text": "Platform Engineering", "correct": True}, {"id": "b", "text": "Waterfall-возрождение", "correct": False}, {"id": "c", "text": "AI-assisted planning", "correct": True}, {"id": "d", "text": "Developer Experience (DevEx)", "correct": True}, {"id": "e", "text": "Отказ от метрик", "correct": False}]},
+                ],
+            },
+            {
+                "t": "Ресурсы: Карьера DM",
+                "xp": 10,
+                "steps": [
+                    {
+                        "type": "resources",
+                        "title": "Книги, статьи и шаблоны",
+                        "description": "Изучите эти материалы для углубления знаний по теме.",
+                        "items": [
+                            {"label": "PMI-ACP Certification", "url": "https://www.pmi.org/certifications/agile-acp", "type": "link"},
+                            {"label": "Scrum.org — PSM", "url": "https://www.scrum.org/assessments/professional-scrum-master-i-certification", "type": "link"},
+                            {"label": "SAFe Certifications", "url": "https://www.scaledagileframework.com/certification", "type": "link"},
+                            {"label": "Delivery Management Career Path — Gov.UK", "url": "https://www.gov.uk/guidance/delivery-manager", "type": "link"},
+                        ],
+                    }
                 ],
             },
         ],
