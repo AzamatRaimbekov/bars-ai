@@ -69,10 +69,12 @@ interface InfoTabProps {
   thumbnailUrl: string;
   price: number;
   isPublished: boolean;
+  tags: string[];
   saving: boolean;
   hasUnsavedChanges: boolean;
   onSave: () => void;
   onChange: (field: string, value: string | number | boolean) => void;
+  onTagsChange: (tags: string[]) => void;
 }
 
 function InfoTab({
@@ -83,10 +85,12 @@ function InfoTab({
   thumbnailUrl,
   price,
   isPublished,
+  tags,
   saving,
   hasUnsavedChanges,
   onSave,
   onChange,
+  onTagsChange,
 }: InfoTabProps) {
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="show" exit="exit" className="space-y-5">
@@ -175,6 +179,41 @@ function InfoTab({
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Tags */}
+          <div>
+            <label className="text-sm text-white/40 mb-2 block">Теги</label>
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {tags.map((tag: string) => (
+                <span
+                  key={tag}
+                  className="text-xs px-2.5 py-1 rounded-full bg-[#F97316]/10 text-[#FB923C] flex items-center gap-1"
+                >
+                  {tag}
+                  <button
+                    onClick={() => onTagsChange(tags.filter((t: string) => t !== tag))}
+                    className="text-white/30 hover:text-white/60"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+            <input
+              placeholder="Добавить тег + Enter"
+              className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#F97316]/50 placeholder:text-white/30"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  const val = (e.target as HTMLInputElement).value.trim()
+                  if (val && !tags.includes(val)) {
+                    onTagsChange([...tags, val])
+                  }
+                  ;(e.target as HTMLInputElement).value = ''
+                }
+              }}
+            />
           </div>
 
           <div>
@@ -345,6 +384,7 @@ export default function CourseEditor() {
     thumbnail_url: "",
     price: 0,
     is_published: false,
+    tags: [] as string[],
   });
 
   // Roadmap layout persistence
@@ -370,6 +410,7 @@ export default function CourseEditor() {
           thumbnail_url: data.thumbnail_url ?? "",
           price: data.price,
           is_published: data.status === "published",
+          tags: data.tags ?? [],
         });
         if (data.roadmap_nodes) setRoadmapPositions(data.roadmap_nodes as NodePosition[]);
         if (data.roadmap_edges) setRoadmapEdges(data.roadmap_edges as RoadmapEdge[]);
@@ -386,6 +427,10 @@ export default function CourseEditor() {
     setFormState((prev) => ({ ...prev, [field]: value }));
   }, []);
 
+  const handleTagsChange = useCallback((tags: string[]) => {
+    setFormState((prev) => ({ ...prev, tags }));
+  }, []);
+
   const handleSaveInfo = async () => {
     if (!id) return;
     setSaving(true);
@@ -398,6 +443,7 @@ export default function CourseEditor() {
         thumbnail_url: formState.thumbnail_url || null,
         price: formState.price,
         status: formState.is_published ? "published" : "draft",
+        tags: formState.tags,
       });
       const updated = await courseApi.get(id);
       setCourse(updated);
@@ -417,7 +463,8 @@ export default function CourseEditor() {
     formState.difficulty !== course.difficulty ||
     formState.thumbnail_url !== (course.thumbnail_url ?? "") ||
     formState.price !== course.price ||
-    formState.is_published !== (course.status === "published")
+    formState.is_published !== (course.status === "published") ||
+    JSON.stringify(formState.tags) !== JSON.stringify(course.tags ?? [])
   );
 
   const handleRoadmapSave = async (positions: NodePosition[], edges: RoadmapEdge[]) => {
@@ -547,10 +594,12 @@ export default function CourseEditor() {
                   thumbnailUrl={formState.thumbnail_url}
                   price={formState.price}
                   isPublished={formState.is_published}
+                  tags={formState.tags}
                   saving={saving}
                   hasUnsavedChanges={hasUnsavedChanges}
                   onSave={handleSaveInfo}
                   onChange={handleFieldChange}
+                  onTagsChange={handleTagsChange}
                 />
               </motion.div>
             )}
