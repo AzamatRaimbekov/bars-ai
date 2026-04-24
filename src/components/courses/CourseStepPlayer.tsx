@@ -44,6 +44,7 @@ import type {
   StepBattleSim,
   StepSlowMotion,
   StepPythonCoding,
+  StepResources,
 } from "@/services/courseApi";
 
 import WordBuilderStep from "./steps/WordBuilderStep";
@@ -59,6 +60,7 @@ import { ComboChallengeStep } from "@/components/dance/ComboChallengeStep";
 import { BattleSimStep } from "@/components/dance/BattleSimStep";
 import { SlowMotionStep } from "@/components/dance/SlowMotionStep";
 import PythonCodingStep from "./steps/PythonCodingStep";
+import { ResourcesStep } from "./steps/ResourcesStep";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
@@ -2797,6 +2799,8 @@ export function CourseStepPlayer({
         return <BattleSimStep step={step as StepBattleSim} onAnswer={handleInteractiveAnswer} />;
       case "slow-motion":
         return <SlowMotionStep step={step as StepSlowMotion} onNext={goForward} />;
+      case "resources":
+        return <ResourcesStep step={step as StepResources} onComplete={goForward} />;
       case "python-coding":
         return (
           <PythonCodingStep

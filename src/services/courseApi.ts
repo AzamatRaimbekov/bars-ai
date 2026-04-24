@@ -87,7 +87,8 @@ export type StepType =
   | "sentence-translation"
   | "cloze-passage"
   | "tower-defense"
-  | "python-coding";
+  | "python-coding"
+  | "resources";
 
 export interface StepInfo {
   type: "info";
@@ -287,6 +288,19 @@ export interface StepComboChallenge { type: "combo-challenge"; title: string; mu
 export interface StepBattleSim { type: "battle-sim"; title: string; music: string; duration: number; bpm: number }
 export interface StepSlowMotion { type: "slow-motion"; title: string; video: string; keyframes: { time: number; pose: { landmarks: number[][] }; description: string }[] }
 
+export interface StepResources {
+  type: "resources";
+  title: string;
+  description?: string;
+  items: {
+    label: string;
+    url: string;
+    type: "link" | "file";
+    fileType?: string;
+    fileSize?: number;
+  }[];
+}
+
 export type LessonStep =
   | StepInfo
   | StepQuiz
@@ -321,7 +335,8 @@ export type LessonStep =
   | StepMirrorPractice
   | StepComboChallenge
   | StepBattleSim
-  | StepSlowMotion;
+  | StepSlowMotion
+  | StepResources;
 
 export interface LessonStepsResponse {
   steps: LessonStep[];
