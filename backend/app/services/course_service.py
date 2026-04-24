@@ -746,6 +746,25 @@ async def recommend_by_tags(db: AsyncSession, tags: list[str], limit: int = 20) 
     ]
 
 
+async def approve_course(db: AsyncSession, admin_id: uuid.UUID, course_id: uuid.UUID) -> dict:
+    """Admin approves a pending course — sets status to published."""
+    # Check admin
+    admin_result = await db.execute(select(User).where(User.id == admin_id))
+    admin = admin_result.scalar_one_or_none()
+    if not admin or admin.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    result = await db.execute(select(Course).where(Course.id == course_id))
+    course = result.scalar_one_or_none()
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    course.status = "published"
+    await db.commit()
+    await db.refresh(course)
+    return _course_to_dict(course)
+
+
 def _course_to_dict(course: Course) -> dict:
     return {
         "id": course.id,

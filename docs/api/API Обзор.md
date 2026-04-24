@@ -33,6 +33,7 @@ GET /api/health → { "status": "ok" }
 | GET | `/api/courses/:id` | Детали курса |
 | POST | `/api/courses` | Создание курса |
 | PATCH | `/api/courses/:id` | Редактирование |
+| POST | `/api/courses/:id/approve` | Одобрить курс (только admin) → устанавливает статус `published` |
 
 Все ответы курса (`CourseResponse`, `CourseLessonsResponse`) содержат поле `tags: list[str]`.
 

@@ -69,6 +69,15 @@ async def recommend(
     return await course_service.recommend_by_tags(db, tag_list)
 
 
+@router.post("/{course_id}/approve", response_model=CourseResponse, status_code=200)
+async def approve_course(
+    course_id: uuid.UUID,
+    user_id: uuid.UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    return await course_service.approve_course(db, user_id, course_id)
+
+
 @router.get("/{course_id}")
 async def get_course(
     course_id: uuid.UUID,
