@@ -10,6 +10,7 @@ import CoursesPage from "./pages/CoursesPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import SprintsPage from "./pages/SprintsPage";
 import ModerationPage from "./pages/ModerationPage";
+import AICoursePage from "./pages/AICoursePage";
 
 export default function App() {
   const hydrate = useAuthStore((s) => s.hydrate);
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/moderation" element={<ModerationPage />} />
           <Route path="/payments" element={<PaymentsPage />} />
           <Route path="/sprints" element={<SprintsPage />} />
+          <Route path="/ai-course" element={<AICoursePage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

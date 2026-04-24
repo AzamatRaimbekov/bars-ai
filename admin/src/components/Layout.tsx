@@ -7,6 +7,7 @@ import {
   Zap,
   Shield,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { cn } from "../lib/cn";
@@ -18,6 +19,7 @@ const navItems = [
   { to: "/moderation", icon: Shield, label: "Модерация" },
   { to: "/payments", icon: CreditCard, label: "Платежи" },
   { to: "/sprints", icon: Zap, label: "Спринты" },
+  { to: "/ai-course", icon: Sparkles, label: "AI Генератор" },
 ];
 
 export default function Layout() {
