@@ -39,7 +39,7 @@ export function SprintsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.15 }}
-          className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6"
+          className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 backdrop-blur-sm"
         >
           <div className="flex items-center justify-between mb-5">
             <span className="text-base font-semibold text-white">Весенний спринт</span>

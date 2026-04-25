@@ -1,4 +1,5 @@
 import { LandingNav } from '@/components/landing/LandingNav'
+import { StarField } from '@/components/landing/StarField'
 import { HeroSection } from '@/components/landing/HeroSection'
 import { FeaturesSection } from '@/components/landing/FeaturesSection'
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection'
@@ -9,9 +10,10 @@ import { FinalCTASection } from '@/components/landing/FinalCTASection'
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[#050510] relative">
+      <StarField />
       <LandingNav />
-      <main>
+      <main className="relative z-10">
         <HeroSection />
         <FeaturesSection />
         <HowItWorksSection />
@@ -20,7 +22,7 @@ export default function Landing() {
         <FAQSection />
         <FinalCTASection />
       </main>
-      <footer className="py-8 px-4 border-t border-white/[0.06]">
+      <footer className="relative z-10 py-8 px-4 border-t border-white/[0.06]">
         <div className="max-w-6xl mx-auto text-center text-xs text-white/25">
           © 2026 Bars AI. Все права защищены.
         </div>

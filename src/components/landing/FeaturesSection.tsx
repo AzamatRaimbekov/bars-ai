@@ -45,7 +45,7 @@ export function FeaturesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 text-center"
+              className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center backdrop-blur-sm hover:border-[#F97316]/20 transition-colors"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#F97316]/10 mb-4">
                 <feature.icon className="w-6 h-6 text-[#F97316]" />
