@@ -20,6 +20,11 @@ export default function Landing() {
         <FAQSection />
         <FinalCTASection />
       </main>
+      <footer className="py-8 px-4 border-t border-white/[0.06]">
+        <div className="max-w-6xl mx-auto text-center text-xs text-white/25">
+          © 2026 Bars AI. Все права защищены.
+        </div>
+      </footer>
     </div>
   )
 }
