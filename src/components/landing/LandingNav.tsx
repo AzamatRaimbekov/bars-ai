@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 
 const navLinks = [
   { label: 'Фичи', href: '#features' },
+  { label: 'Форматы', href: '#formats' },
   { label: 'Спринты', href: '#sprints' },
   { label: 'Авторам', href: '#create' },
   { label: 'FAQ', href: '#faq' },

@@ -2,6 +2,8 @@ import { LandingNav } from '@/components/landing/LandingNav'
 import { StarField } from '@/components/landing/StarField'
 import { HeroSection } from '@/components/landing/HeroSection'
 import { FeaturesSection } from '@/components/landing/FeaturesSection'
+import { GameFormatsSection } from '@/components/landing/GameFormatsSection'
+import { ProgressionSection } from '@/components/landing/ProgressionSection'
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection'
 import { SprintsSection } from '@/components/landing/SprintsSection'
 import { CreateCoursesSection } from '@/components/landing/CreateCoursesSection'
@@ -16,6 +18,8 @@ export default function Landing() {
       <main className="relative z-10">
         <HeroSection />
         <FeaturesSection />
+        <GameFormatsSection />
+        <ProgressionSection />
         <HowItWorksSection />
         <SprintsSection />
         <CreateCoursesSection />
