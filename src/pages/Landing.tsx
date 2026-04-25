@@ -1,20 +1,25 @@
-import { Link } from 'react-router-dom'
+import { LandingNav } from '@/components/landing/LandingNav'
+import { HeroSection } from '@/components/landing/HeroSection'
+import { FeaturesSection } from '@/components/landing/FeaturesSection'
+import { HowItWorksSection } from '@/components/landing/HowItWorksSection'
+import { SprintsSection } from '@/components/landing/SprintsSection'
+import { CreateCoursesSection } from '@/components/landing/CreateCoursesSection'
+import { FAQSection } from '@/components/landing/FAQSection'
+import { FinalCTASection } from '@/components/landing/FinalCTASection'
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-extrabold mb-4">
-          Bars<span className="text-[#F97316]"> AI</span>
-        </h1>
-        <p className="text-white/40 mb-6">Landing page coming soon</p>
-        <Link
-          to="/register"
-          className="inline-block bg-[#F97316] text-black font-bold px-6 py-3 rounded-xl"
-        >
-          Начать бесплатно
-        </Link>
-      </div>
+    <div className="min-h-screen bg-black">
+      <LandingNav />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <SprintsSection />
+        <CreateCoursesSection />
+        <FAQSection />
+        <FinalCTASection />
+      </main>
     </div>
   )
 }
