@@ -23,6 +23,7 @@ import Sprint from '@/pages/Sprint'
 import Admin from '@/pages/Admin'
 import ForgotPassword from '@/pages/ForgotPassword'
 import ResetPassword from '@/pages/ResetPassword'
+import Landing from '@/pages/Landing'
 import { Loader2 } from 'lucide-react'
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -35,20 +36,35 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (!isAuthenticated) return <Navigate to="/login" replace />
 
-  // If user hasn't completed onboarding, redirect to /
   const onboardingComplete = !!user?.onboarding_complete
-  const isOnboardingRoute = location.pathname === '/'
 
-  if (!onboardingComplete && !isOnboardingRoute) {
-    return <Navigate to="/" replace />
+  if (!onboardingComplete && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />
   }
 
-  // If user has already completed onboarding, don't let them back to /
-  if (onboardingComplete && isOnboardingRoute) {
+  if (onboardingComplete && location.pathname === '/onboarding') {
     return <Navigate to="/dashboard" replace />
   }
 
   return <>{children}</>
+}
+
+function RootRoute() {
+  const { isAuthenticated, isLoading, user } = useAuthStore()
+
+  if (isLoading) {
+    return <LoadingScreen />
+  }
+
+  if (!isAuthenticated) {
+    return <Landing />
+  }
+
+  if (!user?.onboarding_complete) {
+    return <Navigate to="/onboarding" replace />
+  }
+
+  return <Navigate to="/dashboard" replace />
 }
 
 export default function App() {
@@ -65,8 +81,9 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/" element={<RootRoute />} />
         <Route
-          path="/"
+          path="/onboarding"
           element={
             <AuthGuard>
               <Onboarding />
