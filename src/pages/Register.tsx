@@ -58,7 +58,7 @@ export default function Register() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            Path<span className="text-[#F97316]">Mind</span>
+            Bars<span className="text-[#F97316]"> AI</span>
           </motion.h1>
           <p className="text-white/40 mt-2 text-sm">{t("auth.signUpSubtitle")}</p>
         </div>
