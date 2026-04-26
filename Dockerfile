@@ -26,4 +26,4 @@ EXPOSE 3847
 HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=5 \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:${PORT:-3847}/api/health')" || exit 1
 
-CMD ["sh", "-c", "python create_tables.py && python seed_all.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-3847}"]
+CMD ["sh", "-c", "python create_tables.py && (python seed_all.py &) && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-3847}"]

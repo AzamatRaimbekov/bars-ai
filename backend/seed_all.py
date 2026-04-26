@@ -20,6 +20,7 @@ SEED_MODULES = [
     "seed_copywriting",
     "seed_cybersecurity",
     "seed_data_science",
+    "seed_delivery_management",
     "seed_devops_course",
     "seed_dj_course",
     "seed_english_course",
