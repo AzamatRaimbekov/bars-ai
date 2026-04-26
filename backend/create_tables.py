@@ -7,8 +7,18 @@ from app.models.payment import *  # noqa
 from app.models.notification import *  # noqa
 
 async def main():
+    from sqlalchemy import text
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Add missing columns to existing tables
+        migrations = [
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS interests JSON DEFAULT '[]'",
+        ]
+        for sql in migrations:
+            try:
+                await conn.execute(text(sql))
+            except Exception as e:
+                print(f"  Migration skipped: {e}")
     print("Tables created/verified")
 
 if __name__ == "__main__":
