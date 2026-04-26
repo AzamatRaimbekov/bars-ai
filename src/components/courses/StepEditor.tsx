@@ -241,6 +241,8 @@ function defaultStep(type: StepType): LessonStep {
         starterCode: "",
         expectedOutput: "",
       };
+    default:
+      return { type: "info", title: "", markdown: "" };
   }
 }
 
