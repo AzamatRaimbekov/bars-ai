@@ -9,7 +9,7 @@ const floatingBadges = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 pt-16 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-16 overflow-hidden">
       {/* Nebula glows */}
       <div
         className="absolute pointer-events-none"
@@ -42,28 +42,25 @@ export function HeroSection() {
         }}
       />
 
-      <div className="relative z-10 text-center max-w-2xl mx-auto">
-        {/* Mascot */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ delay: 0.05, type: 'spring', stiffness: 200, damping: 15 }}
-          className="mb-6"
-        >
-          <motion.img
-            src="/images/mascot-happy.png"
-            alt="Барсбек"
-            className="w-28 h-28 md:w-36 md:h-36 mx-auto drop-shadow-[0_0_40px_rgba(249,115,22,0.3)]"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </motion.div>
+      {/* Background video */}
+      <video
+        src="/video/hf_20260426_201936_a657836b-0181-49ed-b1bc-d0cd6f146260.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black/65" />
 
+      {/* Text content */}
+      <div className="relative z-10 text-center max-w-2xl mx-auto">
         {/* Subtitle badge */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
+          transition={{ delay: 0.1 }}
           className="text-xs uppercase tracking-[3px] text-[#F97316] font-semibold mb-5"
         >
           Bars AI Platform
@@ -73,8 +70,8 @@ export function HeroSection() {
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-5"
+          transition={{ delay: 0.2 }}
+          className="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
         >
           Учись. Играй.
           <br />
@@ -87,8 +84,8 @@ export function HeroSection() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="text-lg text-white/50 mb-8 max-w-md mx-auto"
+          transition={{ delay: 0.3 }}
+          className="text-lg text-white/70 mb-8 max-w-md mx-auto drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]"
         >
           AI-ментор, интерактивные курсы и геймификация — всё в одном месте
         </motion.p>
@@ -97,7 +94,7 @@ export function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
+          transition={{ delay: 0.4 }}
         >
           <Link
             to="/register"
@@ -115,8 +112,8 @@ export function HeroSection() {
               key={badge.text}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.55 + badge.delay }}
-              className="bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-2 text-xs text-white/60 backdrop-blur-sm"
+              transition={{ delay: 0.5 + badge.delay }}
+              className="bg-black/30 border border-white/[0.15] rounded-lg px-4 py-2 text-xs text-white/70 backdrop-blur-sm"
             >
               {badge.text}
             </motion.div>
