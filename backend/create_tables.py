@@ -65,7 +65,7 @@ async def main():
             import json
             tags_json = json.dumps(tags)
             await conn.execute(
-                text("UPDATE courses SET tags = :tags WHERE category = :cat AND (tags IS NULL OR tags::text = 'null')"),
+                text("UPDATE courses SET tags = :tags WHERE category = :cat AND (tags IS NULL OR tags::text = 'null' OR tags::text = '[]')"),
                 {"tags": tags_json, "cat": category},
             )
         print("Tables created/verified, tags backfilled")
