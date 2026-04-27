@@ -13,6 +13,9 @@ async def main():
         # Add missing columns to existing tables
         migrations = [
             "ALTER TABLE users ADD COLUMN IF NOT EXISTS interests JSON DEFAULT '[]'",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_complete BOOLEAN DEFAULT FALSE",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS assessment_context TEXT",
+            "ALTER TABLE courses ADD COLUMN IF NOT EXISTS tags JSON",
         ]
         for sql in migrations:
             try:
