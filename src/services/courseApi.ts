@@ -249,6 +249,7 @@ export interface StepPronunciation {
   audioUrl?: string;
   phonetic?: string;
   acceptedForms: string[];
+  lang?: string;
 }
 
 export interface StepWordBuilder {

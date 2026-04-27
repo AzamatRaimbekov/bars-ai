@@ -2,7 +2,9 @@ import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, Square, Play, Loader2, Volume2 } from "lucide-react";
 import type { StepPronunciation } from "@/services/courseApi";
-import { transcribeAudio } from "@/services/courseApi";
+
+const SpeechRecognition =
+  (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
 interface Props {
   step: StepPronunciation;
@@ -24,8 +26,7 @@ export default function PronunciationStep({ step, onAnswer }: Props) {
   const [isCorrect, setIsCorrect] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
+  const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const playReference = useCallback(() => {
@@ -39,51 +40,65 @@ export default function PronunciationStep({ step, onAnswer }: Props) {
     audio.play().catch(() => {});
   }, [step.audioUrl]);
 
-  const startRecording = useCallback(async () => {
+  const startRecording = useCallback(() => {
     setError(null);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
-      chunksRef.current = [];
 
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-
-      recorder.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        setPhase("transcribing");
-
-        try {
-          const { text } = await transcribeAudio(blob);
-          setRecognized(text);
-          const normalizedResult = normalize(text);
-          const correct = step.acceptedForms.some(
-            (form) => normalize(form) === normalizedResult
-          );
-          setIsCorrect(correct);
-          setPhase("result");
-          setTimeout(() => onAnswer(correct), 1500);
-        } catch {
-          setError("Ошибка распознавания речи");
-          setPhase("idle");
-          setTimeout(() => onAnswer(false), 1500);
-        }
-      };
-
-      mediaRecorderRef.current = recorder;
-      recorder.start();
-      setPhase("recording");
-    } catch {
-      setError("Нет доступа к микрофону");
-      setTimeout(() => onAnswer(false), 1500);
+    if (!SpeechRecognition) {
+      setError("Браузер не поддерживает распознавание речи. Используйте Chrome или Edge.");
+      return;
     }
-  }, [step.acceptedForms, onAnswer]);
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = step.lang || "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 3;
+
+    recognition.onresult = (event: any) => {
+      const results = event.results[0];
+      let matched = false;
+      let bestText = results[0].transcript;
+
+      for (let i = 0; i < results.length; i++) {
+        const text = results[i].transcript;
+        if (i === 0) bestText = text;
+        const normalizedResult = normalize(text);
+        if (step.acceptedForms.some((form) => normalize(form) === normalizedResult)) {
+          bestText = text;
+          matched = true;
+          break;
+        }
+      }
+
+      setRecognized(bestText);
+      setIsCorrect(matched);
+      setPhase("result");
+      setTimeout(() => onAnswer(matched), 1500);
+    };
+
+    recognition.onerror = (event: any) => {
+      if (event.error === "not-allowed") {
+        setError("Нет доступа к микрофону");
+      } else if (event.error === "no-speech") {
+        setError("Речь не обнаружена, попробуйте ещё раз");
+      } else {
+        setError("Ошибка распознавания речи");
+      }
+      setPhase("idle");
+    };
+
+    recognition.onend = () => {
+      if (phase === "recording") setPhase("idle");
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setPhase("recording");
+  }, [step.acceptedForms, step.lang, onAnswer, phase]);
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
-      mediaRecorderRef.current.stop();
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setPhase("transcribing");
     }
   }, []);
 
