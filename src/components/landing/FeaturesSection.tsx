@@ -1,30 +1,33 @@
 import { motion } from 'framer-motion'
 import { Bot, Code, Trophy, BookOpen } from 'lucide-react'
-
-const features = [
-  {
-    icon: Bot,
-    title: 'AI-ментор',
-    description: 'Персональный помощник 24/7',
-  },
-  {
-    icon: Code,
-    title: 'Python в браузере',
-    description: 'Пиши код без установки',
-  },
-  {
-    icon: Trophy,
-    title: 'Геймификация',
-    description: 'XP, лиги, бейджи, стрики',
-  },
-  {
-    icon: BookOpen,
-    title: '44+ курсов',
-    description: 'AI-рекомендации под тебя',
-  },
-]
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 export function FeaturesSection() {
+  useLandingLang()
+
+  const features = [
+    {
+      icon: Bot,
+      title: t('features.ai.title'),
+      description: t('features.ai.desc'),
+    },
+    {
+      icon: Code,
+      title: t('features.python.title'),
+      description: t('features.python.desc'),
+    },
+    {
+      icon: Trophy,
+      title: t('features.gamification.title'),
+      description: t('features.gamification.desc'),
+    },
+    {
+      icon: BookOpen,
+      title: t('features.courses.title'),
+      description: t('features.courses.desc'),
+    },
+  ]
+
   return (
     <section id="features" className="py-24 px-4">
       <div className="max-w-4xl mx-auto">
@@ -34,7 +37,7 @@ export function FeaturesSection() {
           viewport={{ once: true }}
           className="text-3xl font-bold text-white text-center mb-12"
         >
-          Почему Bars AI?
+          {t('features.title')}
         </motion.h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

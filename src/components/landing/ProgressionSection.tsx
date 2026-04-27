@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Flame, Award, TrendingUp, Target } from 'lucide-react'
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 const levels = [
   { name: 'Novice', xp: '0', active: false },
@@ -19,6 +20,14 @@ const badges = [
 ]
 
 export function ProgressionSection() {
+  useLandingLang()
+
+  const quests = [
+    { text: t('progression.quest1'), progress: 100, xp: 30, done: true },
+    { text: t('progression.quest2'), progress: 70, xp: 50, done: false },
+    { text: t('progression.quest3'), progress: 100, xp: 20, done: true },
+  ]
+
   return (
     <section className="py-24 px-4">
       <div className="max-w-4xl mx-auto">
@@ -29,9 +38,9 @@ export function ProgressionSection() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl font-bold text-white mb-3">
-            Прокачивай уровень
+            {t('progression.title')}
           </h2>
-          <p className="text-white/45">Каждое действие приближает тебя к следующему рангу</p>
+          <p className="text-white/45">{t('progression.subtitle')}</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -45,7 +54,7 @@ export function ProgressionSection() {
           >
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-4 h-4 text-[#F97316]" />
-              <span className="text-sm font-semibold text-white">6 уровней прогрессии</span>
+              <span className="text-sm font-semibold text-white">{t('progression.levels')}</span>
             </div>
 
             {/* Level ladder */}
@@ -101,15 +110,11 @@ export function ProgressionSection() {
             >
               <div className="flex items-center gap-2 mb-4">
                 <Target className="w-4 h-4 text-[#3B82F6]" />
-                <span className="text-sm font-semibold text-white">Ежедневные квесты</span>
+                <span className="text-sm font-semibold text-white">{t('progression.quests')}</span>
                 <span className="text-[10px] text-white/30 ml-auto">2/3</span>
               </div>
               <div className="space-y-2.5">
-                {[
-                  { text: 'Пройди 3 урока', progress: 100, xp: 30, done: true },
-                  { text: 'Набери 100 XP', progress: 70, xp: 50, done: false },
-                  { text: 'Не прерывай серию', progress: 100, xp: 20, done: true },
-                ].map((q) => (
+                {quests.map((q) => (
                   <div key={q.text} className="flex items-center gap-3">
                     <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] ${
                       q.done ? 'border-[#22C55E] bg-[#22C55E]/20 text-[#22C55E]' : 'border-white/15 text-white/20'
@@ -141,7 +146,7 @@ export function ProgressionSection() {
               >
                 <Flame className="w-6 h-6 text-[#F97316] mx-auto mb-2" />
                 <div className="text-2xl font-extrabold text-white">7</div>
-                <div className="text-[10px] text-white/35">дней подряд</div>
+                <div className="text-[10px] text-white/35">{t('progression.streak')}</div>
               </motion.div>
 
               <motion.div
@@ -153,7 +158,7 @@ export function ProgressionSection() {
               >
                 <Award className="w-6 h-6 text-[#A855F7] mx-auto mb-2" />
                 <div className="text-2xl font-extrabold text-white">59</div>
-                <div className="text-[10px] text-white/35">бейджей</div>
+                <div className="text-[10px] text-white/35">{t('progression.badges_count')}</div>
               </motion.div>
             </div>
           </div>
@@ -167,7 +172,7 @@ export function ProgressionSection() {
           transition={{ delay: 0.3 }}
           className="mt-6 bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 backdrop-blur-sm"
         >
-          <div className="text-xs text-white/40 mb-3">Собирай бейджи за достижения:</div>
+          <div className="text-xs text-white/40 mb-3">{t('progression.badges_label')}</div>
           <div className="flex flex-wrap justify-center gap-3">
             {badges.map((badge) => (
               <div

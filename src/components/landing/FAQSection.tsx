@@ -1,41 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-
-const faqs = [
-  {
-    question: 'Это бесплатно?',
-    answer: 'Да, регистрация и большинство курсов бесплатны. Есть также платные курсы от авторов — цену устанавливает сам автор.',
-  },
-  {
-    question: 'Нужно устанавливать что-то?',
-    answer: 'Нет, всё работает в браузере — включая Python. Просто зарегистрируйся и начни учиться.',
-  },
-  {
-    question: 'Как заработать на спринтах?',
-    answer: 'Проходи уроки, набирай звёзды за каждое задание, поднимайся в рейтинге спринта. Топ-3 участника получают денежные призы в долларах. Спринты проходят регулярно.',
-  },
-  {
-    question: 'Что такое AI-ментор?',
-    answer: 'Это персональный помощник на базе искусственного интеллекта. Он отвечает на вопросы, объясняет сложные темы, помогает с кодом и подсказывает, что изучать дальше.',
-  },
-  {
-    question: 'Как создать свой курс?',
-    answer: 'Перейди в раздел «Мои курсы», нажми «Создать курс». Есть удобный редактор с поддержкой видео, кода и квизов. Можно также использовать AI — опиши тему, и он сгенерирует структуру курса за тебя.',
-  },
-  {
-    question: 'Какие курсы доступны?',
-    answer: '44+ курсов по программированию, Frontend, английскому языку, управлению проектами и другим направлениям. Новые курсы добавляются каждую неделю — как от команды, так и от авторов сообщества.',
-  },
-  {
-    question: 'Как работает система XP и уровней?',
-    answer: 'За каждый пройденный урок, квиз или задание ты получаешь XP (очки опыта). Накопив достаточно XP, ты повышаешь уровень. Также есть стрики за ежедневное обучение, бейджи за достижения и лиги для соревнований.',
-  },
-  {
-    question: 'Подходит ли платформа для новичков?',
-    answer: 'Да! Большинство курсов начинаются с нуля. Барсбек — наш AI-маскот — поможет подобрать курсы по твоим интересам при регистрации. А AI-ментор всегда рядом, если что-то непонятно.',
-  },
-]
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
@@ -69,6 +35,19 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 }
 
 export function FAQSection() {
+  useLandingLang()
+
+  const faqs = [
+    { question: t('faq.q1'), answer: t('faq.a1') },
+    { question: t('faq.q2'), answer: t('faq.a2') },
+    { question: t('faq.q3'), answer: t('faq.a3') },
+    { question: t('faq.q4'), answer: t('faq.a4') },
+    { question: t('faq.q5'), answer: t('faq.a5') },
+    { question: t('faq.q6'), answer: t('faq.a6') },
+    { question: t('faq.q7'), answer: t('faq.a7') },
+    { question: t('faq.q8'), answer: t('faq.a8') },
+  ]
+
   return (
     <section id="faq" className="py-24 px-4">
       <div className="max-w-2xl mx-auto">
@@ -78,7 +57,7 @@ export function FAQSection() {
           viewport={{ once: true }}
           className="text-3xl font-bold text-white text-center mb-12"
         >
-          Частые вопросы
+          {t('faq.title')}
         </motion.h2>
 
         <div className="flex flex-col gap-3">

@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-
-const navLinks = [
-  { label: 'Фичи', href: '#features' },
-  { label: 'Форматы', href: '#formats' },
-  { label: 'Спринты', href: '#sprints' },
-  { label: 'Авторам', href: '#create' },
-  { label: 'FAQ', href: '#faq' },
-]
+import { t, useLandingLang, LANG_LABELS, type LandingLang } from '@/lib/landing-i18n'
 
 export function LandingNav() {
+  const { lang, setLang } = useLandingLang()
   const [scrolled, setScrolled] = useState(false)
+
+  const navLinks = [
+    { label: t('nav.features'), href: '#features' },
+    { label: t('nav.formats'), href: '#formats' },
+    { label: t('nav.sprints'), href: '#sprints' },
+    { label: t('nav.authors'), href: '#create' },
+    { label: t('nav.faq'), href: '#faq' },
+  ]
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -52,17 +54,34 @@ export function LandingNav() {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Language switcher */}
+          <div className="flex items-center gap-1">
+            {(Object.keys(LANG_LABELS) as LandingLang[]).map((code) => (
+              <button
+                key={code}
+                onClick={() => setLang(code)}
+                className={`text-xs font-semibold px-2 py-1 rounded-lg transition-colors ${
+                  lang === code
+                    ? 'bg-[#F97316] text-black'
+                    : 'text-white/40 hover:text-white/70'
+                }`}
+              >
+                {LANG_LABELS[code]}
+              </button>
+            ))}
+          </div>
+
           <Link
             to="/login"
             className="text-sm text-white/60 hover:text-white transition-colors"
           >
-            Войти
+            {t('nav.login')}
           </Link>
           <Link
             to="/register"
             className="text-sm font-semibold text-black bg-[#F97316] hover:bg-[#FB923C] px-4 py-2 rounded-xl transition-colors"
           >
-            Начать бесплатно
+            {t('nav.start')}
           </Link>
         </div>
       </div>

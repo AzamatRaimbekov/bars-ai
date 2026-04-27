@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 export function FinalCTASection() {
+  useLandingLang()
   return (
     <section className="py-24 px-4 relative overflow-hidden">
       <div
@@ -22,14 +24,14 @@ export function FinalCTASection() {
         viewport={{ once: true }}
         className="max-w-xl mx-auto text-center relative z-10 border border-[#F97316]/20 rounded-2xl py-16 px-6 backdrop-blur-sm bg-[#F97316]/[0.03]"
       >
-        <h2 className="text-3xl font-extrabold text-white mb-4">Готов начать?</h2>
-        <p className="text-base text-white/45 mb-8">Присоединяйся — это бесплатно</p>
+        <h2 className="text-3xl font-extrabold text-white mb-4">{t('cta.title')}</h2>
+        <p className="text-base text-white/45 mb-8">{t('cta.subtitle')}</p>
         <Link
           to="/register"
           className="inline-block text-lg font-bold text-black px-10 py-4 rounded-2xl transition-all hover:scale-105 shadow-[0_0_30px_rgba(249,115,22,0.3)]"
           style={{ background: 'linear-gradient(135deg, #F97316, #FB923C)' }}
         >
-          Создать аккаунт
+          {t('cta.button')}
         </Link>
       </motion.div>
     </section>

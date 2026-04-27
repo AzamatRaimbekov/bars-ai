@@ -1,28 +1,31 @@
 import { motion } from 'framer-motion'
 import { PenLine, Bot, DollarSign } from 'lucide-react'
-
-const benefits = [
-  {
-    icon: PenLine,
-    title: 'Удобный редактор',
-    description: 'Создавай уроки с видео, кодом и квизами',
-    accent: false,
-  },
-  {
-    icon: Bot,
-    title: 'AI генерирует за тебя',
-    description: 'Опиши тему — AI создаст структуру курса',
-    accent: false,
-  },
-  {
-    icon: DollarSign,
-    title: 'Зарабатывай',
-    description: 'Устанавливай цену и получай доход',
-    accent: true,
-  },
-]
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 export function CreateCoursesSection() {
+  useLandingLang()
+
+  const benefits = [
+    {
+      icon: PenLine,
+      title: t('create.editor.title'),
+      description: t('create.editor.desc'),
+      accent: false,
+    },
+    {
+      icon: Bot,
+      title: t('create.ai.title'),
+      description: t('create.ai.desc'),
+      accent: false,
+    },
+    {
+      icon: DollarSign,
+      title: t('create.earn.title'),
+      description: t('create.earn.desc'),
+      accent: true,
+    },
+  ]
+
   return (
     <section id="create" className="py-24 px-4 relative overflow-hidden">
       <div
@@ -44,9 +47,9 @@ export function CreateCoursesSection() {
           className="text-center mb-10"
         >
           <h2 className="text-3xl font-bold text-white mb-3">
-            Создавай курсы. Зарабатывай.
+            {t('create.title')}
           </h2>
-          <p className="text-white/45">Стань автором и получай доход с каждого ученика</p>
+          <p className="text-white/45">{t('create.subtitle')}</p>
         </motion.div>
 
         <div className="flex flex-col gap-3">

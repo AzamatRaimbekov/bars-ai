@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Star } from 'lucide-react'
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 const prizes = [
   { place: '1st', amount: '$500', highlight: true },
@@ -8,6 +9,7 @@ const prizes = [
 ]
 
 export function SprintsSection() {
+  useLandingLang()
   return (
     <section id="sprints" className="py-24 px-4 relative overflow-hidden">
       <div
@@ -29,9 +31,9 @@ export function SprintsSection() {
           className="text-center mb-10"
         >
           <h2 className="text-3xl font-bold text-white mb-3">
-            Спринты — учись и зарабатывай
+            {t('sprints.title')}
           </h2>
-          <p className="text-white/45">Регулярные соревнования с реальными призами</p>
+          <p className="text-white/45">{t('sprints.subtitle')}</p>
         </motion.div>
 
         <motion.div
@@ -42,8 +44,8 @@ export function SprintsSection() {
           className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 backdrop-blur-sm"
         >
           <div className="flex items-center justify-between mb-5">
-            <span className="text-base font-semibold text-white">Весенний спринт</span>
-            <span className="text-sm text-[#FBBF24] font-semibold">3 дня осталось</span>
+            <span className="text-base font-semibold text-white">{t('sprints.name')}</span>
+            <span className="text-sm text-[#FBBF24] font-semibold">{t('sprints.remaining')}</span>
           </div>
 
           <div className="grid grid-cols-3 gap-3 mb-5">
@@ -66,7 +68,7 @@ export function SprintsSection() {
           </div>
 
           <p className="text-xs text-white/35 text-center">
-            Набирай звёзды за выполнение уроков → поднимайся в рейтинге → забирай приз
+            {t('sprints.hint')}
           </p>
         </motion.div>
       </div>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 const floatingBadges = [
   { text: '+250 XP', delay: 0, x: -20, y: 10 },
@@ -8,6 +9,8 @@ const floatingBadges = [
 ]
 
 export function HeroSection() {
+  useLandingLang()
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-16 overflow-hidden">
       {/* Nebula glows */}
@@ -63,7 +66,7 @@ export function HeroSection() {
           transition={{ delay: 0.1 }}
           className="text-xs uppercase tracking-[3px] text-[#F97316] font-semibold mb-5"
         >
-          Bars AI Platform
+          {t('hero.badge')}
         </motion.div>
 
         {/* Main headline */}
@@ -73,10 +76,10 @@ export function HeroSection() {
           transition={{ delay: 0.2 }}
           className="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
         >
-          Учись. Играй.
+          {t('hero.title1')}
           <br />
           <span className="bg-gradient-to-r from-[#F97316] to-[#FBBF24] bg-clip-text text-transparent">
-            Побеждай.
+            {t('hero.title2')}
           </span>
         </motion.h1>
 
@@ -87,7 +90,7 @@ export function HeroSection() {
           transition={{ delay: 0.3 }}
           className="text-lg text-white/70 mb-8 max-w-md mx-auto drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]"
         >
-          AI-ментор, интерактивные курсы и геймификация — всё в одном месте
+          {t('hero.subtitle')}
         </motion.p>
 
         {/* CTA button */}
@@ -101,7 +104,7 @@ export function HeroSection() {
             className="inline-block text-lg font-bold text-black px-8 py-4 rounded-2xl transition-all hover:scale-105 shadow-[0_0_30px_rgba(249,115,22,0.3)]"
             style={{ background: 'linear-gradient(135deg, #F97316, #FB923C)' }}
           >
-            Начать бесплатно
+            {t('hero.cta')}
           </Link>
         </motion.div>
 

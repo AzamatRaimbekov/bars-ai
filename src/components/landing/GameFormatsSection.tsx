@@ -1,49 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Gamepad2, Brain, Code, Layers, Swords, Zap } from 'lucide-react'
-
-const formats = [
-  {
-    id: 'tower',
-    icon: Swords,
-    label: 'Tower Defense',
-    color: '#A855F7',
-    description: 'Стратегия + знания: размещай башни, отбивай врагов, отвечай на вопросы между волнами',
-    mockup: TowerDefenseMockup,
-  },
-  {
-    id: 'quiz',
-    icon: Brain,
-    label: 'Квизы',
-    color: '#3B82F6',
-    description: 'Выбирай правильный ответ — мгновенная обратная связь и XP за каждый верный',
-    mockup: QuizMockup,
-  },
-  {
-    id: 'coding',
-    icon: Code,
-    label: 'Python в браузере',
-    color: '#22C55E',
-    description: 'Пиши код прямо на платформе — запускай, тестируй, получай результат мгновенно',
-    mockup: CodingMockup,
-  },
-  {
-    id: 'match',
-    icon: Layers,
-    label: 'Match Game',
-    color: '#FBBF24',
-    description: 'Соедини термин с определением на скорость — тренируй память и скорость',
-    mockup: MatchMockup,
-  },
-  {
-    id: 'flash',
-    icon: Zap,
-    label: 'Flash Cards',
-    color: '#F97316',
-    description: 'Переверни карточку — запомни ответ. Интервальное повторение для глубокого запоминания',
-    mockup: FlashCardMockup,
-  },
-]
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 function TowerDefenseMockup() {
   return (
@@ -51,7 +9,7 @@ function TowerDefenseMockup() {
       {/* Game field */}
       <div className="bg-black/40 rounded-xl p-4 border border-white/[0.06]">
         <div className="flex items-center justify-between mb-3 text-xs">
-          <span className="text-white/60">Волна 3/5</span>
+          <span className="text-white/60">{t('formats.mock.wave')}</span>
           <div className="flex gap-3">
             <span className="text-[#FBBF24]">⭐ 85</span>
             <span className="text-red-400">❤️ 3</span>
@@ -100,8 +58,8 @@ function TowerDefenseMockup() {
       </div>
       {/* Question phase */}
       <div className="bg-[#A855F7]/[0.08] border border-[#A855F7]/20 rounded-xl p-3">
-        <div className="text-[11px] text-[#A855F7] font-semibold mb-2">Вопрос между волнами:</div>
-        <div className="text-xs text-white/70 mb-2">Что выведет print(2 ** 3)?</div>
+        <div className="text-[11px] text-[#A855F7] font-semibold mb-2">{t('formats.mock.question_phase')}</div>
+        <div className="text-xs text-white/70 mb-2">{t('formats.mock.question_text')}</div>
         <div className="grid grid-cols-2 gap-1.5">
           {['6', '8', '9', '5'].map((a, i) => (
             <div
@@ -116,7 +74,7 @@ function TowerDefenseMockup() {
             </div>
           ))}
         </div>
-        <div className="text-[10px] text-[#FBBF24] mt-2">+25 ⭐ за правильный ответ</div>
+        <div className="text-[10px] text-[#FBBF24] mt-2">{t('formats.mock.reward')}</div>
       </div>
     </div>
   )
@@ -126,11 +84,11 @@ function QuizMockup() {
   return (
     <div className="bg-black/40 rounded-xl p-4 border border-white/[0.06]">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-white/40">Вопрос 3 из 10</span>
+        <span className="text-xs text-white/40">{t('formats.mock.q_counter')}</span>
         <span className="text-xs text-[#FBBF24]">+50 XP</span>
       </div>
       <div className="text-sm text-white mb-4">
-        Какой метод массива возвращает новый массив?
+        {t('formats.mock.q_array')}
       </div>
       <div className="space-y-2">
         {[
@@ -211,7 +169,7 @@ function CodingMockup() {
       <div className="border-t border-white/[0.06] p-3 bg-white/[0.02]">
         <div className="text-[10px] text-white/30 mb-1">Output:</div>
         <div className="font-mono text-xs text-[#22C55E]">21</div>
-        <div className="text-[10px] text-[#22C55E] mt-1">✓ Верно! +100 XP</div>
+        <div className="text-[10px] text-[#22C55E] mt-1">{t('formats.mock.correct')}</div>
       </div>
     </div>
   )
@@ -221,15 +179,15 @@ function MatchMockup() {
   return (
     <div className="bg-black/40 rounded-xl p-4 border border-white/[0.06]">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-white/40">Соедини пары</span>
+        <span className="text-xs text-white/40">{t('formats.mock.match_title')}</span>
         <span className="text-xs text-white/40">⏱ 12с</span>
       </div>
       <div className="space-y-2">
         {[
-          { term: 'Variable', def: 'Именованная ячейка памяти', matched: true },
-          { term: 'Function', def: 'Блок кода для повторного вызова', matched: true },
-          { term: 'Loop', def: 'Повторение действий', matched: false, active: true },
-          { term: 'Array', def: 'Набор элементов', matched: false },
+          { term: 'Variable', def: t('formats.mock.var'), matched: true },
+          { term: 'Function', def: t('formats.mock.func'), matched: true },
+          { term: 'Loop', def: t('formats.mock.loop'), matched: false, active: true },
+          { term: 'Array', def: t('formats.mock.array'), matched: false },
         ].map((pair) => (
           <div key={pair.term} className="flex gap-2">
             <div
@@ -255,7 +213,7 @@ function MatchMockup() {
           </div>
         ))}
       </div>
-      <div className="mt-3 text-[10px] text-white/30 text-center">2 из 4 пар найдено</div>
+      <div className="mt-3 text-[10px] text-white/30 text-center">{t('formats.mock.match_found')}</div>
     </div>
   )
 }
@@ -266,8 +224,8 @@ function FlashCardMockup() {
   return (
     <div className="bg-black/40 rounded-xl p-4 border border-white/[0.06]">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-white/40">Карточка 5 из 20</span>
-        <span className="text-xs text-[#22C55E]">✓ 3 усвоено</span>
+        <span className="text-xs text-white/40">{t('formats.mock.card_counter')}</span>
+        <span className="text-xs text-[#22C55E]">{t('formats.mock.learned')}</span>
       </div>
       {/* Card */}
       <button
@@ -289,15 +247,15 @@ function FlashCardMockup() {
           >
             {flipped ? (
               <div>
-                <div className="text-xs text-[#F97316] mb-1">Ответ:</div>
+                <div className="text-xs text-[#F97316] mb-1">{t('formats.mock.answer')}</div>
                 <div className="text-sm text-white/80">
-                  Структура данных «ключ-значение» с O(1) доступом
+                  {t('formats.mock.hashmap_answer')}
                 </div>
               </div>
             ) : (
               <div>
-                <div className="text-xs text-white/30 mb-1">Нажми чтобы перевернуть</div>
-                <div className="text-sm text-white font-medium">Что такое Hash Map?</div>
+                <div className="text-xs text-white/30 mb-1">{t('formats.mock.flip')}</div>
+                <div className="text-sm text-white font-medium">{t('formats.mock.hashmap_q')}</div>
               </div>
             )}
           </motion.div>
@@ -306,10 +264,10 @@ function FlashCardMockup() {
       {/* Actions */}
       <div className="flex gap-2 mt-3">
         <div className="flex-1 text-center text-xs py-2 rounded-lg bg-[#22C55E]/10 border border-[#22C55E]/20 text-[#22C55E]">
-          Знаю ✓
+          {t('formats.mock.know')}
         </div>
         <div className="flex-1 text-center text-xs py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/40">
-          Пропустить →
+          {t('formats.mock.skip')}
         </div>
       </div>
     </div>
@@ -317,7 +275,52 @@ function FlashCardMockup() {
 }
 
 export function GameFormatsSection() {
+  useLandingLang()
   const [active, setActive] = useState('tower')
+
+  const formats = [
+    {
+      id: 'tower',
+      icon: Swords,
+      label: 'Tower Defense',
+      color: '#A855F7',
+      description: t('formats.tower.desc'),
+      mockup: TowerDefenseMockup,
+    },
+    {
+      id: 'quiz',
+      icon: Brain,
+      label: t('formats.quiz.label'),
+      color: '#3B82F6',
+      description: t('formats.quiz.desc'),
+      mockup: QuizMockup,
+    },
+    {
+      id: 'coding',
+      icon: Code,
+      label: t('features.python.title'),
+      color: '#22C55E',
+      description: t('formats.coding.desc'),
+      mockup: CodingMockup,
+    },
+    {
+      id: 'match',
+      icon: Layers,
+      label: 'Match Game',
+      color: '#FBBF24',
+      description: t('formats.match.desc'),
+      mockup: MatchMockup,
+    },
+    {
+      id: 'flash',
+      icon: Zap,
+      label: 'Flash Cards',
+      color: '#F97316',
+      description: t('formats.flash.desc'),
+      mockup: FlashCardMockup,
+    },
+  ]
+
   const activeFormat = formats.find((f) => f.id === active)!
   const ActiveMockup = activeFormat.mockup
 
@@ -331,9 +334,9 @@ export function GameFormatsSection() {
           className="text-center mb-10"
         >
           <h2 className="text-3xl font-bold text-white mb-3">
-            Учись играя
+            {t('formats.title')}
           </h2>
-          <p className="text-white/45">5 интерактивных форматов — никакой скуки, только практика</p>
+          <p className="text-white/45">{t('formats.subtitle')}</p>
         </motion.div>
 
         <motion.div
@@ -406,15 +409,15 @@ export function GameFormatsSection() {
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3 text-center backdrop-blur-sm">
                   <div className="text-lg font-extrabold text-[#F97316]">5</div>
-                  <div className="text-[10px] text-white/35">форматов</div>
+                  <div className="text-[10px] text-white/35">{t('formats.stat.formats')}</div>
                 </div>
                 <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3 text-center backdrop-blur-sm">
                   <div className="text-lg font-extrabold text-[#FBBF24]">⭐ 3</div>
-                  <div className="text-[10px] text-white/35">макс. звёзд</div>
+                  <div className="text-[10px] text-white/35">{t('formats.stat.stars')}</div>
                 </div>
                 <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3 text-center backdrop-blur-sm">
                   <div className="text-lg font-extrabold text-[#22C55E]">+100</div>
-                  <div className="text-[10px] text-white/35">XP за урок</div>
+                  <div className="text-[10px] text-white/35">{t('formats.stat.xp')}</div>
                 </div>
               </div>
             </div>

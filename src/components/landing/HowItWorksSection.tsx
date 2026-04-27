@@ -1,24 +1,27 @@
 import { motion } from 'framer-motion'
-
-const steps = [
-  {
-    number: '1',
-    title: 'Зарегистрируйся бесплатно',
-    description: 'Барсбек подберёт курсы по твоим интересам',
-  },
-  {
-    number: '2',
-    title: 'Проходи курсы и набирай XP',
-    description: 'Интерактивные уроки, код в браузере, AI-помощник',
-  },
-  {
-    number: '3',
-    title: 'Соревнуйся и зарабатывай',
-    description: 'Лиги, спринты с призами, рейтинги',
-  },
-]
+import { t, useLandingLang } from '@/lib/landing-i18n'
 
 export function HowItWorksSection() {
+  useLandingLang()
+
+  const steps = [
+    {
+      number: '1',
+      title: t('how.step1.title'),
+      description: t('how.step1.desc'),
+    },
+    {
+      number: '2',
+      title: t('how.step2.title'),
+      description: t('how.step2.desc'),
+    },
+    {
+      number: '3',
+      title: t('how.step3.title'),
+      description: t('how.step3.desc'),
+    },
+  ]
+
   return (
     <section className="py-24 px-4">
       <div className="max-w-2xl mx-auto">
@@ -28,7 +31,7 @@ export function HowItWorksSection() {
           viewport={{ once: true }}
           className="text-3xl font-bold text-white text-center mb-12"
         >
-          Как это работает
+          {t('how.title')}
         </motion.h2>
 
         <div className="flex flex-col gap-6">
