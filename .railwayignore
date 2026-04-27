@@ -13,7 +13,8 @@ docs
 dist
 *.pyc
 *.tsbuildinfo
-*.png
-*.jpg
 .env
 .DS_Store
+landing-*.png
+hero-*.png
+mobile-*.png
