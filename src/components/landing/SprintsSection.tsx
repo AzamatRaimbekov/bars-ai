@@ -2,9 +2,9 @@ import { motion } from 'framer-motion'
 import { Star } from 'lucide-react'
 
 const prizes = [
-  { place: '1st', amount: '50 000 ₸', highlight: true },
-  { place: '2nd', amount: '30 000 ₸', highlight: false },
-  { place: '3rd', amount: '15 000 ₸', highlight: false },
+  { place: '1st', amount: '$500', highlight: true },
+  { place: '2nd', amount: '$300', highlight: false },
+  { place: '3rd', amount: '$150', highlight: false },
 ]
 
 export function SprintsSection() {
