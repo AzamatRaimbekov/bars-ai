@@ -27,14 +27,16 @@ async def list_courses(
     difficulty: Optional[str] = Query(None),
     min_price: Optional[int] = Query(None, ge=0),
     max_price: Optional[int] = Query(None, ge=0),
+    tags: Optional[str] = Query(None),
     sort: str = Query("newest", pattern=r"^(newest|popular|rating|price_asc|price_desc)$"),
     page: int = Query(1, ge=1),
     per_page: int = Query(50, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()] if tags else None
     return await course_service.list_courses(
         db, search=search, category=category, difficulty=difficulty,
-        min_price=min_price, max_price=max_price, sort=sort,
+        min_price=min_price, max_price=max_price, tags=tag_list, sort=sort,
         page=page, per_page=per_page,
     )
 

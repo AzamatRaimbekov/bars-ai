@@ -121,10 +121,13 @@ async def list_courses(
     difficulty: str | None = None,
     min_price: int | None = None,
     max_price: int | None = None,
+    tags: list[str] | None = None,
     sort: str = "newest",
     page: int = 1,
     per_page: int = 50,
 ) -> dict:
+    from sqlalchemy import cast, String
+
     query = (
         select(Course, User.name.label("author_name"))
         .join(User, Course.author_id == User.id)
@@ -141,6 +144,10 @@ async def list_courses(
         query = query.where(Course.price >= min_price)
     if max_price is not None:
         query = query.where(Course.price <= max_price)
+    if tags:
+        from sqlalchemy import text
+        for tag in tags:
+            query = query.where(text("tags::text LIKE :tag").bindparams(tag=f'%"{tag}"%'))
 
     # Count total
     count_query = select(func.count()).select_from(query.subquery())
