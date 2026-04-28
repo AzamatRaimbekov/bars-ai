@@ -115,11 +115,16 @@ async def generate_course(
 
     file_context = "\n\n".join(file_texts) if file_texts else None
 
-    return await ai_service.generate_course(
-        db, user_id, topic, language, sections_count, difficulty,
-        custom_prompt=prompt or None,
-        file_context=file_context,
-    )
+    try:
+        return await ai_service.generate_course(
+            db, user_id, topic, language, sections_count, difficulty,
+            custom_prompt=prompt or None,
+            file_context=file_context,
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 def _extract_file_text(content: bytes, filename: str) -> str:
