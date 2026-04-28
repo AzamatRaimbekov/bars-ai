@@ -123,8 +123,9 @@ async def generate_course(
         )
     except Exception as e:
         import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        tb = traceback.format_exc()
+        print(f"GENERATE-COURSE ERROR: {type(e).__name__}: {e}\n{tb}")
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {e}")
 
 
 def _extract_file_text(content: bytes, filename: str) -> str:
