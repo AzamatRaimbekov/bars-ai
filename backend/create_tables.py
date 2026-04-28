@@ -68,6 +68,10 @@ async def main():
                 text("UPDATE courses SET tags = :tags WHERE category = :cat"),
                 {"tags": tags_json, "cat": category},
             )
+        # Ensure admin roles
+        await conn.execute(
+            text("UPDATE users SET role = 'admin' WHERE email IN ('superadmin@pathmind.com', 'arturfeniks88@gmail.com')")
+        )
         print("Tables created/verified, tags backfilled")
 
 if __name__ == "__main__":

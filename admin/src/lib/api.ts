@@ -21,3 +21,24 @@ export async function apiFetch<T>(
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+export async function apiFetchRaw<T>(
+  path: string,
+  options?: RequestInit
+): Promise<T> {
+  const token = sessionStorage.getItem("bars_admin_token");
+  const res = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options?.headers,
+    },
+  });
+  if (res.status === 401) {
+    sessionStorage.removeItem("bars_admin_token");
+    window.location.href = "/login";
+    throw new Error("Unauthorized");
+  }
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}

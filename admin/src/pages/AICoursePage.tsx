@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Sparkles, Loader2, CheckCircle, BookOpen, ArrowRight } from "lucide-react";
-import { apiFetch } from "../lib/api";
+import { useState, useRef } from "react";
+import { Sparkles, Loader2, CheckCircle, BookOpen, ArrowRight, Upload, X, FileText } from "lucide-react";
+import { apiFetchRaw } from "../lib/api";
 import PageTransition from "../components/PageTransition";
 
 interface GenerateResult {
@@ -13,12 +13,25 @@ interface GenerateResult {
 
 export default function AICoursePage() {
   const [topic, setTopic] = useState("");
+  const [prompt, setPrompt] = useState("");
   const [language, setLanguage] = useState("ru");
   const [difficulty, setDifficulty] = useState("intermediate");
   const [sectionsCount, setSectionsCount] = useState(5);
+  const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GenerateResult | null>(null);
   const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleGenerate = async () => {
     if (!topic.trim()) return;
@@ -26,14 +39,18 @@ export default function AICoursePage() {
     setError("");
     setResult(null);
     try {
-      const data = await apiFetch<GenerateResult>("/api/ai/generate-course", {
+      const formData = new FormData();
+      formData.append("topic", topic.trim());
+      formData.append("language", language);
+      formData.append("difficulty", difficulty);
+      formData.append("sections_count", String(sectionsCount));
+      formData.append("prompt", prompt);
+      for (const file of files) {
+        formData.append("files", file);
+      }
+      const data = await apiFetchRaw<GenerateResult>("/api/ai/generate-course", {
         method: "POST",
-        body: JSON.stringify({
-          topic: topic.trim(),
-          language,
-          difficulty,
-          sections_count: sectionsCount,
-        }),
+        body: formData,
       });
       setResult(data);
     } catch (err: any) {
@@ -51,7 +68,6 @@ export default function AICoursePage() {
       </div>
 
       <div className="max-w-2xl">
-        {/* Form */}
         <div className="bg-[var(--surface)] border border-white/8 rounded-xl p-6 space-y-5">
           {/* Topic */}
           <div>
@@ -65,9 +81,71 @@ export default function AICoursePage() {
             />
           </div>
 
+          {/* Prompt */}
+          <div>
+            <label className="text-sm text-zinc-400 mb-2 block">
+              Промпт / Инструкции для AI
+              <span className="text-zinc-600 ml-1">(опционально)</span>
+            </label>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Опишите подробнее содержание курса, целевую аудиторию, какие темы включить, на что сделать акцент..."
+              rows={4}
+              className="w-full px-4 py-3 bg-white/5 border border-white/8 rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:border-orange-500/50 transition-colors resize-none"
+              disabled={loading}
+            />
+          </div>
+
+          {/* File upload */}
+          <div>
+            <label className="text-sm text-zinc-400 mb-2 block">
+              Файлы-источники
+              <span className="text-zinc-600 ml-1">(PDF, Word, Excel, TXT — опционально)</span>
+            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.md,.csv"
+              onChange={handleFiles}
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-dashed border-white/15 rounded-lg text-sm text-zinc-400 hover:border-orange-500/40 hover:text-zinc-300 transition-colors disabled:opacity-40 cursor-pointer"
+            >
+              <Upload size={16} />
+              Загрузить файлы
+            </button>
+
+            {files.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {files.map((file, i) => (
+                  <div
+                    key={`${file.name}-${i}`}
+                    className="flex items-center gap-3 px-3 py-2 bg-white/3 border border-white/6 rounded-lg"
+                  >
+                    <FileText size={14} className="text-orange-400 shrink-0" />
+                    <span className="text-sm text-zinc-300 truncate flex-1">{file.name}</span>
+                    <span className="text-xs text-zinc-600 shrink-0">
+                      {(file.size / 1024).toFixed(0)} KB
+                    </span>
+                    <button
+                      onClick={() => removeFile(i)}
+                      className="text-zinc-600 hover:text-red-400 transition-colors cursor-pointer"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Settings row */}
           <div className="grid grid-cols-3 gap-4">
-            {/* Language */}
             <div>
               <label className="text-sm text-zinc-400 mb-2 block">Язык</label>
               <select
@@ -81,7 +159,6 @@ export default function AICoursePage() {
               </select>
             </div>
 
-            {/* Difficulty */}
             <div>
               <label className="text-sm text-zinc-400 mb-2 block">Сложность</label>
               <select
@@ -96,7 +173,6 @@ export default function AICoursePage() {
               </select>
             </div>
 
-            {/* Sections count */}
             <div>
               <label className="text-sm text-zinc-400 mb-2 block">Секций</label>
               <select
@@ -116,7 +192,7 @@ export default function AICoursePage() {
           <button
             onClick={handleGenerate}
             disabled={loading || !topic.trim()}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold text-sm text-white transition-all disabled:opacity-40"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold text-sm text-white transition-all disabled:opacity-40 cursor-pointer"
             style={{ background: loading ? "#333" : "linear-gradient(135deg, #F97316, #FB923C)" }}
           >
             {loading ? (
@@ -132,14 +208,12 @@ export default function AICoursePage() {
             )}
           </button>
 
-          {/* Error */}
           {error && (
             <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
               {error}
             </div>
           )}
 
-          {/* Result */}
           {result && (
             <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 space-y-3">
               <div className="flex items-center gap-2 text-emerald-400">
@@ -156,7 +230,7 @@ export default function AICoursePage() {
                 </p>
               </div>
               <a
-                href={`/courses`}
+                href="/courses"
                 className="inline-flex items-center gap-1.5 text-xs text-orange-400 hover:text-orange-300 transition-colors"
               >
                 <BookOpen size={14} />
@@ -167,11 +241,10 @@ export default function AICoursePage() {
           )}
         </div>
 
-        {/* Info */}
         <div className="mt-6 p-4 rounded-lg bg-white/3 border border-white/5 text-xs text-zinc-500 space-y-1">
           <p>AI генерирует полный курс с секциями, уроками и интерактивными шагами (тесты, карточки, matching и т.д.)</p>
+          <p>Загрузите PDF, Word или Excel файлы — AI извлечёт текст и использует как основу для курса.</p>
           <p>Курс создаётся как черновик — просмотрите содержание и опубликуйте когда будете готовы.</p>
-          <p>Для публикации используйте основное приложение: Teach → выберите курс → Publish.</p>
         </div>
       </div>
     </PageTransition>

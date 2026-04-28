@@ -152,7 +152,7 @@ async def check_translation(
         return {"correct": False, "feedback": "Ошибка проверки.", "suggested": ""}
 
 
-async def generate_course(db, admin_id, topic: str, language: str, sections_count: int, difficulty: str) -> dict:
+async def generate_course(db, admin_id, topic: str, language: str, sections_count: int, difficulty: str, custom_prompt: str | None = None, file_context: str | None = None) -> dict:
     """Generate a full course using Claude AI and save to DB."""
     from app.models.course import Course, CourseSection, CourseLesson
     import uuid as uuid_mod
@@ -224,7 +224,14 @@ Each lesson must have 3-5 steps. Use these step types:
 - "resources" (items with label, url, type:"link")
 
 Mix step types for engagement. Every lesson should start with "info" step.
-Make content professional, detailed, and reference real frameworks/books."""
+Make content professional, detailed, and reference real frameworks/books.
+
+"""
+    if custom_prompt:
+        user_prompt += f"\n\nAdditional instructions from the admin:\n{custom_prompt}"
+
+    if file_context:
+        user_prompt += f"\n\nUse the following reference material to create course content. Base the lessons on this material:\n\n{file_context}"
 
     raw = await _call_claude(system_prompt, [{"role": "user", "content": user_prompt}], max_tokens=8000)
 
