@@ -24,8 +24,8 @@ MENTOR_PROMPTS = {
 
 
 async def _call_claude(system_prompt: str, messages: list[dict], max_tokens: int = 1024) -> str:
-    timeout = 180.0 if max_tokens > 4000 else 60.0
-    async with httpx.AsyncClient(timeout=timeout) as client:
+    timeout = 300.0 if max_tokens > 4000 else 60.0
+    async with httpx.AsyncClient(timeout=httpx.Timeout(timeout, connect=30.0)) as client:
         resp = await client.post(
             CLAUDE_API_URL,
             headers={
