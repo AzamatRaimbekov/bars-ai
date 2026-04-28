@@ -70,9 +70,10 @@ async def main():
                 {"tags": tags_json, "cat": category},
             )
         # Ensure admin roles
-        await conn.execute(
-            text("UPDATE users SET role = 'admin' WHERE email IN ('superadmin@pathmind.com', 'admin@pathmind.com', 'arturfeniks88@gmail.com')")
+        result = await conn.execute(
+            text("UPDATE users SET role = 'admin' WHERE LOWER(email) IN ('superadmin@pathmind.com', 'admin@pathmind.com', 'arturfeniks88@gmail.com')")
         )
+        print(f"Admin roles updated: {result.rowcount} rows")
         print("Tables created/verified, tags backfilled")
 
 if __name__ == "__main__":
