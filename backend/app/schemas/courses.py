@@ -108,7 +108,7 @@ class CourseResponse(BaseModel):
     author_id: uuid.UUID
     author_name: str
     category: str
-    tags: list[str] = []
+    tags: list[str] | None = []
     difficulty: str
     price: int
     currency: str
@@ -133,7 +133,7 @@ class CourseLessonsResponse(BaseModel):
     author_id: uuid.UUID
     author_name: str
     category: str
-    tags: list[str] = []
+    tags: list[str] | None = []
     difficulty: str
     price: int
     currency: str
