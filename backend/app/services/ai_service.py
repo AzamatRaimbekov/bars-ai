@@ -234,7 +234,7 @@ Make content professional, detailed, and reference real frameworks/books.
     if file_context:
         user_prompt += f"\n\nUse the following reference material to create course content. Base the lessons on this material:\n\n{file_context}"
 
-    raw = await _call_claude(system_prompt, [{"role": "user", "content": user_prompt}], max_tokens=8000)
+    raw = await _call_claude(system_prompt, [{"role": "user", "content": user_prompt}], max_tokens=16000)
 
     # Parse JSON - strip markdown code blocks if present
     text = raw.strip()
