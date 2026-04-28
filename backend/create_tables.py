@@ -70,7 +70,7 @@ async def main():
             )
         # Ensure admin roles
         await conn.execute(
-            text("UPDATE users SET role = 'admin' WHERE email IN ('superadmin@pathmind.com', 'arturfeniks88@gmail.com')")
+            text("UPDATE users SET role = 'admin' WHERE email IN ('superadmin@pathmind.com', 'admin@pathmind.com', 'arturfeniks88@gmail.com')")
         )
         print("Tables created/verified, tags backfilled")
 
