@@ -153,90 +153,10 @@ async def check_translation(
         return {"correct": False, "feedback": "Ошибка проверки.", "suggested": ""}
 
 
-async def generate_course(db, admin_id, topic: str, language: str, sections_count: int, difficulty: str, custom_prompt: str | None = None, file_context: str | None = None) -> dict:
-    """Generate a full course using Claude AI and save to DB."""
-    from app.models.course import Course, CourseSection, CourseLesson
-    import uuid as uuid_mod
+def _parse_json(raw: str) -> dict:
+    """Parse JSON from Claude response, handling markdown wrappers and truncation."""
+    import json as json_mod
 
-    lang_instruction = "Respond entirely in Russian." if language == "ru" else "Respond entirely in English."
-
-    system_prompt = f"""You are an expert course creator for the Bars AI learning platform.
-You create comprehensive, professional courses for adults.
-{lang_instruction}
-
-IMPORTANT: Return ONLY valid JSON, no markdown, no code blocks, no explanations."""
-
-    user_prompt = f"""Create a course on the topic: "{topic}"
-Difficulty level: {difficulty}
-Number of sections: {sections_count}
-Each section should have 4-6 lessons.
-
-Return a JSON object with this EXACT structure:
-{{
-  "title": "Course title",
-  "description": "Course description (2-3 sentences)",
-  "category": "one of: management, programming, design, marketing, languages, finance, other",
-  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
-  "sections": [
-    {{
-      "title": "Section title",
-      "lessons": [
-        {{
-          "title": "Lesson title",
-          "xp": 20,
-          "steps": [
-            {{
-              "type": "info",
-              "title": "Step title",
-              "markdown": "## Heading\\n\\nDetailed content with **bold**, lists, examples, references to real books/frameworks. At least 200 words per info step."
-            }},
-            {{
-              "type": "quiz",
-              "question": "Question text?",
-              "options": [
-                {{"id": "a", "text": "Option A", "correct": false}},
-                {{"id": "b", "text": "Option B", "correct": true}},
-                {{"id": "c", "text": "Option C", "correct": false}},
-                {{"id": "d", "text": "Option D", "correct": false}}
-              ]
-            }},
-            {{
-              "type": "flashcards",
-              "cards": [
-                {{"front": "Term", "back": "Definition"}},
-                {{"front": "Term 2", "back": "Definition 2"}}
-              ]
-            }}
-          ]
-        }}
-      ]
-    }}
-  ]
-}}
-
-Each lesson must have 3-5 steps. Use these step types:
-- "info" (with detailed markdown content, include real book/framework references)
-- "quiz" (single choice, 4 options)
-- "true-false" (statement + correct: true/false)
-- "matching" (pairs: left/right)
-- "flashcards" (cards: front/back)
-- "fill-blank" (sentence with ___ + answer)
-- "drag-order" (items in correct order)
-- "resources" (items with label, url, type:"link")
-
-Mix step types for engagement. Every lesson should start with "info" step.
-Make content professional, detailed, and reference real frameworks/books.
-
-"""
-    if custom_prompt:
-        user_prompt += f"\n\nAdditional instructions from the admin:\n{custom_prompt}"
-
-    if file_context:
-        user_prompt += f"\n\nUse the following reference material to create course content. Base the lessons on this material:\n\n{file_context}"
-
-    raw = await _call_claude(system_prompt, [{"role": "user", "content": user_prompt}], max_tokens=16000)
-
-    # Parse JSON - strip markdown code blocks if present
     text = raw.strip()
     if text.startswith("```"):
         text = text.split("\n", 1)[1] if "\n" in text else text[3:]
@@ -246,8 +166,100 @@ Make content professional, detailed, and reference real frameworks/books.
         text = text[4:]
     text = text.strip()
 
+    try:
+        return json_mod.loads(text)
+    except json_mod.JSONDecodeError:
+        # Try to fix truncated JSON by closing open brackets
+        fixed = text
+        open_braces = fixed.count("{") - fixed.count("}")
+        open_brackets = fixed.count("[") - fixed.count("]")
+        # Remove trailing incomplete string/value
+        last_complete = max(fixed.rfind("},"), fixed.rfind("}]"), fixed.rfind('"}'))
+        if last_complete > 0:
+            fixed = fixed[:last_complete + 1]
+        fixed += "]" * max(0, open_brackets - (fixed.count("[") - fixed.count("]")))
+        fixed += "}" * max(0, open_braces - (fixed.count("{") - fixed.count("}")))
+        # Recount after trim
+        open_brackets = fixed.count("[") - fixed.count("]")
+        open_braces = fixed.count("{") - fixed.count("}")
+        fixed += "]" * max(0, open_brackets)
+        fixed += "}" * max(0, open_braces)
+        return json_mod.loads(fixed)
+
+
+async def generate_course(db, admin_id, topic: str, language: str, sections_count: int, difficulty: str, custom_prompt: str | None = None, file_context: str | None = None) -> dict:
+    """Generate a full course using Claude AI — one section at a time to avoid truncation."""
+    from app.models.course import Course, CourseSection, CourseLesson
+    import uuid as uuid_mod
     import json as json_mod
-    course_data = json_mod.loads(text)
+
+    lang_instruction = "Respond entirely in Russian." if language == "ru" else "Respond entirely in English."
+
+    system_prompt = f"""You are an expert course creator for the Bars AI learning platform.
+You create comprehensive, professional courses for adults.
+{lang_instruction}
+
+IMPORTANT: Return ONLY valid JSON, no markdown, no code blocks, no explanations."""
+
+    # Step 1: Generate course outline (title, description, section titles)
+    outline_prompt = f"""Create a course outline on: "{topic}"
+Difficulty: {difficulty}
+Number of sections: {sections_count}
+{f"Additional instructions: {custom_prompt}" if custom_prompt else ""}
+{f"Reference material: {file_context[:5000]}" if file_context else ""}
+
+Return JSON:
+{{
+  "title": "Course title",
+  "description": "Course description (2-3 sentences)",
+  "category": "one of: management, programming, design, marketing, languages, finance, other",
+  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+  "sections": ["Section 1 title", "Section 2 title", ...]
+}}"""
+
+    outline_raw = await _call_claude(system_prompt, [{"role": "user", "content": outline_prompt}], max_tokens=1000)
+    outline = _parse_json(outline_raw)
+
+    # Step 2: Generate each section separately
+    sections_data = []
+    section_titles = outline.get("sections", [f"Section {i+1}" for i in range(sections_count)])
+
+    for i, section_title in enumerate(section_titles):
+        section_prompt = f"""Generate section {i+1} of the course "{outline.get('title', topic)}".
+Section title: "{section_title}"
+Difficulty: {difficulty}
+{f"Reference material excerpt: {file_context[i*3000:(i+1)*3000]}" if file_context else ""}
+
+Return JSON with 3-4 lessons, each with 3-4 steps:
+{{
+  "title": "{section_title}",
+  "lessons": [
+    {{
+      "title": "Lesson title",
+      "xp": 20,
+      "steps": [
+        {{"type": "info", "title": "Step title", "markdown": "## Heading\\n\\nDetailed content (100+ words)"}},
+        {{"type": "quiz", "question": "?", "options": [{{"id":"a","text":"A","correct":false}},{{"id":"b","text":"B","correct":true}},{{"id":"c","text":"C","correct":false}},{{"id":"d","text":"D","correct":false}}]}},
+        {{"type": "flashcards", "cards": [{{"front":"Term","back":"Def"}}]}}
+      ]
+    }}
+  ]
+}}
+
+Step types to mix: info, quiz, true-false, matching, flashcards, fill-blank, drag-order.
+Every lesson starts with "info". Make content professional with real examples."""
+
+        section_raw = await _call_claude(system_prompt, [{"role": "user", "content": section_prompt}], max_tokens=8000)
+        section_data = _parse_json(section_raw)
+        sections_data.append(section_data)
+
+    course_data = {
+        "title": outline.get("title", topic),
+        "description": outline.get("description", ""),
+        "category": outline.get("category", "other"),
+        "tags": outline.get("tags", []),
+        "sections": sections_data,
+    }
 
     # Create course in DB
     slug = topic.lower().replace(" ", "-").replace(".", "")[:200]
