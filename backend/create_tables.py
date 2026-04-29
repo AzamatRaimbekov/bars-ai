@@ -69,6 +69,15 @@ async def main():
                 text("UPDATE courses SET tags = :tags WHERE category = :cat"),
                 {"tags": tags_json, "cat": category},
             )
+        # Deduplicate courses — keep oldest, delete newer duplicates
+        dedup = await conn.execute(
+            text("""DELETE FROM courses WHERE id NOT IN (
+                SELECT MIN(id::text)::uuid FROM courses GROUP BY title
+            )""")
+        )
+        if dedup.rowcount > 0:
+            print(f"Deduplication: removed {dedup.rowcount} duplicate courses")
+
         # Ensure admin roles
         result = await conn.execute(
             text("UPDATE users SET role = 'admin' WHERE LOWER(email) IN ('superadmin@pathmind.com', 'admin@pathmind.com', 'arturfeniks88@gmail.com')")

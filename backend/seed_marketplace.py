@@ -1469,6 +1469,10 @@ S = [
 
 async def main():
     async with async_session() as db:
+        existing = (await db.execute(select(Course).where(Course.title == T))).scalar_one_or_none()
+        if existing:
+            print(f"'{T}' already exists — skipping.")
+            return
         author = (await db.execute(select(User).limit(1))).scalar_one_or_none()
         if not author:
             print("No users.")
