@@ -1,4 +1,5 @@
 import uuid
+from dataclasses import dataclass
 from typing import AsyncGenerator
 
 from fastapi import Depends, HTTPException
@@ -16,13 +17,35 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
+@dataclass
+class CurrentUser:
+    id: uuid.UUID
+    org_id: uuid.UUID | None
+    is_superadmin: bool
+
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security_scheme),
+) -> CurrentUser:
+    payload = decode_access_token(credentials.credentials)
+    if payload is None:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    org_id = uuid.UUID(payload["org_id"]) if payload.get("org_id") else None
+    return CurrentUser(
+        id=uuid.UUID(payload["sub"]),
+        org_id=org_id,
+        is_superadmin=payload.get("is_superadmin", False),
+    )
+
+
 async def get_current_user_id(
     credentials: HTTPAuthorizationCredentials = Depends(security_scheme),
 ) -> uuid.UUID:
-    user_id = decode_access_token(credentials.credentials)
-    if user_id is None:
+    """Backward-compatible dependency — returns just the user UUID."""
+    payload = decode_access_token(credentials.credentials)
+    if payload is None:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
-    return uuid.UUID(user_id)
+    return uuid.UUID(payload["sub"])
 
 
 optional_security = HTTPBearer(auto_error=False)
@@ -33,7 +56,16 @@ async def get_optional_user_id(
 ) -> uuid.UUID | None:
     if credentials is None:
         return None
-    user_id = decode_access_token(credentials.credentials)
-    if user_id is None:
+    payload = decode_access_token(credentials.credentials)
+    if payload is None:
         return None
-    return uuid.UUID(user_id)
+    return uuid.UUID(payload["sub"])
+
+
+def require_superadmin():
+    """Dependency that ensures the user is a superadmin."""
+    async def _checker(user: CurrentUser = Depends(get_current_user)):
+        if not user.is_superadmin:
+            raise HTTPException(status_code=403, detail="Superadmin access required")
+        return user
+    return _checker

@@ -20,9 +20,18 @@ def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
 
-def create_access_token(user_id: str) -> str:
+def create_access_token(user_id: str, org_id: str | None = None, is_superadmin: bool = False) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.JWT_ACCESS_EXPIRE_MINUTES)
-    return jwt.encode({"sub": user_id, "exp": expire, "type": "access"}, settings.JWT_SECRET, algorithm=ALGORITHM)
+    payload = {
+        "sub": user_id,
+        "exp": expire,
+        "type": "access",
+    }
+    if org_id:
+        payload["org_id"] = org_id
+    if is_superadmin:
+        payload["is_superadmin"] = True
+    return jwt.encode(payload, settings.JWT_SECRET, algorithm=ALGORITHM)
 
 
 def create_refresh_token() -> tuple[str, str]:
@@ -36,12 +45,16 @@ def hash_token(raw: str) -> str:
     return hashlib.sha256(raw.encode()).hexdigest()
 
 
-def decode_access_token(token: str) -> str | None:
-    """Returns user_id or None if invalid."""
+def decode_access_token(token: str) -> dict | None:
+    """Returns payload dict with sub, org_id, is_superadmin or None if invalid."""
     try:
         payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[ALGORITHM])
         if payload.get("type") != "access":
             return None
-        return payload.get("sub")
+        return {
+            "sub": payload.get("sub"),
+            "org_id": payload.get("org_id"),
+            "is_superadmin": payload.get("is_superadmin", False),
+        }
     except JWTError:
         return None

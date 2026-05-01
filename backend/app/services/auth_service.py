@@ -38,7 +38,11 @@ async def register(db: AsyncSession, email: str, password: str, name: str, direc
     progress = Progress(user_id=user.id)
     db.add(progress)
 
-    access_token = create_access_token(str(user.id))
+    access_token = create_access_token(
+        str(user.id),
+        org_id=str(user.organization_id) if user.organization_id else None,
+        is_superadmin=user.is_superadmin,
+    )
     raw_refresh, token_hash = create_refresh_token()
     rt = RefreshToken(
         user_id=user.id,
@@ -59,7 +63,11 @@ async def login(db: AsyncSession, email: str, password: str) -> tuple[User, str,
     if not user or not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    access_token = create_access_token(str(user.id))
+    access_token = create_access_token(
+        str(user.id),
+        org_id=str(user.organization_id) if user.organization_id else None,
+        is_superadmin=user.is_superadmin,
+    )
     raw_refresh, token_hash = create_refresh_token()
     rt = RefreshToken(
         user_id=user.id,
@@ -88,7 +96,12 @@ async def refresh(db: AsyncSession, raw_token: str) -> tuple[str, str]:
 
     rt.revoked = True
 
-    access_token = create_access_token(str(rt.user_id))
+    user = await db.get(User, rt.user_id)
+    access_token = create_access_token(
+        str(rt.user_id),
+        org_id=str(user.organization_id) if user and user.organization_id else None,
+        is_superadmin=user.is_superadmin if user else False,
+    )
     new_raw, new_hash = create_refresh_token()
     new_rt = RefreshToken(
         user_id=rt.user_id,
