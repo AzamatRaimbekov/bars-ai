@@ -6,5 +6,6 @@ dist
 *.tsbuildinfo
 .claude/
 .superpowers/
+.worktrees/
 docs/.obsidian/workspace.json
 docs/.obsidian/cache
