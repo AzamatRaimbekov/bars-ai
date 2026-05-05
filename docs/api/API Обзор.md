@@ -110,6 +110,49 @@ GET /api/health → { "status": "ok" }
 | GET | `/api/admin/courses/pending` | Курсы на модерации |
 | POST | `/api/admin/courses/:id/review` | Одобрить/отклонить курс |
 
+## Организации (`/api/organizations`) — B2B
+| Метод | Путь | Описание |
+|---|---|---|
+| POST | `/api/organizations/` | Создать организацию (становишься owner) |
+| GET | `/api/organizations/current` | Текущая организация пользователя |
+| PATCH | `/api/organizations/current` | Обновить настройки организации |
+
+## Отделы (`/api/departments`) — B2B
+| Метод | Путь | Описание |
+|---|---|---|
+| POST | `/api/departments/` | Создать отдел |
+| GET | `/api/departments/` | Список отделов организации |
+| PATCH | `/api/departments/:id` | Обновить отдел |
+| DELETE | `/api/departments/:id` | Удалить отдел |
+| POST | `/api/departments/:id/members` | Добавить участника |
+| DELETE | `/api/departments/:id/members/:userId` | Удалить участника |
+
+## Роли (`/api/roles`) — B2B RBAC
+| Метод | Путь | Описание |
+|---|---|---|
+| POST | `/api/roles/` | Создать роль |
+| GET | `/api/roles/` | Список ролей организации |
+| PATCH | `/api/roles/:id` | Обновить роль |
+| DELETE | `/api/roles/:id` | Удалить роль (не системную) |
+| GET | `/api/roles/permissions` | Список всех доступных permissions |
+| POST | `/api/roles/assign` | Назначить роль пользователю |
+| DELETE | `/api/roles/:id/assign/:userId` | Снять роль с пользователя |
+
+## Инвайты (`/api/invites`) — B2B
+| Метод | Путь | Описание |
+|---|---|---|
+| POST | `/api/invites/` | Создать инвайт-ссылку |
+| GET | `/api/invites/` | Список активных инвайтов |
+| DELETE | `/api/invites/:id` | Деактивировать инвайт |
+| POST | `/api/invites/join/:code` | Принять инвайт (регистрация + вход) |
+
+## Platform Admin (`/api/platform-admin`) — Superadmin
+| Метод | Путь | Описание |
+|---|---|---|
+| GET | `/api/platform-admin/organizations` | Все организации с user_count |
+| PATCH | `/api/platform-admin/organizations/:id/status` | Активировать/деактивировать организацию |
+| GET | `/api/platform-admin/stats` | Статистика платформы (orgs, users, courses) |
+
 ---
 
 > Автодокументация FastAPI: `http://localhost:3847/docs` (Swagger UI)

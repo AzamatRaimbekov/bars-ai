@@ -1,6 +1,6 @@
 ---
 description: Master index of all wiki pages. LLM reads this first to find relevant pages.
-updated: 2026-04-27
+updated: 2026-05-04
 ---
 
 # Wiki Index
@@ -44,6 +44,7 @@ updated: 2026-04-27
 | [[Онбординг]] | 4-step flow: name, interests, chat, recommendations | 3 |
 | [[AI Менторство]] | Barsbek AI assistant, 8 specializations, voice mode | 3 |
 | [[Admin Panel]] | Separate admin app, AI course generator, moderation | 3 |
+| [[B2B SaaS]] | Multi-tenant B2B: organizations, departments, RBAC, invites | 4 |
 
 ## Guides
 | Page | Summary | Links |

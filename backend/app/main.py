@@ -34,6 +34,7 @@ async def health():
 
 
 from app.routers import auth, users, progress, ai, quests, leaderboard, leagues, courses, mentor, sprint, admin, payments, notifications, uploads
+from app.routers import organizations, departments, roles, invites, platform_admin
 
 app.include_router(auth.router)
 app.include_router(users.router)
@@ -49,6 +50,11 @@ app.include_router(admin.router)
 app.include_router(payments.router)
 app.include_router(notifications.router)
 app.include_router(uploads.router)
+app.include_router(organizations.router)
+app.include_router(departments.router)
+app.include_router(roles.router)
+app.include_router(invites.router)
+app.include_router(platform_admin.router)
 
 # Serve frontend static files in production
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"

@@ -33,3 +33,14 @@ description: Chronological log of wiki changes. Append-only.
 - Added missing columns: onboarding_complete, assessment_context, tags
 - Backfilled tags for all courses based on category mapping
 - Fixed course list 500 error (tags schema allowing None)
+
+## [2026-05-04] ingest | B2B SaaS Phase 1
+- Added B2B SaaS feature page documenting multi-tenant architecture
+- Updated Модели page with 7 new B2B models (Organization, Department, Role, InviteLink, etc.)
+- Updated База данных page with all new model descriptions and User/Course B2B columns
+- Updated Аутентификация page with JWT B2B extension, CurrentUser dependency, RBAC permissions
+- Updated index.md with B2B SaaS entry
+
+## [2026-05-03] ingest | Contributor guide
+- Added root `AGENTS.md` with repo-specific contributor workflow and commands
+- Updated project structure wiki to reference the new guide and nested compiler subproject
