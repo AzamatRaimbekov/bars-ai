@@ -8,6 +8,7 @@ description: Chronological log of wiki changes. Append-only.
 
 - Backend: добавил отсутствующие `ALTER TABLE ADD COLUMN IF NOT EXISTS` в `backend/create_tables.py` для `users.organization_id`, `users.is_superadmin`, `courses.organization_id` — Railway-деплой через root `Dockerfile` не запускал alembic, поэтому B2B Phase 1 колонки не создавались и `SELECT` падал. Параллельно создана Alembic-миграция `b1a2c3d4e5f6_add_b2b_saas_phase1_schema.py` для `backend/Dockerfile`-пути.
 - Frontend: заменил группу из 4 кнопок-переключателей языка в `LandingNav` на нативный `<select>` — на мобильном навбар больше не переполняется. Обновлены [[фичи/Landing i18n]] и [[фронтенд/Компоненты]].
+- Mentor: вернул `lg:flex-row` основному контейнеру `src/pages/Mentor.tsx` — коммит `bad632e` (mobile-fullscreen фикс) случайно сменил layout на `flex-col` для всех брейкпоинтов, из-за чего на десктопе сайдбар сессий стакался поверх чата вместо левой колонки.
 
 ## [2026-04-27] init | Wiki restructured to LLM Wiki pattern
 - Converted existing docs to LLM Wiki pattern with index.md and log.md

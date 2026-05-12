@@ -377,7 +377,7 @@ export default function Mentor() {
           <TopBar />
         </div>
         <main className="lg:px-6 lg:pt-6 lg:pb-6">
-      <div className="fixed inset-0 z-10 lg:relative lg:z-auto lg:h-[calc(100vh-8rem)] lg:rounded-2xl border-0 lg:border border-white/6 bg-[#0A0A0A] overflow-hidden flex flex-col pb-[76px] lg:pb-0">
+      <div className="fixed inset-0 z-10 lg:relative lg:z-auto lg:h-[calc(100vh-8rem)] lg:rounded-2xl border-0 lg:border border-white/6 bg-[#0A0A0A] overflow-hidden flex flex-col lg:flex-row pb-[76px] lg:pb-0">
         {/* Mobile sidebar toggle */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
