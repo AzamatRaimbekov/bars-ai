@@ -53,7 +53,10 @@ async def main():
             "ALTER TABLE users ADD COLUMN IF NOT EXISTS interests JSON DEFAULT '[]'",
             "ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_complete BOOLEAN DEFAULT FALSE",
             "ALTER TABLE users ADD COLUMN IF NOT EXISTS assessment_context TEXT",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id)",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_superadmin BOOLEAN NOT NULL DEFAULT FALSE",
             "ALTER TABLE courses ADD COLUMN IF NOT EXISTS tags JSON",
+            "ALTER TABLE courses ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id)",
         ]
         for sql in migrations:
             try:
