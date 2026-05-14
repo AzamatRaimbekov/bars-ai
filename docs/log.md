@@ -27,6 +27,18 @@ description: Chronological log of wiki changes. Append-only.
 - `seed_choreography.py` — «Хореография — ставь свои танцы» (Intermediate). 4 секции, 13 уроков, 55 шагов, 260 XP. Музыкальность (счёт, фразы, акценты), композиция (драматургия номера), пространство и формации, работа с зеркалом и видео, чек-лист готовности.
 - Все три категории `Dance`, зарегистрированы в `seed_all.py`.
 
+## [2026-05-14] ingest | 2026-trend courses pack (5 courses)
+
+Курсы под актуальные тренды для подготовки к запуску:
+
+- `seed_ai_agents.py` — «AI-агенты — построй своего автономного помощника» (Intermediate, AI). 4 секции, 12 уроков, 48 шагов, 290 XP. Agent loop, tools, MCP, browser automation, sub-agents, security, финальный проект — агент-секретарь.
+- `seed_cursor_ai_ide.py` — «Cursor & AI IDE 2026 — кодинг с ИИ-напарником» (Beginner, Programming). 4 секции, 11 уроков, 47 шагов, 235 XP. Cursor/Windsurf/Claude Code, Tab/Cmd+K/Composer/Agent, .cursorrules, безопасность и code review.
+- `seed_ege_with_ai.py` — «Подготовка к ЕГЭ и ОГЭ с ИИ» (Beginner, AI). 4 секции, 12 уроков, 46 шагов, 260 XP. Для школьников 14-17: русский/сочинения, математика, информатика, общество/история, английский, анти-патерны.
+- `seed_short_video.py` — «Reels & TikTok — снимай виральные видео с нуля» (Beginner, Marketing). 4 секции, 11 уроков, 45 шагов, 235 XP. Хук/основа/CTA, CapCut, форматы, тренды, алгоритм, монетизация.
+- `seed_personal_brand.py` — «Personal Brand на LinkedIn, X и Telegram» (Beginner, Marketing). 4 секции, 10 уроков, 41 шаг, 225 XP. Позиционирование, форматы постов, нетворкинг, AI для контента, метрики, 30-дневный старт.
+
+Все зарегистрированы в `seed_all.py`. Закрывают 5 разных аудиторий: dev, кодеры, школьники, креаторы, b2b спецы.
+
 ## [2026-04-27] init | Wiki restructured to LLM Wiki pattern
 - Converted existing docs to LLM Wiki pattern with index.md and log.md
 - Added feature pages: Геймификация, Спринты, Курсы и шаги, Онбординг, AI Менторство, Admin Panel, Landing i18n, Production
