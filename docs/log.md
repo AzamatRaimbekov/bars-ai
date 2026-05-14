@@ -39,6 +39,19 @@ description: Chronological log of wiki changes. Append-only.
 
 Все зарегистрированы в `seed_all.py`. Закрывают 5 разных аудиторий: dev, кодеры, школьники, креаторы, b2b спецы.
 
+## [2026-05-14] ingest | Lifestyle & career pack (6 courses)
+
+Шесть курсов под разные аудитории: финансы, продуктивность, креатив, soft-skills, быт, карьера.
+
+- `seed_investing_basics.py` — «Инвестиции с нуля» (Beginner, Finance). 4 сек, 12 ур, 50 шагов, 270 XP. Для 20-35: бюджет, подушка, ETF/ОФЗ, ИИС-3, диверсификация, психология, налоги. СНГ контекст.
+- `seed_notion_second_brain.py` — «Notion и Second Brain» (Beginner, Productivity). 4 сек, 11 ур, 45 шагов, 235 XP. PARA, CODE, Zettelkasten, Notion AI, daily/weekly review.
+- `seed_ai_video_gen.py` — «AI Video Generation» (Beginner, AI). 4 сек, 11 ур, 45 шагов, 235 XP. Sora 2, Veo 3, Runway, Higgsfield, Kling. Промпты, camera moves, image-to-video, use cases, этика.
+- `seed_emotional_intelligence.py` — «Эмоциональный интеллект» (Beginner, Soft Skills). 4 сек, 11 ур, 46 шагов, 250 XP. 4 компонента EI, словарь эмоций, пауза 6 сек, эмпатия, DESC, конфликты, 6 стилей лидерства Гоулмена.
+- `seed_cooking_basics.py` — «Кулинария для начинающих» (Beginner, Other). 4 сек, 13 ур, 52 шага, 240 XP. Ножи, базовые техники, простые блюда, meal prep, заморозка, тарелка 50/25/25, шопинг.
+- `seed_it_interview_2026.py` — «Подготовка к собесу в IT 2026» (Intermediate, Programming). 4 сек, 11 ур, 46 шагов, 250 XP. Резюме под ATS, 15 паттернов Leetcode, UMPIRE, Big O, SD-фреймворк, CAP, STAR, переговоры по офферу.
+
+Все зарегистрированы в `seed_all.py`.
+
 ## [2026-04-27] init | Wiki restructured to LLM Wiki pattern
 - Converted existing docs to LLM Wiki pattern with index.md and log.md
 - Added feature pages: Геймификация, Спринты, Курсы и шаги, Онбординг, AI Менторство, Admin Panel, Landing i18n, Production
