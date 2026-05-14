@@ -10,6 +10,10 @@ description: Chronological log of wiki changes. Append-only.
 - Frontend: заменил группу из 4 кнопок-переключателей языка в `LandingNav` на нативный `<select>` — на мобильном навбар больше не переполняется. Обновлены [[фичи/Landing i18n]] и [[фронтенд/Компоненты]].
 - Mentor: вернул `lg:flex-row` основному контейнеру `src/pages/Mentor.tsx` — коммит `bad632e` (mobile-fullscreen фикс) случайно сменил layout на `flex-col` для всех брейкпоинтов, из-за чего на десктопе сайдбар сессий стакался поверх чата вместо левой колонки.
 
+## [2026-05-14] ingest | Kids AI course
+
+- Добавлен курс `seed_ai_kids.py` — «ИИ для детей — приключение с роботом Барсбеком» (7+). 7 секций, 23 урока, 106 шагов, 425 XP. Категория AI, Beginner. Минимум текста, упор на видео и игровые шаги: `quiz`, `true-false`, `multi-select`, `drag-order`, `matching`, `category-sort`, `flashcards`. Зарегистрирован в `seed_all.py`. Темы: что такое ИИ, где он живёт, как учится, ИИ-художник, голосовые помощники, ИИ в играх, безопасность.
+
 ## [2026-04-27] init | Wiki restructured to LLM Wiki pattern
 - Converted existing docs to LLM Wiki pattern with index.md and log.md
 - Added feature pages: Геймификация, Спринты, Курсы и шаги, Онбординг, AI Менторство, Admin Panel, Landing i18n, Production
