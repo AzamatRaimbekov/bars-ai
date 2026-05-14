@@ -20,6 +20,13 @@ description: Chronological log of wiki changes. Append-only.
 - Добавлен `seed_ai_fluency.py` — «AI Fluency — как команде грамотно работать с ИИ» (Beginner). 5 секций, 16 уроков, 73 шага, 360 XP. Для не-технических специалистов (продакты, маркетологи, аналитики, HR): сильные/слабые стороны LLM, ландшафт моделей, use cases по сферам, формула промпта CRAFT, итеративный диалог, галлюцинации, конфиденциальность, bias, 30-дневный план внедрения в команде.
 - Оба зарегистрированы в `seed_all.py`. Покрывают разные аудитории (dev vs business), не пересекаются с существующими курсами по Claude Code и ChatGPT.
 
+## [2026-05-14] ingest | Dance courses pack (3 courses)
+
+- `seed_hip_hop_foundation.py` — «Хип-хоп — фундамент уличного танца» (Beginner). 4 секции, 12 уроков, 54 шага, 225 XP. История и культура, bounce/groove, foundations (top rock, indian step, kick step), первая комбинация.
+- `seed_dancer_body.py` — «Анатомия танцора — тело, гибкость и здоровье» (Beginner). 4 секции, 13 уроков, 59 шагов, 225 XP. Универсально для любого стиля: суставы и мышцы, разминка, динамическая vs статическая растяжка, шпагаты, кор, плиометрика, восстановление и профилактика травм.
+- `seed_choreography.py` — «Хореография — ставь свои танцы» (Intermediate). 4 секции, 13 уроков, 55 шагов, 260 XP. Музыкальность (счёт, фразы, акценты), композиция (драматургия номера), пространство и формации, работа с зеркалом и видео, чек-лист готовности.
+- Все три категории `Dance`, зарегистрированы в `seed_all.py`.
+
 ## [2026-04-27] init | Wiki restructured to LLM Wiki pattern
 - Converted existing docs to LLM Wiki pattern with index.md and log.md
 - Added feature pages: Геймификация, Спринты, Курсы и шаги, Онбординг, AI Менторство, Admin Panel, Landing i18n, Production
