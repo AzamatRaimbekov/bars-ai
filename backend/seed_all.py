@@ -12,6 +12,8 @@ SEED_MODULES = [
     "seed_production",
     "seed_ai_chatgpt",
     "seed_ai_kids",
+    "seed_ai_fluency",
+    "seed_mcp",
     "seed_blender_3d",
     "seed_callcenter_course",
     "seed_chinese_language",

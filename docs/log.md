@@ -14,6 +14,12 @@ description: Chronological log of wiki changes. Append-only.
 
 - Добавлен курс `seed_ai_kids.py` — «ИИ для детей — приключение с роботом Барсбеком» (7+). 7 секций, 23 урока, 106 шагов, 425 XP. Категория AI, Beginner. Минимум текста, упор на видео и игровые шаги: `quiz`, `true-false`, `multi-select`, `drag-order`, `matching`, `category-sort`, `flashcards`. Зарегистрирован в `seed_all.py`. Темы: что такое ИИ, где он живёт, как учится, ИИ-художник, голосовые помощники, ИИ в играх, безопасность.
 
+## [2026-05-14] ingest | Anthropic-inspired courses: MCP and AI Fluency
+
+- Добавлен `seed_mcp.py` — «Model Context Protocol (MCP) — практика» (Intermediate). 5 секций, 18 уроков, 79 шагов, 465 XP. Для разработчиков: архитектура (Host/Client/Server), tools/resources/prompts, sampling, транспорты (stdio, Streamable HTTP), OAuth 2.1, безопасность (confused deputy, prompt injection), production-чеклист, финальный проект.
+- Добавлен `seed_ai_fluency.py` — «AI Fluency — как команде грамотно работать с ИИ» (Beginner). 5 секций, 16 уроков, 73 шага, 360 XP. Для не-технических специалистов (продакты, маркетологи, аналитики, HR): сильные/слабые стороны LLM, ландшафт моделей, use cases по сферам, формула промпта CRAFT, итеративный диалог, галлюцинации, конфиденциальность, bias, 30-дневный план внедрения в команде.
+- Оба зарегистрированы в `seed_all.py`. Покрывают разные аудитории (dev vs business), не пересекаются с существующими курсами по Claude Code и ChatGPT.
+
 ## [2026-04-27] init | Wiki restructured to LLM Wiki pattern
 - Converted existing docs to LLM Wiki pattern with index.md and log.md
 - Added feature pages: Геймификация, Спринты, Курсы и шаги, Онбординг, AI Менторство, Admin Panel, Landing i18n, Production
