@@ -52,6 +52,17 @@ description: Chronological log of wiki changes. Append-only.
 
 Все зарегистрированы в `seed_all.py`.
 
+## [2026-05-15] fix | Claude Code Advanced content + TerminalSim UX
+
+- **Курс Claude Code Advanced** (`seed_claude_code_advanced.py`):
+  - 121 сломанный `code-puzzle` — переименован `items` → `fragments` под `StepCodePuzzle` schema из `courseApi.ts` (плеер не находил данные); поле `question` убрано (плеер не отображает).
+  - 20 устаревших модельных ID: `claude-opus-4-20250514` → `claude-opus-4-7`, `claude-sonnet-4-20250514` → `claude-sonnet-4-6`, `claude-haiku-235-20250414` → `claude-haiku-4-5-20251001` (последний был ещё и галлюцинацией — «235» не существовало).
+  - 3 prompt/command mismatch в terminal-sim — промпт требовал нескольких действий («перейдите в директорию и запустите», «откройте терминал в VS Code и запустите», «запустите тесты и проверьте покрытие»), а `expectedCommand` была одной командой. Промпты переписаны под одну команду.
+  - `seed_claude_code_course.py` и `seed_claude_code_full.py` — те же проверки прошли чисто.
+- **TerminalSim UX** (`src/components/courses/CourseStepPlayer.tsx`):
+  - `<input type="text">` → `<textarea>` с авто-ростом по строкам — длинные команды теперь визуально переносятся, можно вводить много-строчные через Shift+Enter, Enter по-прежнему отправляет.
+  - Сравнение команд: `command === expected` → нормализация (trim + collapse whitespace), пользователь не теряет балл из-за лишнего пробела.
+
 ## [2026-04-27] init | Wiki restructured to LLM Wiki pattern
 - Converted existing docs to LLM Wiki pattern with index.md and log.md
 - Added feature pages: Геймификация, Спринты, Курсы и шаги, Онбординг, AI Менторство, Admin Panel, Landing i18n, Production

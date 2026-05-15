@@ -1887,9 +1887,11 @@ function TerminalSimStep({
   const [showHint, setShowHint] = useState(false);
   const [outputVisible, setOutputVisible] = useState(false);
 
+  const normalize = (s: string) => s.trim().replace(/\s+/g, " ");
+
   const handleSubmit = () => {
     if (!command.trim()) return;
-    const correct = command === step.expectedCommand;
+    const correct = normalize(command) === normalize(step.expectedCommand);
     setIsCorrect(correct);
     setSubmitted(true);
     if (correct) {
@@ -1924,20 +1926,23 @@ function TerminalSimStep({
         {/* Terminal body */}
         <div className="p-4 font-mono text-sm min-h-[100px]">
           {/* Command input line */}
-          <div className="flex items-center gap-2">
-            <span className="text-[#4ADE80] select-none flex-shrink-0">$</span>
-            <input
-              type="text"
+          <div className="flex items-start gap-2">
+            <span className="text-[#4ADE80] select-none flex-shrink-0 leading-6">$</span>
+            <textarea
               value={command}
               onChange={(e) => setCommand(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !submitted && command.trim()) handleSubmit();
+                if (e.key === "Enter" && !e.shiftKey && !submitted && command.trim()) {
+                  e.preventDefault();
+                  handleSubmit();
+                }
               }}
               disabled={submitted}
-              placeholder="Введите команду..."
+              placeholder="Введите команду... (Enter — выполнить, Shift+Enter — новая строка)"
               autoComplete="off"
               spellCheck={false}
-              className="flex-1 bg-transparent outline-none text-[#4ADE80] placeholder:text-white/20 disabled:cursor-default caret-[#4ADE80]"
+              rows={Math.max(1, command.split("\n").length)}
+              className="flex-1 bg-transparent outline-none text-[#4ADE80] placeholder:text-white/20 disabled:cursor-default caret-[#4ADE80] resize-none leading-6 break-all whitespace-pre-wrap"
             />
           </div>
 
